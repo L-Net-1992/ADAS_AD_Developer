@@ -36,7 +36,7 @@ protected:
      */
     void mousePressEvent(QMouseEvent* event)
     {
-        if(event->button() && Qt::LeftButton)
+        if(event->button() & Qt::LeftButton)
         {
             _selectItem = itemAt(event->pos());
             if(_selectItem==Q_NULLPTR) return;

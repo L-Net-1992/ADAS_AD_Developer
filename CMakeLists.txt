@@ -37,6 +37,7 @@ set ( PROJECT_SOURCES
     dialogs/nodeparametersdialog.h dialogs/nodeparametersdialog.cpp dialogs/nodeparametersdialog.ui
     dialogs/nodetreedialog.h dialogs/nodetreedialog.cpp dialogs/nodetreedialog.ui
     dialogs/importscriptdialog.h dialogs/importscriptdialog.cpp dialogs/importscriptdialog.ui
+    dialogs/testdialog.h dialogs/testdialog.cpp dialogs/testdialog.ui
 
     image.qrc
     TextData.hpp

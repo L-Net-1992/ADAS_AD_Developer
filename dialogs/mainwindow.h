@@ -34,6 +34,7 @@
 #include <dialogs/projectdialog.h>
 #include <dialogs/nodeparametersdialog.h>
 #include <dialogs/nodetreedialog.h>
+#include <dialogs/testdialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "aicctreewidget.hpp"

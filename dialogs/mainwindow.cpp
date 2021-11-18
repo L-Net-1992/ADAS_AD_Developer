@@ -231,14 +231,16 @@ void MainWindow::initToolbar()
         }
     });
 
-//    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
+    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
+        TestDialog *tdialog = new TestDialog(this);
+        tdialog->show();
 //        qDebug() << ui->sw_flowscene->allViews().count() ;
         //复原为原始大小
 //        ui->sw_flowscene->allViews()[0]->scaleDefault();
 
 //        ui->sw_flowscene->allViews()[0]->scaleDown();
 //        ui->sw_flowscene->allViews()[0]->scale(1,1);
-//    });
+    });
 }
 
 ///初始化面包屑导航

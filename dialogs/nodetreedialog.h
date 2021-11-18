@@ -61,6 +61,7 @@ private:
     void initTreeWidget();
 //    void initNodeConfig();
     void initToolBar();
+    void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
 
 

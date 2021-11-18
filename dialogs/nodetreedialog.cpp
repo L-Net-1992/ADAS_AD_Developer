@@ -9,6 +9,7 @@ NodeTreeDialog::NodeTreeDialog(QWidget *parent) :
 
     this->initTreeWidget();
     this->initToolBar();
+    this->initNodeButtonTable();
 }
 
 NodeTreeDialog::~NodeTreeDialog()
@@ -18,7 +19,7 @@ NodeTreeDialog::~NodeTreeDialog()
 ///初始化属性结构内容
 void NodeTreeDialog::initTreeWidget()
 {
-    AICCTreeWidget *tw = ui->tw_node;
+    AICCTreeWidget *tw = ui->tw_nodeTree;
     tw->clear();
     AICCSqlite sqlite;
     QSqlQuery squery = sqlite.query("select class_name from nodeClass order by sort");
@@ -27,7 +28,7 @@ void NodeTreeDialog::initTreeWidget()
         makeRootGroupItem(tw,className,className);
     }
 
-    connect(ui->tw_node,&AICCTreeWidget::itemClicked,this,&NodeTreeDialog::treeWidgetItemClicked);
+    connect(ui->tw_nodeTree,&AICCTreeWidget::itemClicked,this,&NodeTreeDialog::treeWidgetItemClicked);
 
     tw->expandAll();
 }
@@ -37,6 +38,11 @@ void NodeTreeDialog::initToolBar(){
 
 }
 
+///初始化表格
+void NodeTreeDialog::initNodeButtonTable(){
+    ui->tw_nodeModels->setShowGrid(false);
+
+}
 
 ///创建属性结构的根目录分类
 void NodeTreeDialog::makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text)
@@ -57,6 +63,9 @@ void NodeTreeDialog::setNodeMap(QMap<QString,QSet<QString>> pnm){
 AICCToolButton * createToolButton( QString name,QString caption){
 
     AICCToolButton *tb = new AICCToolButton();
+    if(caption.lastIndexOf("::")!=-1)
+        caption.insert(caption.lastIndexOf("::")+2,"\n");
+
     tb->setText(caption);
     tb->setNodeName(name);
     tb->setNodeCaption(caption);
@@ -64,25 +73,30 @@ AICCToolButton * createToolButton( QString name,QString caption){
     QSizePolicy sp = tb->sizePolicy();
     sp.setHorizontalPolicy(QSizePolicy::Preferred);
     tb->setSizePolicy(sp);
+    tb->setToolTip(name);
     return tb;
 }
 
 ///点击树形节点后右侧按钮区域变化
 void NodeTreeDialog::treeWidgetItemClicked(QTreeWidgetItem *item, int column){
-    this->setFixedWidth(1000);
+    this->setFixedWidth(1140);
+    this->setFixedHeight(624);
 
-    ///删除已有的按钮
-    QList<AICCToolButton*> tbs = ui->widget_node->findChildren<AICCToolButton*>();
-    ui->widget_node->setSizeIncrement(1000,600);
-    foreach(QToolButton *tb,tbs){
-        ui->gl_node->removeWidget(tb);
-        delete tb;
-    }
+    ///清空表格内容，删除已有的按钮
+    ui->tw_nodeModels->setRowCount(0);
+    ui->tw_nodeModels->clearContents();
+
     ///增加点击分类对应的按钮
+    /// 最多6列，根据按钮的总量决定行数
+    int columnCount = 6;
     QString itemData = item->data(0,Qt::UserRole+1).value<QString>();
     if(_nodeMap.contains(itemData)){
         AICCSqlite sqlite;
         QSet<QString> nodes = _nodeMap[itemData];
+
+        int ncount = nodes.count();
+        ui->tw_nodeModels->setRowCount(ncount/8+1);
+
         int i=0;
         foreach(QString name,nodes){
             QSqlQuery squery = sqlite.query("select caption from node where name = '"+name+"'");
@@ -96,7 +110,7 @@ void NodeTreeDialog::treeWidgetItemClicked(QTreeWidgetItem *item, int column){
             connect(tb,&QToolButton::clicked,this,[tb,this](bool checked=false){
                emit nodeDoubleClicked(tb->text());
             });
-            ui->gl_node->addWidget(tb,i/15,i%8,Qt::AlignHCenter);
+            ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
             i++;
         }
     }

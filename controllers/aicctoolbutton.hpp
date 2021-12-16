@@ -6,12 +6,31 @@
 #include <QDebug>
 #include <QDrag>
 #include <QMimeData>
+#include <QStyleFactory>
+#include <QStyle>
 
 class AICCToolButton : public QToolButton
 {
     Q_OBJECT
 public:
-    AICCToolButton(QWidget *parent=nullptr):QToolButton(parent){};
+    AICCToolButton(QWidget *parent=nullptr):QToolButton(parent){
+        //设置文字与图标的布局
+        QString pbt_style = "background-color:white;text-align:bottom;background-repeat:repeat-no-repeat;background-position:top;background-origin:content;";
+        this->setStyleSheet(pbt_style);
+//        this->setStyleSheet(this->styleSheet()+"background-image:url(:/res/nodeIcon/math_add.png);");
+        QSize qsize(50,50);
+        this->setIconSize(qsize);
+        this->setMinimumSize(135,75);
+        QSizePolicy sp = this->sizePolicy();
+        sp.setHorizontalPolicy(QSizePolicy::Preferred);
+        this->setSizePolicy(sp);
+
+    };
+    ///设置Node的Icon
+    void setNodeIcon(const QString iconUrl){
+        this->setStyleSheet(this->styleSheet()+"background-image:url(:"+iconUrl+");");
+    }
+
     void setNodeName(QString name){_nodeName = name;}
     void setNodeCaption(QString caption){_nodeCaption = caption;}
 protected:

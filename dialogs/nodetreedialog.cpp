@@ -65,15 +65,11 @@ AICCToolButton * createToolButton( QString name,QString caption){
     AICCToolButton *tb = new AICCToolButton();
     if(caption.lastIndexOf("::")!=-1)
         caption.insert(caption.lastIndexOf("::")+2,"\n");
-
-    tb->setText(caption);
+    tb->setText("\n\n"+caption);
     tb->setNodeName(name);
     tb->setNodeCaption(caption);
-    tb->setMinimumSize(80,50);
-    QSizePolicy sp = tb->sizePolicy();
-    sp.setHorizontalPolicy(QSizePolicy::Preferred);
-    tb->setSizePolicy(sp);
     tb->setToolTip(name);
+//    tb->setNodeIcon("/res/nodeIcon/math_add.png");
     return tb;
 }
 
@@ -99,12 +95,16 @@ void NodeTreeDialog::treeWidgetItemClicked(QTreeWidgetItem *item, int column){
 
         int i=0;
         foreach(QString name,nodes){
-            QSqlQuery squery = sqlite.query("select caption from node where name = '"+name+"'");
+            QSqlQuery squery = sqlite.query("select caption,node_icon from node where name = '"+name+"'");
             AICCToolButton *tb;
-            if(squery.next())
+            if(squery.next()){
                 tb = createToolButton(name,squery.value(0).toString());
-            else
+                tb->setNodeIcon(squery.value(1).toString());
+            }
+            else{
                 tb = createToolButton(name,name);
+                tb->setNodeIcon("/res/nicon/node.png");
+            }
 
             //点击按钮通知事件
             connect(tb,&QToolButton::clicked,this,[tb,this](bool checked=false){

@@ -24,5 +24,21 @@
         <file>res/breadcrumbNavigation/model_16.png</file>
         <file>res/breadcrumbNavigation/rightArrow_16.png</file>
         <file>res/breadcrumbNavigation/subsystem_16.png</file>
+        <file>res/nicon/math_sub.png</file>
+        <file>res/nicon/math_sign.png</file>
+        <file>res/nicon/math_power.png</file>
+        <file>res/nicon/math_mul.png</file>
+        <file>res/nicon/math_div.png</file>
+        <file>res/nicon/math_add.png</file>
+        <file>res/nicon/math_abs.png</file>
+        <file>res/nicon/math_unary.png</file>
+        <file>res/nicon/math_tan.png</file>
+        <file>res/nicon/math_sin.png</file>
+        <file>res/nicon/math_rooting.png</file>
+        <file>res/nicon/math_cos.png</file>
+        <file>res/nicon/math_atan.png</file>
+        <file>res/nicon/math_asin.png</file>
+        <file>res/nicon/math_acos.png</file>
+        <file>res/nicon/node.png</file>
     </qresource>
 </RCC>

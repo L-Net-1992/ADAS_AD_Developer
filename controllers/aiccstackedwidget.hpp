@@ -52,7 +52,7 @@ public:
                     R"(
         {
           "FlowViewStyle": {
-            "BackgroundColor": [255, 205, 255],
+            "BackgroundColor": [255, 255, 255],
             "FineGridColor": [255, 255, 255],
             "CoarseGridColor": [255, 255, 255]
           }

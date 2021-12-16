@@ -369,10 +369,10 @@
                <bool>false</bool>
               </attribute>
               <attribute name="verticalHeaderMinimumSectionSize">
-               <number>60</number>
+               <number>80</number>
               </attribute>
               <attribute name="verticalHeaderDefaultSectionSize">
-               <number>60</number>
+               <number>80</number>
               </attribute>
               <column>
                <property name="text">

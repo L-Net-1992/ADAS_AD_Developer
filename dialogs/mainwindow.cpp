@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     npDialog = new NodeParametersDialog(this);
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
+    diDialog = new DataInspectorDialog(this);
 
 
     this->initMenu();
@@ -231,6 +232,11 @@ void MainWindow::initToolbar()
         }
     });
 
+    ///点击显示数据检查器窗口
+    connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
+        diDialog->show();
+    });
+
     ///测试dialog显示
 //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
 //        TestDialog *tdialog = new TestDialog(this);
@@ -408,6 +414,10 @@ void MainWindow::initImportScriptDialog(){
     });
 }
 
+///初始化数据检查窗口
+void MainWindow::initDataInspectorDialog(){
+
+}
 
 //只负责注册右键菜单，并返回右键菜单的数据模型
 std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::list<Invocable> parserResult){

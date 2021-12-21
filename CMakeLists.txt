@@ -21,8 +21,8 @@ file(GLOB allCopyFiles "${CMAKE_CURRENT_SOURCE_DIR}/nodeconfig/*.hpp")
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
 
 #find_package(Qt5 COMPONENTS Widgets Xml Sql REQUIRED)
-find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Concurrent REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Concurrent REQUIRED)
+find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql ChartsConcurrent REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
@@ -38,6 +38,7 @@ set ( PROJECT_SOURCES
     dialogs/nodetreedialog.h dialogs/nodetreedialog.cpp dialogs/nodetreedialog.ui
     dialogs/importscriptdialog.h dialogs/importscriptdialog.cpp dialogs/importscriptdialog.ui
     dialogs/testdialog.h dialogs/testdialog.cpp dialogs/testdialog.ui
+    dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
 
     image.qrc
     TextData.hpp
@@ -85,6 +86,7 @@ target_link_libraries(AutoPlateform
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Xml
     Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Charts
     Qt${QT_VERSION_MAJOR}::Concurrent
     NodeEditor::nodes
     ${LLVM_AVAILABLE_LIBS}

@@ -35,6 +35,7 @@
 #include <dialogs/nodeparametersdialog.h>
 #include <dialogs/nodetreedialog.h>
 #include <dialogs/testdialog.h>
+#include <dialogs/datainspectordialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "aicctreewidget.hpp"
@@ -76,6 +77,7 @@ private:
     NodeParametersDialog *npDialog;
     NodeTreeDialog *nodeTreeDialog;
     ImportScriptDialog *isDialog;
+    DataInspectorDialog *diDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
 
     //nodeeditor部分
@@ -96,6 +98,7 @@ private:
     void initStackedWidget();
     void initImportScriptDialog();
     void initProjectDialog();
+    void initDataInspectorDialog();
 
     //动作函数部分
     void pbOpenAction();

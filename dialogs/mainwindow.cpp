@@ -167,11 +167,11 @@ void MainWindow::initToolbar()
     delete titleBarWidget;
 
     //初始化tab标签
-    ui->tw_toolbar->setTabText(0,"编辑器");
-    ui->tw_toolbar->setTabText(1,"编译器");
-    ui->tw_toolbar->setTabText(2,"仿真器");
-    ui->tw_toolbar->setTabText(3,"在线标定");
-    ui->tw_toolbar->setTabText(4,"模块自定义");
+    ui->tw_toolbar->setTabText(0,"Editor");
+    ui->tw_toolbar->setTabText(1,"Compiler");
+    ui->tw_toolbar->setTabText(2,"Emulator");
+    ui->tw_toolbar->setTabText(3,"OnlineCalibration");
+    ui->tw_toolbar->setTabText(4,"CustomModules");
 
     //显示node模块的窗口
     connect(ui->pb_library_browser,&QPushButton::clicked,this,[&]{

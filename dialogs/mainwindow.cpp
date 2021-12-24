@@ -357,7 +357,7 @@ void MainWindow::initNodeEditor(){
     QStringList files = getFlieList(path);
 
     //0:执行加载前准备动作
-    ui->statusbar->showMessage("开始加载Node模块数据...");
+    ui->statusbar->showMessage("Start load node moduls data...");
     ui->tw_toolbar->setEnabled(false);
 
     //耗时操作放到单独线程中操作，操作完毕后通知外部继续执行
@@ -374,7 +374,7 @@ void MainWindow::initNodeEditor(){
     //显示状态栏进度数据
     connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
         //加载过程中显示当前进度
-        ui->statusbar->showMessage("已加载Node模块:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
+        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
     });
 }
 

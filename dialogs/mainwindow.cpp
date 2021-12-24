@@ -69,7 +69,7 @@ void MainWindow::initTreeView()
     tw->setDragDropMode(QAbstractItemView::DragOnly);
     tw->setDragEnabled(true);
     tw->clear();
-
+/*
     QTreeWidgetItem* rootGroupSource = new QTreeWidgetItem(tw);
     rootGroupSource->setText(0,QStringLiteral("数据源"));
     QTreeWidgetItem* itemSource1 = new QTreeWidgetItem(rootGroupSource);
@@ -114,6 +114,7 @@ void MainWindow::initTreeView()
     itemResultCalculator->setData(0,Qt::UserRole+1, QStringLiteral("AICCNumberResult"));
 
     ui->tw_node->expandAll();
+    */
     //    QTreeWidgetItemIterator it(ui->treeWidget);
     //    while(*it)
     //    {

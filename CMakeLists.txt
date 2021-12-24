@@ -65,10 +65,10 @@ set ( PROJECT_SOURCES
 
     sqlite/aiccsqlite.hpp
 
-    nodeconfig/adas/node.hpp
-    nodeconfig/adas/asio_can.h
-    nodeconfig/adas/can.h
-    nodeconfig/adas/runtime.hpp
+#    nodeconfig/adas/node.hpp
+#    nodeconfig/adas/asio_can.h
+#    nodeconfig/adas/can.h
+#    nodeconfig/adas/runtime.hpp
     )
 
 add_executable(AutoPlateform

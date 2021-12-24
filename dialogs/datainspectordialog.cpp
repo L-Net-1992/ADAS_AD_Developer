@@ -29,7 +29,7 @@ void DataInspectorDialog::initTableWidget(){
     for(int i=0;i<ui->tw_output->rowCount();i++){
         //Check Box
         QCheckBox *ckb = new QCheckBox(this);
-        QHBoxLayout *hLayout = new QHBoxLayout(this);
+        QHBoxLayout *hLayout = new QHBoxLayout();
         hLayout->addWidget(ckb);
         hLayout->setMargin(0);
         hLayout->setAlignment(ckb,Qt::AlignCenter);

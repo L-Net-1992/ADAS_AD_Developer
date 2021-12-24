@@ -1,4 +1,4 @@
-#ifndef AICCSTACKEDWIDGET_H
+﻿#ifndef AICCSTACKEDWIDGET_H
 #define AICCSTACKEDWIDGET_H
 
 #include <QStackedWidget>
@@ -52,8 +52,8 @@ public:
                     R"(
         {
           "FlowViewStyle": {
-            "BackgroundColor": [255, 255, 255],
-            "FineGridColor": [255, 255, 255],
+            "BackgroundColor": [255, 0, 255],
+            "FineGridColor": [255, 255, 0],
             "CoarseGridColor": [255, 255, 255]
           }
         }

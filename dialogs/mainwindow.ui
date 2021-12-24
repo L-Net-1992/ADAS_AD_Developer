@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -174,7 +174,7 @@
    <property name="minimumSize">
     <size>
      <width>240</width>
-     <height>139</height>
+     <height>148</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -495,7 +495,7 @@
         <string notr="true">background:rgb(240, 240, 240)</string>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>

@@ -15,6 +15,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 
 file(GLOB allCopyFiles "${CMAKE_CURRENT_SOURCE_DIR}/nodeconfig/*.hpp")
@@ -65,10 +66,10 @@ set ( PROJECT_SOURCES
 
     sqlite/aiccsqlite.hpp
 
-    nodeconfig/adas/node.hpp
-    nodeconfig/adas/asio_can.h
-    nodeconfig/adas/can.h
-    nodeconfig/adas/runtime.hpp
+#    nodeconfig/adas/node.hpp
+#    nodeconfig/adas/asio_can.h
+#    nodeconfig/adas/can.h
+#    nodeconfig/adas/runtime.hpp
     )
 
 add_executable(AutoPlateform

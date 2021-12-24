@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 刘典 on 2021/9/12.
 //
 
@@ -23,7 +23,7 @@ private:
 public:
     FindInvocableContext(std::list<Invocable> &result, const std::filesystem::path &includePaths,
                          const std::filesystem::path &file) : _result(result), _includePaths(includePaths),
-                                                              _file(file) {}
+        _file(file) {}
 
     FindInvocableContext(const FindInvocableContext &other) = delete;
 
@@ -52,7 +52,7 @@ class FindInvocableVisitor
         : public clang::RecursiveASTVisitor<FindInvocableVisitor> {
 public:
     explicit FindInvocableVisitor(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-            : _context(context), _findContext(findInvocableContext) {}
+        : _context(context), _findContext(findInvocableContext) {}
 
 
 
@@ -155,7 +155,7 @@ private:
 class FindInvocableConsumer : public clang::ASTConsumer {
 public:
     explicit FindInvocableConsumer(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-            : _visitor(context, findInvocableContext) {}
+        : _visitor(context, findInvocableContext) {}
 
     void HandleTranslationUnit(clang::ASTContext &context) override {
         _visitor.TraverseDecl(context.getTranslationUnitDecl());
@@ -203,20 +203,29 @@ public:
         clang::tooling::FixedCompilationDatabase compilation(".", {});
         clang::tooling::ClangTool tool(compilation, {file.string()});
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster("-std=c++17",
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    getInsertArgumentAdjuster("-std=c++17",
+                                              clang::tooling::ArgumentInsertPosition::END));
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    //ubuntu配置
+                    //                getInsertArgumentAdjuster({"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
+                    //windows配置
+                    getInsertArgumentAdjuster({"-I", "D:/works/AICC/llvm/llvm.12.0.0.src9/build/Release/lib/clang/14.0.0/include"},
+                                              clang::tooling::ArgumentInsertPosition::END));
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/home/fc/works/CLionProjects/runtime/include"},
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    //ubuntu配置
+                    //                    getInsertArgumentAdjuster({"-I", "/home/fc/works/CLionProjects/runtime/include"},
+                    //windows配置
+                    getInsertArgumentAdjuster({"-I","D:/works/runtime/include"},
+                                              clang::tooling::ArgumentInsertPosition::END));
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/usr/local/boost_1_76_0/include"},
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    //ubuntu配置
+                    //                getInsertArgumentAdjuster({"-I", "/usr/local/boost_1_76_0/include"},
+                    //window配置
+                    getInsertArgumentAdjuster({"-I", "D:/Boost/boost_1_76_0"},
+                                              clang::tooling::ArgumentInsertPosition::END));
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", _includePaths.string()},
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    getInsertArgumentAdjuster({"-I", _includePaths.string()},
+                                              clang::tooling::ArgumentInsertPosition::END));
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("-v", // Verbose
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++

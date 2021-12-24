@@ -1,4 +1,4 @@
-#include "datainspectordialog.h"
+﻿#include "datainspectordialog.h"
 #include "ui_datainspectordialog.h"
 
 
@@ -29,7 +29,7 @@ void DataInspectorDialog::initTableWidget(){
     for(int i=0;i<ui->tw_output->rowCount();i++){
         //Check Box
         QCheckBox *ckb = new QCheckBox(this);
-        QHBoxLayout *hLayout = new QHBoxLayout(this);
+        QHBoxLayout *hLayout = new QHBoxLayout();
         hLayout->addWidget(ckb);
         hLayout->setMargin(0);
         hLayout->setAlignment(ckb,Qt::AlignCenter);
@@ -42,12 +42,13 @@ void DataInspectorDialog::initTableWidget(){
         ui->tw_output->setItem(i,1,itemName);
 
         //Line
+//        ▃▃▃▃▃
         QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
         itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
         ui->tw_output->setItem(i,2,itemLine);
         //        QGraphicsLineItem *itemLine = new QGraphicsLineItem();
         //        itemLine->setLine(0,0,0,30);
-        //        QHBoxLayout *lLayout = new QHBoxLayout(this);
+        //        QHBoxLayout *lLayout = new QHBoxLayout();
         //        lLayout->addWidget(itemLine);
         //        hLayout->setMargin(0);
         //        hLayout->setAlignment(itemLine,Qt::AlignCenter);
@@ -103,6 +104,6 @@ void DataInspectorDialog::initCharts(){
     chart->setAxisX(axisX,series);
     chart->setAxisY(axisY,series);
 
-//    QHBoxLayout *layout = new QHBoxLayout(this);
+//    QHBoxLayout *layout = new QHBoxLayout();
     ui->chartView->setRenderHint(QPainter::Antialiasing);
 }

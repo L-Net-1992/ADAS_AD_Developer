@@ -1,4 +1,4 @@
-#include "importscriptdialog.h"
+﻿#include "importscriptdialog.h"
 #include "ui_importscriptdialog.h"
 
 ImportScriptDialog::ImportScriptDialog(QWidget *parent) :

@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 刘典 on 2021/9/12.
 //
 
@@ -19,8 +19,10 @@ void ModuleLibrary::importFiles(const QStringList &files) {
         fs::path p = file.toStdString();
         if(!fileInIncludePaths(p)) {
             emit errorOccured(QString("文件 '%1' 不在 Include Paths 中").arg(file));
+//            emit errorOccured(QString("文件 '%1' 不在 Include Paths 中").arg(file));
             continue;
         }
+
         std::string error_message;
         if(!parser.parse(p, _parseResult, error_message)) {
             emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(file, QString::fromStdString(error_message)));

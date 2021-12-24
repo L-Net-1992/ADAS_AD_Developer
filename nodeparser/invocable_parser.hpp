@@ -230,6 +230,11 @@ public:
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++
         //                                                               clang::tooling::ArgumentInsertPosition::END));
+
+        tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster({"-D","_WIN32_WINNT=0x0601"},
+                                              clang::tooling::ArgumentInsertPosition::END));
+
         FindInvocableActionFactory factory(findInvocableContext);
         //tool.setDiagnosticConsumer(nullptr);
         int ret = tool.run(&factory);

@@ -1,5 +1,7 @@
 #ifndef MATH_HPP
 #define MATH_HPP
+
+
 #include <cmath>
 #include <string>
 #include <chrono>

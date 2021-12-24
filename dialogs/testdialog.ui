@@ -10,6 +10,11 @@
     <height>488</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>方正准圆简体</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -30,6 +35,11 @@
      <width>9999999</width>
      <height>999999</height>
     </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>方正准圆简体</family>
+    </font>
    </property>
    <property name="selectionMode">
     <enum>QAbstractItemView::NoSelection</enum>

@@ -19,6 +19,11 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="font">
+   <font>
+    <family>方正准圆简体</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Library Browser</string>
   </property>
@@ -344,6 +349,11 @@
             </property>
             <item>
              <widget class="QTableWidget" name="tw_nodeModels">
+              <property name="font">
+               <font>
+                <family>方正准圆简体</family>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">QTableWidget::item{padding:2px;}</string>
               </property>

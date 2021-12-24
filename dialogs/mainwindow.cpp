@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    qDebug() << "debug----------------";
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
@@ -181,7 +182,10 @@ void MainWindow::initToolbar()
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //此处为临时路径,以后需要改进这种方案
-        std::ofstream file("/home/fc/works/CLionProjects/runtime/test/generate.cpp");
+        //ubuntu
+        //        std::ofstream file("/home/fc/works/CLionProjects/runtime/test/generate.cpp");
+        //windows
+        std::ofstream file("D:/works/runtime/test/generate.cpp");
         if(!file){
             QMessageBox::critical(Q_NULLPTR,"发生错误","打开文件失败");
             return;
@@ -238,10 +242,10 @@ void MainWindow::initToolbar()
     });
 
     ///测试dialog显示
-//    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
-//        TestDialog *tdialog = new TestDialog(this);
-//        tdialog->show();
-//    });
+    //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
+    //        TestDialog *tdialog = new TestDialog(this);
+    //        tdialog->show();
+    //    });
 }
 
 ///初始化面包屑导航
@@ -387,7 +391,7 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
 
     //4:启用工具栏
-//    ui->tw_toolbar->setTabEnabled(true);
+    //    ui->tw_toolbar->setTabEnabled(true);
     qDebug() << "tw_toolbar->setEnabled(true)";
     ui->tw_toolbar->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -447,9 +451,9 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
 
     }
 
-//    for(auto const &assoc : ret->registeredModelsCategoryAssociation()){
-//        qDebug() << assoc.first;
-//    }
+    //    for(auto const &assoc : ret->registeredModelsCategoryAssociation()){
+    //        qDebug() << assoc.first;
+    //    }
     return ret;
 }
 

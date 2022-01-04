@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>738</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,6 +95,12 @@
       </item>
       <item>
        <widget class="AICCStackedWidget" name="sw_flowscene">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="acceptDrops">
          <bool>false</bool>
         </property>
@@ -104,6 +110,32 @@
         <property name="currentIndex">
          <number>-1</number>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tw_bottom">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>130</height>
+         </size>
+        </property>
+        <property name="tabPosition">
+         <enum>QTabWidget::South</enum>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab_console">
+         <attribute name="title">
+          <string>Console</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="tab_5">
+         <attribute name="title">
+          <string>Other</string>
+         </attribute>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -722,42 +754,10 @@ Generator</string>
           </size>
          </property>
         </widget>
-        <widget class="QPushButton" name="pb_import">
-         <property name="geometry">
-          <rect>
-           <x>360</x>
-           <y>10</y>
-           <width>90</width>
-           <height>90</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">text-align:bottom;
-background-repeat:repeat-no-repeat;
-background-image:url(:/res/rosVariableSizeMessages_24.png);
-background-position:top;
-background-origin:content;
-padding-top:8px;
-padding-bottom:15px;</string>
-         </property>
-         <property name="text">
-          <string>Import
-</string>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-        </widget>
         <widget class="QPushButton" name="pb_modelSettings">
          <property name="geometry">
           <rect>
-           <x>460</x>
+           <x>360</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -789,7 +789,7 @@ Settings</string>
         <widget class="Line" name="line_3">
          <property name="geometry">
           <rect>
-           <x>560</x>
+           <x>460</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -808,7 +808,7 @@ Settings</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>570</x>
+           <x>470</x>
            <y>10</y>
            <width>67</width>
            <height>17</height>
@@ -824,7 +824,7 @@ Settings</string>
         <widget class="QLineEdit" name="lineEdit">
          <property name="geometry">
           <rect>
-           <x>650</x>
+           <x>550</x>
            <y>10</y>
            <width>70</width>
            <height>20</height>
@@ -846,7 +846,7 @@ Settings</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>570</x>
+           <x>470</x>
            <y>37</y>
            <width>151</width>
            <height>25</height>
@@ -874,7 +874,7 @@ Settings</string>
         <widget class="QPushButton" name="pushButton_3">
          <property name="geometry">
           <rect>
-           <x>570</x>
+           <x>470</x>
            <y>70</y>
            <width>151</width>
            <height>25</height>
@@ -904,7 +904,7 @@ padding-left:5px;</string>
         <widget class="Line" name="line_4">
          <property name="geometry">
           <rect>
-           <x>730</x>
+           <x>630</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -920,7 +920,7 @@ padding-left:5px;</string>
         <widget class="QPushButton" name="pushButton_6">
          <property name="geometry">
           <rect>
-           <x>740</x>
+           <x>640</x>
            <y>10</y>
            <width>51</width>
            <height>90</height>
@@ -952,7 +952,7 @@ Back</string>
         <widget class="QPushButton" name="pushButton_7">
          <property name="geometry">
           <rect>
-           <x>800</x>
+           <x>700</x>
            <y>10</y>
            <width>51</width>
            <height>90</height>
@@ -983,7 +983,7 @@ padding-bottom:25px;</string>
         <widget class="QPushButton" name="pushButton_8">
          <property name="geometry">
           <rect>
-           <x>860</x>
+           <x>760</x>
            <y>10</y>
            <width>61</width>
            <height>90</height>
@@ -1015,7 +1015,7 @@ Forward</string>
         <widget class="QPushButton" name="pb_dataInspector">
          <property name="geometry">
           <rect>
-           <x>940</x>
+           <x>840</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -1047,7 +1047,7 @@ Inspector</string>
         <widget class="Line" name="line_5">
          <property name="geometry">
           <rect>
-           <x>930</x>
+           <x>830</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1085,13 +1085,45 @@ Inspector</string>
          <string>Page</string>
         </attribute>
        </widget>
-       <widget class="QWidget" name="tab_5">
+       <widget class="QWidget" name="tab_custom_module">
         <property name="font">
          <font/>
         </property>
         <attribute name="title">
          <string>Page</string>
         </attribute>
+        <widget class="QPushButton" name="pb_import">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>90</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/rosVariableSizeMessages_24.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:15px;</string>
+         </property>
+         <property name="text">
+          <string>Import
+</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>

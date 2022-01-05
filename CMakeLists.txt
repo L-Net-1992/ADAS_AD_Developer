@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.12)
 
-project(AutoPlateform VERSION 0.1 LANGUAGES CXX)
+project(AutoPlatform VERSION 0.1 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_BUILD_RPATH "$ORIGIN")

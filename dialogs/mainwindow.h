@@ -6,6 +6,7 @@
 #include <QTableWidget>
 #include <QItemDelegate>
 #include <QStandardItemModel>
+#include <QtGlobal>
 #include <itemreadonlydelegate.h>
 #include <QDropEvent>
 #include <QMimeData>

@@ -12,9 +12,12 @@
 #include <clang/Tooling/Tooling.h>
 #include <clang/Tooling/CompilationDatabase.h>
 #include "invocable.hpp"
+#include "utils.h"
 #include <filesystem>
 #include <list>
 #include <optional>
+#include <QJsonObject>
+
 
 class FindInvocableContext {
 private:
@@ -205,26 +208,38 @@ public:
         tool.appendArgumentsAdjuster(
                 getInsertArgumentAdjuster("-std=c++17",
                                           clang::tooling::ArgumentInsertPosition::END));
+
+        QJsonObject jo = getConfig();
+        //runtime path
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
+                getInsertArgumentAdjuster({"-I", jo.value("runtime").toString().append("/include").toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
+        //boost path
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/home/fc/works/CLionProjects/runtime/include"},
+                getInsertArgumentAdjuster({"-I", jo.value("boost").toString().append("/include").toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
+        //llvm compiler
+#ifdef Q_OS_LINUX
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", "/usr/local/boost_1_76_0/include"},
+                getInsertArgumentAdjuster({"-I", jo.value("clang").toString().append("/include").toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
+#endif
+#ifdef Q_OS_WIN64
+        tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster({"-I",jo.value("clang").toString().append("/include").toStdString()},
+                                              clang::tooling::ArgumentInsertPosition::END));
+        tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster({"-I",jo.value("clangCXX").toString().toStdString()},
+                                              clang::tooling::ArgumentInsertPosition::END));
+        tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster({"-I",jo.value("clangCXXAarch64").toString().toStdString()},
+                                              clang::tooling::ArgumentInsertPosition::END));
+#endif
+
         tool.appendArgumentsAdjuster(
                 getInsertArgumentAdjuster({"-I", _includePaths.string()},
                                           clang::tooling::ArgumentInsertPosition::END));
-        //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("-v", // Verbose
-        //                                                               clang::tooling::ArgumentInsertPosition::END));
-        //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++
-        //                                                               clang::tooling::ArgumentInsertPosition::END));
 
-        tool.appendArgumentsAdjuster(
-                    getInsertArgumentAdjuster({"-D","_WIN32_WINNT=0x0601"},
-                                              clang::tooling::ArgumentInsertPosition::END));
 
         FindInvocableActionFactory factory(findInvocableContext);
         //tool.setDiagnosticConsumer(nullptr);

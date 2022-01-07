@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.12)
 
-project(AutoPlateform VERSION 0.1 LANGUAGES CXX)
+project(AutoPlatform VERSION 0.1 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_BUILD_RPATH "$ORIGIN")
@@ -70,19 +70,21 @@ set ( PROJECT_SOURCES
     nodeconfig/adas/asio_can.h
     nodeconfig/adas/can.h
     nodeconfig/adas/runtime.hpp
+
+    conf/config.json
     )
 
-add_executable(AutoPlateform
+add_executable(AutoPlatform
     ${PROJECT_SOURCES}
     )
 
-target_compile_options(AutoPlateform PRIVATE -Wall -fvisibility=hidden -fno-rtti)
-target_include_directories(AutoPlateform
+target_compile_options(AutoPlatform PRIVATE -Wall -fvisibility=hidden -fno-rtti)
+target_include_directories(AutoPlatform
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
     )
-target_link_libraries(AutoPlateform
+target_link_libraries(AutoPlatform
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Xml

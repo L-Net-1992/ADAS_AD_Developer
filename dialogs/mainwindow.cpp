@@ -182,11 +182,15 @@ void MainWindow::initToolbar()
 
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
-        //此处为临时路径,以后需要改进这种方案
-        //ubuntu
-        //        std::ofstream file("/home/fc/works/CLionProjects/runtime/test/generate.cpp");
-        //windows
-        std::ofstream file("D:/works/runtime/test/generate.cpp");
+     QJsonObject jo;
+#ifdef Q_OS_WIN64
+        jo  = getWin64Config(QApplication::applicationDirPath());
+#endif
+#ifdef Q_OS_LINUX
+        jo = getUbuntuConfig(QApplication::applicationDirPath());
+#endif
+
+        std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
         if(!file){
             QMessageBox::critical(Q_NULLPTR,"发生错误","打开文件失败");
             return;

@@ -215,9 +215,17 @@ public:
                 getInsertArgumentAdjuster({"-I", jo.value("runtime").toString().append("/include").toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
         //boost path
+#ifdef Q_OS_LINUX
         tool.appendArgumentsAdjuster(
                 getInsertArgumentAdjuster({"-I", jo.value("boost").toString().append("/include").toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
+#endif
+#ifdef Q_OS_WIN64
+        tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster({"-I", jo.value("boost").toString().toStdString()},
+                                              clang::tooling::ArgumentInsertPosition::END));
+#endif
+
         //llvm compiler
 #ifdef Q_OS_LINUX
         tool.appendArgumentsAdjuster(

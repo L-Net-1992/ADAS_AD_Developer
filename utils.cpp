@@ -25,14 +25,16 @@ QJsonObject getConfig(){
     return ret;
 }
 
-QJsonObject getUbuntuConfig(const QString &rootpath){
-    Config config(rootpath+"/conf/config.json");
-    QJsonObject ret = config.readJsonObject("ubuntuPath");
-    return ret;
-}
-
-QJsonObject getWin64Config(const QString &rootpath){
-    Config config(rootpath+"/conf/config.json");
-    QJsonObject ret = config.readJsonObject("win64Path");
-    return ret;
+///order json
+QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
+    QList<QPair<QString,QJsonObject>> list;
+    QStringList keys = jo.keys();
+//    for(QString key:jo.keys()){
+    for(auto it = keys.begin();it!=keys.end();it++){
+        QPair<QString,QJsonObject> pair;
+        pair.first = QString::fromStdString(it->toStdString());
+        pair.second = jo[pair.first].toObject();
+        list.insert(pair.second["order"].toInt(), pair);
+    }
+    return list;
 }

@@ -181,13 +181,7 @@ void MainWindow::initToolbar()
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
 
-     QJsonObject jo;
-#ifdef Q_OS_WIN64
-        jo  = getWin64Config(QApplication::applicationDirPath());
-#endif
-#ifdef Q_OS_LINUX
-        jo = getUbuntuConfig(QApplication::applicationDirPath());
-#endif
+     QJsonObject jo = getConfig();
 
         std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
         if(!file){
@@ -347,6 +341,8 @@ void MainWindow::initProjectDialog(){
 
         //2:初始化FlowScene
         ui->sw_flowscene->initDefaultScenes();
+
+
 
     });
 }

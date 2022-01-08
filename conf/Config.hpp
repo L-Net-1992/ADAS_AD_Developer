@@ -6,6 +6,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+using ordered_json = nlohmann::ordered_json;
+
 class Config
 {
 public:
@@ -25,12 +32,13 @@ public:
         file.close();
 
         QJsonParseError jsonError;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(allData,&jsonError);
+        jsonDoc = QJsonDocument::fromJson(allData,&jsonError);
         if(jsonError.error != QJsonParseError::NoError){
             return false;
         }
 
-        QJsonObject root = jsonDoc.object();
+
+        root = jsonDoc.object();
         m_cache=root.toVariantMap();
 
         return true;
@@ -78,11 +86,50 @@ public:
         }
     }
 
+    QVariantMap readRootJsonObject(){
+        return m_cache;
+    }
+
+    QJsonDocument getJsonDocument(){
+        return jsonDoc;
+    }
+
+    QJsonObject getJsonRoot(){
+        return root;
+    }
 private:
     QString m_fileName;
     QVariantMap m_cache;
+    QJsonDocument jsonDoc;
+    QJsonObject root;
 };
 
+//using json  = nlohmann::json;
+
+
+class ModernJson {
+
+public:
+    ModernJson(const QString &fileName):m_fileName(fileName){
+        open(fileName);
+    }
+    ~ModernJson(){
+    }
+public:
+    bool open(const QString &fileName){
+        std::ifstream jfile(fileName.toStdString());
+        jfile >> m_cache;
+        jfile.close();
+        return true;
+    }
+
+    json readRootJsonObject(){
+        return m_cache;
+    }
+private:
+    QString m_fileName;
+    ordered_json m_cache;
+};
 
 #endif // CONFIG_H
 

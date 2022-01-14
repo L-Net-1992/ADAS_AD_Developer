@@ -1068,6 +1068,72 @@ Inspector</string>
         <attribute name="title">
          <string>Compiler</string>
         </attribute>
+        <widget class="QPushButton" name="pb_script_publish">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>10</y>
+           <width>90</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/publish.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:15px;</string>
+         </property>
+         <property name="text">
+          <string>
+Code
+Publish</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pb_script_compiler">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>90</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/compiler.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:15px;</string>
+         </property>
+         <property name="text">
+          <string>
+Code
+Compiler</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab">
         <property name="font">

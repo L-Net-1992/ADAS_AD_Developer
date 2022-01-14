@@ -1,5 +1,5 @@
-#ifndef AICCFLOWSCENE_H
-#define AICCFLOWSCENE_H
+#ifndef AICCFLOWVIEW_H
+#define AICCFLOWVIEW_H
 
 #include <nodes/FlowView>
 #include <nodes/FlowScene>
@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include "qvariant.h"
 #include "aiccmodel.hpp"
+#include "controllers/aiccflowscene.hpp"
 
 
 using QtNodes::FlowView;
@@ -26,27 +27,25 @@ class AICCFlowView : public FlowView
 {
     Q_OBJECT
 public:
-    AICCFlowView(){
-    }
-    AICCFlowView(FlowScene *scene,QWidget *parent):FlowView(scene,parent)
+    AICCFlowView(){}
+    AICCFlowView(AICCFlowScene *scene,QWidget *parent):FlowView(scene,parent)
     {
         _scene = scene;
-        connect(_scene,&FlowScene::selectionChanged,this,[&]()
-        {
-            auto selectedCount = _scene->selectedNodes().size();
-            if(selectedCount==1){
-                emit getNodeDataModel(_scene->selectedNodes()[0]->nodeDataModel());
-            }
-            else{
-                emit getNodeDataModel(Q_NULLPTR);
-            }
-        });
+//        connect(_scene,&FlowScene::selectionChanged,this,[&]()
+//        {
+//            auto selectedCount = _scene->selectedNodes().size();
+//            if(selectedCount==1){
+//                emit getNodeDataModel(_scene->selectedNodes()[0]->nodeDataModel());
+//            }
+//            else{
+//                emit getNodeDataModel(Q_NULLPTR);
+//            }
+//        });
 
     }
 public:
 Q_SIGNALS:
-    void getNodeDataModel(NodeDataModel *nodeDataModel);
-    void nodeDoubleClicked(Node& n);
+//    void getNodeDataModel(NodeDataModel *nodeDataModel);
     //该信号需要将view对象以参数方式传递过去使用,否则会有问题
     void checkSubSystemName(const QString &name,const QPoint mousePos,const AICCFlowView *cview);
 
@@ -92,13 +91,8 @@ public:
     ///在FlowScene中创建node
     void createNode(QString const &name,const QPoint pos) const
     {
-        auto type = _scene->registry().create(name);
-        if(type){
-            QtNodes::Node &node = _scene->createNode(std::move(type));
             QPointF posView = this->mapToScene(pos);
-            node.nodeGraphicsObject().setPos(posView);
-            _scene->nodePlaced(node);
-        }
+            _scene->dropCreateNode(name,posView);
     }
 
     ///view的缩放复原为原始大小
@@ -109,13 +103,13 @@ public:
         this->setMatrix(q,false);
     }
 
-    FlowScene *scene() const{
+    AICCFlowScene *scene() const{
         return _scene;
     }
 
 private:
-    FlowScene* _scene;
+    AICCFlowScene* _scene;
 };
 
 //}
-#endif // AICCFLOWSCENE_H
+#endif // AICCFLOWVIEW_H

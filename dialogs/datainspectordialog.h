@@ -30,6 +30,7 @@ public:
 private:
     void initTableWidget();
     void initCharts();
+    void removeDockWidgetTopTitle();
 
 private:
     Ui::DataInspectorDialog *ui;

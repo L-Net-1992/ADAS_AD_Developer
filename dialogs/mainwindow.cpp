@@ -293,10 +293,7 @@ void MainWindow::initStackedWidget(){
         fillTableData(nptw,nodeDataModel);
     });
 
-    ///通知当前页面改变
-    connect(ui->sw_flowscene,&AICCStackedWidget::notifyCurrentPagePathNameChanged,ui->sw_flowscene,[&](const QString &url){
-        ui->sw_flowscene->setCurrentUrl(url);
-    });
+
     ///通知面包屑导航改变
     connect(ui->sw_flowscene,&AICCStackedWidget::notifyCurrentPagePathNameChanged,ui->l_breadcrumb_navigation,[&](const QString &url){
         ui->l_breadcrumb_navigation->makeNavigationData(url);

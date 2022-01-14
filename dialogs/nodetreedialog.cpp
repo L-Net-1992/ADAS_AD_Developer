@@ -22,18 +22,16 @@ void NodeTreeDialog::initTreeWidget()
     AICCTreeWidget *tw = ui->tw_nodeTree;
     tw->clear();
 
-//initToolBar();
-makeModelMenuItem(tw);
-
-
-
+    //initToolBar();
+    makeModelMenuItem(tw);
 
     //原目录
     AICCSqlite sqlite;
-    QSqlQuery squery = sqlite.query("select class_name from nodeClass order by sort");
+    QSqlQuery squery = sqlite.query("select class_name,class_desc from nodeClass order by sort");
     while(squery.next()){
         QString className = squery.value(0).toString();
-        makeRootGroupItem(tw,className,className);
+        QString classDesc = squery.value(1).toString();
+        makeRootGroupItem(tw,className,classDesc);
     }
 
     connect(ui->tw_nodeTree,&AICCTreeWidget::itemClicked,this,&NodeTreeDialog::treeWidgetItemClicked);
@@ -45,9 +43,6 @@ makeModelMenuItem(tw);
 void NodeTreeDialog::initToolBar(){
 
 }
-
-
-
 
 ///初始化表格
 void NodeTreeDialog::initNodeButtonTable(){
@@ -66,44 +61,6 @@ void NodeTreeDialog::makeModelMenuItem(AICCTreeWidget *atw){
         twi->setText(0,list_root[i].first);
         recursionQJsonObject(list_root[i].second,twi);
     }
-
-//    for(QPair<QString,QJsonObject> pair: list_root){
-
-//        QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
-//        twi->setText(0,pair.first);
-//    }
-
-
-//    for (auto& element:jo){
-
-//        qDebug() << QString::fromStdString(element.dump()) << endl;
-//    }
-
-//    std::list<json> jo_array = jo;
-//    for(std::list<json>::iterator it = jo_array.begin();it!=jo_array.end();++it){
-//        QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
-//        std::string s = it->dump();
-//        qDebug() << QString::fromStdString(s)  << endl;
-//    }
-
-
-//    for(ordered_json::iterator it = jo.begin();it != jo.end();++it  ){
-//        QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
-//        QString s = QString::fromStdString(it.key());
-//        twi->setText(0,s);
-
-//        recursionQJsonObject(it.value(),twi);
-//    }
-
-
-//    for(const QVariant &v:vm){
-//    for(QString key:vm.keys()){
-//        QJsonObject jo = vm.value(key).toJsonObject();
-//         QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
-//         twi->setText(0,key);
-//        recursionQJsonObject(jo,twi);
-//    }
-
 }
 ///recursion child node
 void NodeTreeDialog::recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){

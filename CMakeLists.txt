@@ -56,6 +56,7 @@ set ( PROJECT_SOURCES
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
     controllers/aiccflowview.hpp
+    controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
 
     nodeparser/invocable.hpp

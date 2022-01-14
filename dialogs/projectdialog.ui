@@ -11,9 +11,7 @@
    </rect>
   </property>
   <property name="font">
-   <font>
-    <family>方正准圆简体</family>
-   </font>
+   <font/>
   </property>
   <property name="windowTitle">
    <string>Create Project</string>
@@ -37,7 +35,7 @@
     <string notr="true"/>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="page">
     <widget class="QGroupBox" name="groupBox">
@@ -123,7 +121,6 @@
      </property>
      <property name="font">
       <font>
-       <family>方正准圆简体</family>
        <pointsize>16</pointsize>
        <bold>true</bold>
        <strikeout>false</strikeout>
@@ -273,7 +270,6 @@
      </property>
      <property name="font">
       <font>
-       <family>方正准圆简体</family>
        <pointsize>16</pointsize>
        <bold>true</bold>
        <strikeout>false</strikeout>
@@ -380,7 +376,6 @@
      </property>
      <property name="font">
       <font>
-       <family>方正准圆简体</family>
        <pointsize>16</pointsize>
        <bold>true</bold>
        <strikeout>false</strikeout>

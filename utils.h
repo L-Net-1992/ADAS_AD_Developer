@@ -8,6 +8,6 @@
  QStringList getFlieList(const QString &path);
 
  QJsonObject getConfig();
- QJsonObject getUbuntuConfig(const QString &rootpath);
- QJsonObject getWin64Config(const QString &rootpath);
+
+ QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo);
 #endif // UTILS_H

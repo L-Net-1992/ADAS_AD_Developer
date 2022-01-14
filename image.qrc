@@ -40,5 +40,7 @@
         <file>res/nicon/math_asin.png</file>
         <file>res/nicon/math_acos.png</file>
         <file>res/nicon/node.png</file>
+        <file>res/publish.png</file>
+        <file>res/compiler.png</file>
     </qresource>
 </RCC>

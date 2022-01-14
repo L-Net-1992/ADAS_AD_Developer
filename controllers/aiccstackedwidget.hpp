@@ -22,6 +22,7 @@
 #include <nodeparser/module_library.hpp>
 #include <nodeparser/invocable_parser.hpp>
 #include <controllers/aiccflowview.hpp>
+#include <controllers/aiccflowscene.hpp>
 #include <sqlite/aiccsqlite.hpp>
 
 
@@ -105,7 +106,7 @@ public:
     void addNewPageFlowScene(QString pageName){
 
         //设置nodeeditor的scene与view
-        auto scene = new FlowScene();
+        auto scene = new AICCFlowScene();
         auto view = new AICCFlowView(scene,this);
         view->setAcceptDrops(true);
         view->setDragMode(QGraphicsView::DragMode::NoDrag);
@@ -126,15 +127,16 @@ public:
                 cview->createNode(name,pos);
                 this->addNewPageFlowScene(name);
             }
+
         });
 
         //双击节点显示节点的属性窗口
         connect(scene,&FlowScene::nodeDoubleClicked,this,[&](Node &n){
             //如果为子系统,显示子系统对应的窗口
             if(n.nodeDataModel()->name()=="subsystem::SubSystem"){
-                setCurrPagePathName(_currPagePathName+"/"+n.nodeDataModel()->name());
+                setCurrPagePathName(_currPagePathName+"/"+n.nodeDataModel()->caption());
             }
-            // 此处要修改为向外发送消息，由主窗口来处理双击后的操作，以调用npDialog
+            // 此处要修改为向外发送消息，由主窗口来处理双击后的操作，以调用nodeParametersDialog
             emit nodeDoubleClicked(n.nodeDataModel(), _currPagePathName);
         });
 
@@ -159,7 +161,7 @@ public:
 
 
         //获得节点属性,发送消息至外层继续将节点属性数据传递到主窗口
-        connect(view,&AICCFlowView::getNodeDataModel,this,[&](NodeDataModel *nodeDataModel){
+        connect(view->scene(),&AICCFlowScene::getNodeDataModel,this,[&](NodeDataModel *nodeDataModel){
             emit getNodeDataModel(nodeDataModel);
         });
 
@@ -186,6 +188,7 @@ private:
 public:
     void setCurrPagePathName(const QString &newCurrPagePathName){
         _currPagePathName = newCurrPagePathName;
+        this->setCurrentUrl(_currPagePathName);                                         //
         emit notifyCurrentPagePathNameChanged(_currPagePathName);
     }
 
@@ -224,11 +227,10 @@ Q_SIGNALS:
     void registerDataModelsCompleted(const QMap<QString,QSet<QString>> nodeMap);
     //传递FlowView的getNodeDataModel到外层
     void getNodeDataModel(NodeDataModel *nodeDataModel);
-    //双击节点后发送节点消息到外层，当前是为属性窗口提供信息
-    void nodeDoubleClicked(NodeDataModel *nodeDataModel,const QString &pagePathName);
-
     //最终改造,_currPagePathName改变时向外通知消息
     void notifyCurrentPagePathNameChanged(const QString &url);
+    //双击节点后发送节点消息到外层，当前是为属性窗口提供信息
+    void nodeDoubleClicked(NodeDataModel *nodeDataModel,const QString &pagePathName);
 
 private:
 

@@ -182,13 +182,18 @@ void MainWindow::initToolbar()
 
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
-     QJsonObject jo;
-#ifdef Q_OS_WIN64
-        jo  = getWin64Config(QApplication::applicationDirPath());
-#endif
-#ifdef Q_OS_LINUX
-        jo = getUbuntuConfig(QApplication::applicationDirPath());
-#endif
+//<<<<<<< HEAD
+//     QJsonObject jo;
+//#ifdef Q_OS_WIN64
+//        jo  = getWin64Config(QApplication::applicationDirPath());
+//#endif
+//#ifdef Q_OS_LINUX
+//        jo = getUbuntuConfig(QApplication::applicationDirPath());
+//#endif
+//=======
+
+     QJsonObject jo = getConfig();
+//>>>>>>> c2b3617511b54a05e9c2f1db44eac5ba440fab0b
 
         std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
         if(!file){
@@ -300,10 +305,7 @@ void MainWindow::initStackedWidget(){
         fillTableData(nptw,nodeDataModel);
     });
 
-    ///通知当前页面改变
-    connect(ui->sw_flowscene,&AICCStackedWidget::notifyCurrentPagePathNameChanged,ui->sw_flowscene,[&](const QString &url){
-        ui->sw_flowscene->setCurrentUrl(url);
-    });
+
     ///通知面包屑导航改变
     connect(ui->sw_flowscene,&AICCStackedWidget::notifyCurrentPagePathNameChanged,ui->l_breadcrumb_navigation,[&](const QString &url){
         ui->l_breadcrumb_navigation->makeNavigationData(url);
@@ -348,6 +350,8 @@ void MainWindow::initProjectDialog(){
 
         //2:初始化FlowScene
         ui->sw_flowscene->initDefaultScenes();
+
+
 
     });
 }

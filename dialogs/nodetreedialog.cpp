@@ -21,11 +21,17 @@ void NodeTreeDialog::initTreeWidget()
 {
     AICCTreeWidget *tw = ui->tw_nodeTree;
     tw->clear();
+
+    //initToolBar();
+    makeModelMenuItem(tw);
+
+    //原目录
     AICCSqlite sqlite;
-    QSqlQuery squery = sqlite.query("select class_name from nodeClass order by sort");
+    QSqlQuery squery = sqlite.query("select class_name,class_desc from nodeClass order by sort");
     while(squery.next()){
         QString className = squery.value(0).toString();
-        makeRootGroupItem(tw,className,className);
+        QString classDesc = squery.value(1).toString();
+        makeRootGroupItem(tw,className,classDesc);
     }
 
     connect(ui->tw_nodeTree,&AICCTreeWidget::itemClicked,this,&NodeTreeDialog::treeWidgetItemClicked);
@@ -42,6 +48,41 @@ void NodeTreeDialog::initToolBar(){
 void NodeTreeDialog::initNodeButtonTable(){
     ui->tw_nodeModels->setShowGrid(false);
 
+}
+
+///create class menu with json data
+void NodeTreeDialog::makeModelMenuItem(AICCTreeWidget *atw){
+    Config config(QApplication::applicationDirPath() + "/conf/model_menu.json");
+    QJsonObject jo_root = config.getJsonRoot();
+    QList<QPair<QString,QJsonObject>> list_root = orderedQJsonObject(jo_root);
+
+    for(int i =0 ;i<list_root.size();i++){
+        QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
+        twi->setText(0,list_root[i].first);
+        recursionQJsonObject(list_root[i].second,twi);
+    }
+}
+///recursion child node
+void NodeTreeDialog::recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
+    QStringList keys = jo.keys();
+    for(QString key:keys){
+        if(key=="order") continue;
+        QJsonValue jv = jo.value(key);
+        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
+        ctwi->setText(0,key);
+        if(jv.isObject())
+            recursionQJsonObject(jv.toObject(),ctwi);
+        else if(jv.isArray())
+            makeLeafNode(jv.toArray(),ctwi);
+
+    }
+}
+
+void NodeTreeDialog::makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
+    for(int i=0;i<ja.size();i++){
+        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
+        ctwi->setText(0,ja[i].toString());
+    }
 }
 
 ///创建属性结构的根目录分类

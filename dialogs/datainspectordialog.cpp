@@ -10,6 +10,7 @@ DataInspectorDialog::DataInspectorDialog(QWidget *parent) :
     ui->setupUi(this);
     initTableWidget();
     initCharts();
+    removeDockWidgetTopTitle();
 }
 
 DataInspectorDialog::~DataInspectorDialog()
@@ -106,4 +107,12 @@ void DataInspectorDialog::initCharts(){
 
 //    QHBoxLayout *layout = new QHBoxLayout();
     ui->chartView->setRenderHint(QPainter::Antialiasing);
+}
+
+void DataInspectorDialog::removeDockWidgetTopTitle(){
+    QWidget *pTitleBar = ui->dockWidget->titleBarWidget();
+    QWidget* pEmptyWidget = new QWidget();
+    ui->dockWidget->setTitleBarWidget(pEmptyWidget);
+    delete pTitleBar;
+    pTitleBar=Q_NULLPTR;
 }

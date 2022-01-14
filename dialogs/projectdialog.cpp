@@ -106,6 +106,10 @@ void ProjectDialog::initButton()
                 return;
             }
         }
+
+        //set current page index is 0;
+        ui->sw_project->setCurrentIndex(0);
+
         emit projectCreateCompleted(false);
     });
 

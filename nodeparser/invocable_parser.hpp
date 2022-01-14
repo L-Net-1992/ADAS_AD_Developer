@@ -216,7 +216,7 @@ public:
                                           clang::tooling::ArgumentInsertPosition::END));
         //boost path
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", jo.value("boost").toString().append("/include").toStdString()},
+                getInsertArgumentAdjuster({"-I", jo.value("boost").toString().toStdString()},
                                           clang::tooling::ArgumentInsertPosition::END));
         //llvm compiler
 #ifdef Q_OS_LINUX

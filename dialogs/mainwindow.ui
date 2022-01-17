@@ -736,7 +736,7 @@ Browser</string>
          <property name="styleSheet">
           <string notr="true">text-align:bottom;
 background-repeat:repeat-no-repeat;
-background-image:url(:/res/configureRosNetwork_24.png);
+background-image:url(:/res/code-generator.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;
@@ -1173,7 +1173,7 @@ Compiler</string>
          <property name="styleSheet">
           <string notr="true">text-align:bottom;
 background-repeat:repeat-no-repeat;
-background-image:url(:/res/rosVariableSizeMessages_24.png);
+background-image:url(:/res/Import_24.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;

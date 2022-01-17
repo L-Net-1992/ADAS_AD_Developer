@@ -4,10 +4,16 @@
 #include <QDir>
 #include <conf/Config.hpp>
 #include <QApplication>
+#include <QTreeWidgetItem>
+#include <QJsonArray>
 
  QStringList getFlieList(const QString &path);
 
  QJsonObject getConfig();
 
  QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo);
+
+ void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi);
+
+ void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi);
 #endif // UTILS_H

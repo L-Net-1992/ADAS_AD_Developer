@@ -69,6 +69,17 @@ void MainWindow::initTreeView()
     tw->setDragEnabled(true);
     tw->clear();
 
+    Config config(QApplication::applicationDirPath()+"/conf/model_menu.json");
+    QJsonObject jo_root = config.getJsonRoot();
+    QList<QPair<QString,QJsonObject>> list_root = orderedQJsonObject(jo_root);
+
+    for(int i=0;i<list_root.size();i++){
+        QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
+        twi->setText(0,list_root[i].first);
+        recursionQJsonObject(list_root[i].second,twi);
+    }
+
+    /*
     QTreeWidgetItem* rootGroupSource = new QTreeWidgetItem(tw);
     rootGroupSource->setText(0,QStringLiteral("数据源"));
     QTreeWidgetItem* itemSource1 = new QTreeWidgetItem(rootGroupSource);
@@ -111,7 +122,7 @@ void MainWindow::initTreeView()
     QTreeWidgetItem* itemResultCalculator = new QTreeWidgetItem(rootGroupResult);
     itemResultCalculator->setText(0, QStringLiteral("四则运算结果"));
     itemResultCalculator->setData(0,Qt::UserRole+1, QStringLiteral("AICCNumberResult"));
-
+*/
     ui->tw_node->expandAll();
     //    QTreeWidgetItemIterator it(ui->treeWidget);
     //    while(*it)

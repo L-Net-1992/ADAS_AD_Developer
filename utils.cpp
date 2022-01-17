@@ -38,3 +38,27 @@ QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
     }
     return list;
 }
+
+
+///recursion child node
+void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
+    QStringList keys = jo.keys();
+//    for(auto key:keys){
+    for(int i=0;i<keys.size();i++){
+        if(keys[i]=="order") continue;
+        QJsonValue jv = jo.value(keys[i]);
+        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
+        ctwi->setText(0,keys[i]);
+        if(jv.isObject())
+            recursionQJsonObject(jv.toObject(),ctwi);
+        else if(jv.isArray())
+            makeLeafNode(jv.toArray(),ctwi);
+    }
+}
+
+void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
+    for(int i=0;i<ja.size();i++){
+        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
+        ctwi->setText(0,ja[i].toString());
+    }
+}

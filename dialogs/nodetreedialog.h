@@ -21,6 +21,7 @@
 #include "controllers/aiccstackedwidget.hpp"
 #include "aicctreewidget.hpp"
 #include "sqlite/aiccsqlite.hpp"
+#include "utils.h"
 #include <dialogs/importscriptdialog.h>
 
 
@@ -60,14 +61,11 @@ private slots:
 
 private:
     void initTreeWidget();
-    void recursionQJsonObject(QJsonObject jo);
-//    void initNodeConfig();
     void initToolBar();
     void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
     void makeModelMenuItem(AICCTreeWidget *atw);
-    void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi);
-    void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi);
+
 
 private:
     Ui::NodeTreeDialog *ui;

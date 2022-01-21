@@ -42,5 +42,7 @@
         <file>res/compiler.png</file>
         <file>res/Import_24.png</file>
         <file>res/code-generator.png</file>
+        <file>res/update.png</file>
+        <file>res/inject.png</file>
     </qresource>
 </RCC>

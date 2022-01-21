@@ -53,9 +53,9 @@ public:
                     R"(
         {
           "FlowViewStyle": {
-            "BackgroundColor": [255, 255, 255],
-            "FineGridColor": [255, 255, 255],
-            "CoarseGridColor": [255, 255, 255]
+      "BackgroundColor": [255, 255, 240],
+      "FineGridColor": [245, 245, 230],
+      "CoarseGridColor": [235, 235, 220]
           }
         }
         )");
@@ -214,7 +214,7 @@ public:
         for(int i=0;i<_allViews.count();i++){
             if(i==rootIndex){
                 _allViews[i]->scene()->clearScene();
-               _allViews[i]->scaleDefault();
+                _allViews[i]->scaleDefault();
             }
             else
                 //TODO:此处需要研究一下是否需要对view、scene进行回收
@@ -241,7 +241,7 @@ private:
     //key为当前page的路由，value为page对应的index
     QMap<QString,int> _routeDataMap;
     //保存所有FlowScene用于统一操作
-//    QList<FlowScene*> _allScenes;
+    //    QList<FlowScene*> _allScenes;
     QList<AICCFlowView *> _allViews;
 };
 

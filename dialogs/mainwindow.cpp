@@ -70,6 +70,16 @@ void MainWindow::initTreeView()
     tw->setDragEnabled(true);
     tw->clear();
 
+    Config config(QApplication::applicationDirPath()+"/conf/model_menu.json");
+    QJsonObject jo_root = config.getJsonRoot();
+    QList<QPair<QString,QJsonObject>> list_root = orderedQJsonObject(jo_root);
+
+    for(int i=0;i<list_root.size();i++){
+        QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
+        twi->setText(0,list_root[i].first);
+        recursionQJsonObject(list_root[i].second,twi);
+    }
+
     /*
     QTreeWidgetItem* rootGroupSource = new QTreeWidgetItem(tw);
     rootGroupSource->setText(0,QStringLiteral("数据源"));
@@ -183,7 +193,7 @@ void MainWindow::initToolbar()
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
 
-     QJsonObject jo = getConfig();
+        QJsonObject jo = getConfig();
 
         std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
         if(!file){

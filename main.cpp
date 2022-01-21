@@ -18,6 +18,12 @@ int main(int argc, char *argv[])
     QString styleSheet = QString::fromLatin1(file.readAll());
     a.setStyleSheet(styleSheet);
 
+#ifdef Q_OS_WIN64
+    QFont font;
+    font.setFamily("MS Shell Dlg 2"); // Tahoma 宋体
+    qApp->setFont(font);
+#endif
+
     MainWindow w;
     w.show();
     return a.exec();

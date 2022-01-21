@@ -20,7 +20,10 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>汽车自动驾驶图形化开发平台</string>
+   <string>图形化ADAS/AD应用开发系统</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -120,6 +123,9 @@
           <height>130</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="tabPosition">
          <enum>QTabWidget::North</enum>
         </property>
@@ -127,9 +133,39 @@
          <number>0</number>
         </property>
         <widget class="QWidget" name="tab_output">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <attribute name="title">
           <string>Output</string>
          </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit">
+            <property name="styleSheet">
+             <string notr="true">background-color:#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_other">
          <attribute name="title">
@@ -151,7 +187,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -333,6 +369,20 @@
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QTreeView::branch{
+background-color:#FFFFFF;
+}
+
+QTreeView {
+border:1px solid #FFFFFF;
+selection-background-color:#FFFFFF;
+selection-color:#FFFFFF;
+alternate-background-color:#FFFFFF;
+background-color:#FFFFFF;
+gridline-color:#FFFFFF;
+}</string>
+         </property>
          <property name="dragEnabled">
           <bool>true</bool>
          </property>
@@ -440,6 +490,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#FFFFFF</string>
+       </property>
        <property name="sortingEnabled">
         <bool>false</bool>
        </property>
@@ -524,7 +577,7 @@
         <font/>
        </property>
        <property name="styleSheet">
-        <string notr="true">background:rgb(240, 240, 240)</string>
+        <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -761,7 +814,7 @@ Settings</string>
           <rect>
            <x>480</x>
            <y>10</y>
-           <width>71</width>
+           <width>81</width>
            <height>90</height>
           </rect>
          </property>
@@ -790,7 +843,7 @@ padding-bottom:20px;</string>
         <widget class="QPushButton" name="pushButton_7">
          <property name="geometry">
           <rect>
-           <x>560</x>
+           <x>570</x>
            <y>10</y>
            <width>51</width>
            <height>90</height>
@@ -821,9 +874,9 @@ padding-bottom:20px;</string>
         <widget class="QPushButton" name="pushButton_8">
          <property name="geometry">
           <rect>
-           <x>620</x>
+           <x>630</x>
            <y>10</y>
-           <width>71</width>
+           <width>81</width>
            <height>90</height>
           </rect>
          </property>
@@ -852,7 +905,7 @@ padding-bottom:20px;</string>
         <widget class="QPushButton" name="pb_dataInspector">
          <property name="geometry">
           <rect>
-           <x>710</x>
+           <x>730</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -884,7 +937,7 @@ Inspector</string>
         <widget class="Line" name="line_5">
          <property name="geometry">
           <rect>
-           <x>700</x>
+           <x>720</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>

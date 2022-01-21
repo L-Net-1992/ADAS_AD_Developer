@@ -77,6 +77,7 @@ void MainWindow::initTreeView()
     for(int i=0;i<list_root.size();i++){
         QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
         twi->setText(0,list_root[i].first);
+//        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
         recursionQJsonObject(list_root[i].second,twi);
     }
 
@@ -159,8 +160,8 @@ void MainWindow::fillTableData(QTableWidget *tw,const NodeDataModel *ndm)
 
 void MainWindow::initSplitter()
 {
-    ui->dw_left->hide();
-    ui->dw_right->hide();
+    ui->dw_left->show();
+    ui->dw_right->show();
 }
 
 ///初始化右侧属性表格

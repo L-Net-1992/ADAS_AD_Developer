@@ -46,6 +46,10 @@ public:
     ~AICCStackedWidget(){
     }
 
+//    "BackgroundColor": [255, 255, 240],
+//    "FineGridColor": [245, 245, 230],
+//    "CoarseGridColor": [235, 235, 220]
+
     ///设置NodeEditor的样式
     void setNodeEditorStyle()
     {
@@ -53,9 +57,9 @@ public:
                     R"(
         {
           "FlowViewStyle": {
-      "BackgroundColor": [255, 255, 240],
-      "FineGridColor": [245, 245, 230],
-      "CoarseGridColor": [235, 235, 220]
+      "BackgroundColor": [255, 255, 255],
+      "FineGridColor": [255, 255, 255],
+      "CoarseGridColor": [255, 255, 255]
           }
         }
         )");

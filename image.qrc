@@ -6,8 +6,6 @@
         <file>res/Save.png</file>
         <file>res/Open.png</file>
         <file>res/LibraryBrower.png</file>
-        <file>res/configureRosNetwork_24.png</file>
-        <file>res/rosVariableSizeMessages_24.png</file>
         <file>res/Config.png</file>
         <file>res/fast_restart_button.png</file>
         <file>res/Run_24.png</file>
@@ -42,5 +40,9 @@
         <file>res/nicon/node.png</file>
         <file>res/publish.png</file>
         <file>res/compiler.png</file>
+        <file>res/Import_24.png</file>
+        <file>res/code-generator.png</file>
+        <file>res/update.png</file>
+        <file>res/inject.png</file>
     </qresource>
 </RCC>

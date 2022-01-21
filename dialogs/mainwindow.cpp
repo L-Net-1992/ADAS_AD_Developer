@@ -69,7 +69,8 @@ void MainWindow::initTreeView()
     tw->setDragDropMode(QAbstractItemView::DragOnly);
     tw->setDragEnabled(true);
     tw->clear();
-/*
+
+    /*
     QTreeWidgetItem* rootGroupSource = new QTreeWidgetItem(tw);
     rootGroupSource->setText(0,QStringLiteral("数据源"));
     QTreeWidgetItem* itemSource1 = new QTreeWidgetItem(rootGroupSource);
@@ -112,9 +113,8 @@ void MainWindow::initTreeView()
     QTreeWidgetItem* itemResultCalculator = new QTreeWidgetItem(rootGroupResult);
     itemResultCalculator->setText(0, QStringLiteral("四则运算结果"));
     itemResultCalculator->setData(0,Qt::UserRole+1, QStringLiteral("AICCNumberResult"));
-
+*/
     ui->tw_node->expandAll();
-    */
     //    QTreeWidgetItemIterator it(ui->treeWidget);
     //    while(*it)
     //    {
@@ -182,18 +182,8 @@ void MainWindow::initToolbar()
 
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
-//<<<<<<< HEAD
-//     QJsonObject jo;
-//#ifdef Q_OS_WIN64
-//        jo  = getWin64Config(QApplication::applicationDirPath());
-//#endif
-//#ifdef Q_OS_LINUX
-//        jo = getUbuntuConfig(QApplication::applicationDirPath());
-//#endif
-//=======
 
      QJsonObject jo = getConfig();
-//>>>>>>> c2b3617511b54a05e9c2f1db44eac5ba440fab0b
 
         std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
         if(!file){

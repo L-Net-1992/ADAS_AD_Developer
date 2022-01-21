@@ -83,6 +83,8 @@ public:
     QJsonObject readJsonObject(const QString &key){
         if(m_cache.contains(key)){
             return m_cache.value(key).toJsonObject();
+        }else{
+            return {};
         }
     }
 

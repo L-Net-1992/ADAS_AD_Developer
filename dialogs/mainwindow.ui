@@ -126,9 +126,9 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab_console">
+        <widget class="QWidget" name="tab_output">
          <attribute name="title">
-          <string>Console</string>
+          <string>Output</string>
          </attribute>
         </widget>
         <widget class="QWidget" name="tab_other">
@@ -547,56 +547,10 @@
         <attribute name="title">
          <string>Editor</string>
         </attribute>
-        <widget class="QToolButton" name="tb_new">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>40</width>
-           <height>40</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>48</y>
-           <width>40</width>
-           <height>40</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>New
-▼</string>
-         </property>
-        </widget>
         <widget class="QPushButton" name="pb_open">
          <property name="geometry">
           <rect>
-           <x>60</x>
+           <x>70</x>
            <y>10</y>
            <width>71</width>
            <height>25</height>
@@ -616,7 +570,7 @@
         <widget class="QPushButton" name="pb_save">
          <property name="geometry">
           <rect>
-           <x>60</x>
+           <x>70</x>
            <y>40</y>
            <width>71</width>
            <height>25</height>
@@ -636,7 +590,7 @@
         <widget class="QPushButton" name="pb_print">
          <property name="geometry">
           <rect>
-           <x>60</x>
+           <x>70</x>
            <y>70</y>
            <width>71</width>
            <height>25</height>
@@ -656,7 +610,7 @@
         <widget class="QPushButton" name="pb_library_browser">
          <property name="geometry">
           <rect>
-           <x>150</x>
+           <x>160</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -676,7 +630,7 @@ padding-bottom:15px;</string>
          </property>
          <property name="text">
           <string>
-Library
+Modules
 Browser</string>
          </property>
          <property name="iconSize">
@@ -692,7 +646,7 @@ Browser</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>140</x>
+           <x>150</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -708,7 +662,7 @@ Browser</string>
         <widget class="Line" name="line_2">
          <property name="geometry">
           <rect>
-           <x>250</x>
+           <x>260</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -724,7 +678,7 @@ Browser</string>
         <widget class="QPushButton" name="pb_script_generator">
          <property name="geometry">
           <rect>
-           <x>260</x>
+           <x>270</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -736,7 +690,7 @@ Browser</string>
          <property name="styleSheet">
           <string notr="true">text-align:bottom;
 background-repeat:repeat-no-repeat;
-background-image:url(:/res/configureRosNetwork_24.png);
+background-image:url(:/res/code-generator.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;
@@ -757,7 +711,7 @@ Generator</string>
         <widget class="QPushButton" name="pb_modelSettings">
          <property name="geometry">
           <rect>
-           <x>360</x>
+           <x>370</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -776,7 +730,7 @@ padding-top:8px;
 padding-bottom:15px;</string>
          </property>
          <property name="text">
-          <string>Model
+          <string>Module
 Settings</string>
          </property>
          <property name="iconSize">
@@ -789,122 +743,7 @@ Settings</string>
         <widget class="Line" name="line_3">
          <property name="geometry">
           <rect>
-           <x>460</x>
-           <y>20</y>
-           <width>3</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
            <x>470</x>
-           <y>10</y>
-           <width>67</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="text">
-          <string>Stop Time</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit">
-         <property name="geometry">
-          <rect>
-           <x>550</x>
-           <y>10</y>
-           <width>70</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color:rgb(255, 255, 255)</string>
-         </property>
-         <property name="text">
-          <string>Inf</string>
-         </property>
-        </widget>
-        <widget class="QComboBox" name="comboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>470</x>
-           <y>37</y>
-           <width>151</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <item>
-          <property name="text">
-           <string>Normal</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Accelerator</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Rapid Accelerator</string>
-          </property>
-         </item>
-        </widget>
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="geometry">
-          <rect>
-           <x>470</x>
-           <y>70</y>
-           <width>151</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">text-align:left;
-padding-left:5px;</string>
-         </property>
-         <property name="text">
-          <string>Fast Restart</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/fast_restart_button.png</normaloff>:/res/fast_restart_button.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-        </widget>
-        <widget class="Line" name="line_4">
-         <property name="geometry">
-          <rect>
-           <x>630</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -920,9 +759,9 @@ padding-left:5px;</string>
         <widget class="QPushButton" name="pushButton_6">
          <property name="geometry">
           <rect>
-           <x>640</x>
+           <x>480</x>
            <y>10</y>
-           <width>51</width>
+           <width>71</width>
            <height>90</height>
           </rect>
          </property>
@@ -936,11 +775,10 @@ background-image:url(:/res/StepBackConfig_24.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;
-padding-bottom:15px;</string>
+padding-bottom:20px;</string>
          </property>
          <property name="text">
-          <string>Step
-Back</string>
+          <string>Backward</string>
          </property>
          <property name="iconSize">
           <size>
@@ -952,7 +790,7 @@ Back</string>
         <widget class="QPushButton" name="pushButton_7">
          <property name="geometry">
           <rect>
-           <x>700</x>
+           <x>560</x>
            <y>10</y>
            <width>51</width>
            <height>90</height>
@@ -968,7 +806,7 @@ background-image:url(:/res/Run_24.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;
-padding-bottom:25px;</string>
+padding-bottom:20px;</string>
          </property>
          <property name="text">
           <string>Run</string>
@@ -983,9 +821,9 @@ padding-bottom:25px;</string>
         <widget class="QPushButton" name="pushButton_8">
          <property name="geometry">
           <rect>
-           <x>760</x>
+           <x>620</x>
            <y>10</y>
-           <width>61</width>
+           <width>71</width>
            <height>90</height>
           </rect>
          </property>
@@ -999,11 +837,10 @@ background-image:url(:/res/StepForward.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;
-padding-bottom:15px;</string>
+padding-bottom:20px;</string>
          </property>
          <property name="text">
-          <string>Step
-Forward</string>
+          <string>Forward</string>
          </property>
          <property name="iconSize">
           <size>
@@ -1015,7 +852,7 @@ Forward</string>
         <widget class="QPushButton" name="pb_dataInspector">
          <property name="geometry">
           <rect>
-           <x>840</x>
+           <x>710</x>
            <y>10</y>
            <width>90</width>
            <height>90</height>
@@ -1047,7 +884,7 @@ Inspector</string>
         <widget class="Line" name="line_5">
          <property name="geometry">
           <rect>
-           <x>830</x>
+           <x>700</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1058,6 +895,37 @@ Inspector</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_9">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>51</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/New_24.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:20px;</string>
+         </property>
+         <property name="text">
+          <string>New</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
          </property>
         </widget>
        </widget>
@@ -1142,6 +1010,38 @@ Compiler</string>
         <attribute name="title">
          <string>Emulator</string>
         </attribute>
+        <widget class="QPushButton" name="pb_inject">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>90</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/inject.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:20px;</string>
+         </property>
+         <property name="text">
+          <string>
+Inject</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_3">
         <property name="font">
@@ -1150,6 +1050,38 @@ Compiler</string>
         <attribute name="title">
          <string>OnlineCalibration</string>
         </attribute>
+        <widget class="QPushButton" name="pb_update">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>90</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">text-align:bottom;
+background-repeat:repeat-no-repeat;
+background-image:url(:/res/update.png);
+background-position:top;
+background-origin:content;
+padding-top:8px;
+padding-bottom:20px;</string>
+         </property>
+         <property name="text">
+          <string>
+Update</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_custom_module">
         <property name="font">
@@ -1173,7 +1105,7 @@ Compiler</string>
          <property name="styleSheet">
           <string notr="true">text-align:bottom;
 background-repeat:repeat-no-repeat;
-background-image:url(:/res/rosVariableSizeMessages_24.png);
+background-image:url(:/res/Import_24.png);
 background-position:top;
 background-origin:content;
 padding-top:8px;

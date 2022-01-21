@@ -62,28 +62,6 @@ void NodeTreeDialog::makeModelMenuItem(AICCTreeWidget *atw){
         recursionQJsonObject(list_root[i].second,twi);
     }
 }
-///recursion child node
-void NodeTreeDialog::recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
-    QStringList keys = jo.keys();
-    for(QString key:keys){
-        if(key=="order") continue;
-        QJsonValue jv = jo.value(key);
-        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
-        ctwi->setText(0,key);
-        if(jv.isObject())
-            recursionQJsonObject(jv.toObject(),ctwi);
-        else if(jv.isArray())
-            makeLeafNode(jv.toArray(),ctwi);
-
-    }
-}
-
-void NodeTreeDialog::makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
-    for(int i=0;i<ja.size();i++){
-        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
-        ctwi->setText(0,ja[i].toString());
-    }
-}
 
 ///创建属性结构的根目录分类
 void NodeTreeDialog::makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text)

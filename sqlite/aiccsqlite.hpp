@@ -37,6 +37,7 @@ public:
             return _sqlQuery;
         }else{
             qDebug() << _sqlQuery.lastError();
+            return _sqlQuery;
         }
     }
 

@@ -187,7 +187,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -583,7 +583,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1026,6 +1026,11 @@ Browser</string>
            <height>51</height>
           </rect>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
@@ -1062,6 +1067,11 @@ Browser</string>
            <height>91</height>
           </rect>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
@@ -1091,6 +1101,11 @@ Publish</string>
            <width>141</width>
            <height>31</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
          </property>
          <item>
           <property name="text">

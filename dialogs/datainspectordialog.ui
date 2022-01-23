@@ -40,6 +40,12 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>260</width>
+       <height>216</height>
+      </size>
+     </property>
      <property name="features">
       <set>QDockWidget::NoDockWidgetFeatures</set>
      </property>

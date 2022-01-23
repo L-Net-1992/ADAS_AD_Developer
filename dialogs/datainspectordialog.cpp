@@ -22,7 +22,7 @@ DataInspectorDialog::~DataInspectorDialog()
 void DataInspectorDialog::initTableWidget(){
     ui->tw_output->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->tw_output->setColumnWidth(0,23);
-    ui->tw_output->setColumnWidth(1,130);
+    ui->tw_output->setColumnWidth(1,110);
     ui->tw_output->setColumnWidth(2,85);
 
     //Temp Data

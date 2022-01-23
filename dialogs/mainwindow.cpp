@@ -252,6 +252,19 @@ void MainWindow::initToolbar()
         diDialog->show();
     });
 
+    ///平台选择下拉框
+    connect(ui->cb_select_platform,&QComboBox::currentTextChanged,this,[&](const QString &text){
+        if(text==QString::fromLocal8Bit("--请选择平台--"))
+            ui->tb_code_compiler->setEnabled(false);
+        else
+            ui->tb_code_compiler->setEnabled(true);
+    });
+
+    ///代码编译按钮code compiler
+//    connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
+
+//    });
+
     ///测试dialog显示
     //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
     //        TestDialog *tdialog = new TestDialog(this);

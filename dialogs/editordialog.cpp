@@ -11,8 +11,10 @@ EditorDialog::EditorDialog(QWidget *parent) :
 
 void EditorDialog::openTextFile(const QString pathName){
     QFile file(pathName);
-    if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
+        ui->pte_editor->clear();
         ui->pte_editor->appendPlainText(file.readAll());
+    }
     else
         qDebug() <<"The file open failed!";
 }

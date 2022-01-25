@@ -213,6 +213,7 @@ public:
             cmd = be + " \"" + cmd + '"';
         }
         file << cmd << std::endl;
+        file << "echo 'Build Completed'" << std::endl;
 
     }
     static void generateDeployScript(const QtNodes::FlowScene &scene, const PackageLibrary & packageLibrary, const std::filesystem::path & config_file ,std::ofstream &file) {
@@ -222,6 +223,7 @@ public:
         file << "cd $SRC_DIR" << std::endl;
         file << config["kill_cmd"].as_string().c_str() << std::endl;
         file << config["deploy_cmd"].as_string().c_str() << std::endl;
+        file << "echo 'Deploy Completed'" << std::endl;
 
     }
     static void generateRunScript(const QtNodes::FlowScene &scene, const PackageLibrary & packageLibrary, const std::filesystem::path & config_file ,std::ofstream &file) {
@@ -230,6 +232,7 @@ public:
         file << "SRC_DIR=$(dirname $(realpath \"$0\"))" << std::endl;
         file << "cd $SRC_DIR" << std::endl;
         file << config["kill_cmd"].as_string().c_str() << std::endl;
+        file << "echo 'Start Running'" << std::endl;
         file << config["run_cmd"].as_string().c_str() << std::endl;
 
     }
@@ -239,6 +242,7 @@ public:
         file << "SRC_DIR=$(dirname $(realpath \"$0\"))" << std::endl;
         file << "cd $SRC_DIR" << std::endl;
         file << config["kill_cmd"].as_string().c_str() << std::endl;
+        file << "echo 'Stop'" << std::endl;
 
     }
 

@@ -27,8 +27,8 @@ private:
 public:
     FindInvocableContext(std::list<Invocable> &result, const std::filesystem::path &includePaths,
                          const std::filesystem::path &file, std::string package) : _result(result),
-                                                                                   _includePaths(includePaths),
-                                                                                   _file(file), _package(package) {}
+        _includePaths(includePaths),
+        _file(file), _package(package) {}
 
     FindInvocableContext(const FindInvocableContext &other) = delete;
 
@@ -61,7 +61,7 @@ class FindInvocableVisitor
         : public clang::RecursiveASTVisitor<FindInvocableVisitor> {
 public:
     explicit FindInvocableVisitor(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-            : _context(context), _findContext(findInvocableContext) {}
+        : _context(context), _findContext(findInvocableContext) {}
 
 
     bool VisitCXXRecordDecl(clang::CXXRecordDecl *decl) {
@@ -163,7 +163,7 @@ private:
 class FindInvocableConsumer : public clang::ASTConsumer {
 public:
     explicit FindInvocableConsumer(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-            : _visitor(context, findInvocableContext) {}
+        : _visitor(context, findInvocableContext) {}
 
     void HandleTranslationUnit(clang::ASTContext &context) override {
         _visitor.TraverseDecl(context.getTranslationUnitDecl());
@@ -207,24 +207,24 @@ public:
         }
         switch (DiagLevel) {
 
-            case clang::DiagnosticsEngine::Ignored:
-                llvm::outs() << "ignored: ";
-                break;
-            case clang::DiagnosticsEngine::Note:
-                llvm::outs() << "note: ";
-                break;
-            case clang::DiagnosticsEngine::Remark:
-                llvm::outs() << "remark: ";
-                break;
-            case clang::DiagnosticsEngine::Warning:
-                llvm::outs() << "warning: ";
-                break;
-            case clang::DiagnosticsEngine::Error:
-                llvm::outs() << "error: ";
-                break;
-            case clang::DiagnosticsEngine::Fatal:
-                llvm::outs() << "fatal: ";
-                break;
+        case clang::DiagnosticsEngine::Ignored:
+            llvm::outs() << "ignored: ";
+            break;
+        case clang::DiagnosticsEngine::Note:
+            llvm::outs() << "note: ";
+            break;
+        case clang::DiagnosticsEngine::Remark:
+            llvm::outs() << "remark: ";
+            break;
+        case clang::DiagnosticsEngine::Warning:
+            llvm::outs() << "warning: ";
+            break;
+        case clang::DiagnosticsEngine::Error:
+            llvm::outs() << "error: ";
+            break;
+        case clang::DiagnosticsEngine::Fatal:
+            llvm::outs() << "fatal: ";
+            break;
         }
         llvm::SmallVector<char> str;
         Info.FormatDiagnostic(str);
@@ -249,11 +249,11 @@ private:
         clang::tooling::FixedCompilationDatabase compilation(".", {});
         clang::tooling::ClangTool tool(compilation, {file.string()});
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster("-std=c++17",
-                                          clang::tooling::ArgumentInsertPosition::END));
+                    getInsertArgumentAdjuster("-std=c++17",
+                                              clang::tooling::ArgumentInsertPosition::END));
         for (const auto &inc: include_directories) {
             tool.appendArgumentsAdjuster(
-                    getInsertArgumentAdjuster(
+                        getInsertArgumentAdjuster(
                             {"-I", inc.string()},
                             clang::tooling::ArgumentInsertPosition::END));
         }
@@ -261,16 +261,11 @@ private:
         ///获得配置信息
         QJsonObject jo = getConfig();
 
-#ifdef Q_OS_LINUX
-        tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster(
-                        {"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
-                        clang::tooling::ArgumentInsertPosition::END));
-#endif
-#ifdef Q_OS_WIN64
         tool.appendArgumentsAdjuster(
                     getInsertArgumentAdjuster({"-I",jo.value("clang").toString().append("/include").toStdString()},
                                               clang::tooling::ArgumentInsertPosition::END));
+
+#ifdef Q_OS_WIN64
         tool.appendArgumentsAdjuster(
                     getInsertArgumentAdjuster({"-I",jo.value("clangCXX").toString().toStdString()},
                                               clang::tooling::ArgumentInsertPosition::END));

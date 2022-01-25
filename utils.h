@@ -7,7 +7,8 @@
 #include <QTreeWidgetItem>
 #include <QJsonArray>
 
- QStringList getFlieList(const QString &path);
+ QStringList getFileList(const QString &path);
+ QStringList getADASPackagesFileList(const QString &path);
 
  QJsonObject getConfig();
 

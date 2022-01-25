@@ -18,6 +18,8 @@
 #include <QSharedPointer>
 #include <QtConcurrent>
 #include <QMetaType>
+#include <QMessageBox>
+#include <QPlainTextEdit>
 #include <fstream>
 
 #include <nodes/FlowScene>
@@ -58,6 +60,7 @@ using QtNodes::NodeStyle;
 using QtNodes::ConnectionStyle;
 
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -70,6 +73,7 @@ protected:
     void registrySceneGenerateNodeMenu(std::list<Invocable> parserResult);
 Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
+//    void
 
 private:
     Ui::MainWindow *ui;
@@ -80,6 +84,7 @@ private:
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+    QProcess * _process;
 
     //nodeeditor部分
     QMap<QString,QSet<QString>> nodeMap;
@@ -108,6 +113,20 @@ private:
     void initNodeEditor();
     std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
+    static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+
+private:
+//    static QString directMsg;
+    static void write(QString str);
+
+public:
+Q_SIGNALS:
+     void redirectMsg(QString text);
+
+public:
+    static inline QPlainTextEdit *pte_out = Q_NULLPTR;
 
 };
+
+
 #endif // MAINWINDOW_H

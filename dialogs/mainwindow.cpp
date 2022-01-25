@@ -16,6 +16,14 @@ MainWindow::MainWindow(QWidget *parent)
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
+    _process = new QProcess(this);
+
+    MainWindow::pte_out = ui->pte_output;
+    qInstallMessageHandler(logOutput);
+
+    connect(_process,&QProcess::readyRead,this,[&](){
+        ui->pte_output->appendPlainText(_process->readAll());
+    });
 
 
     this->initMenu();
@@ -51,6 +59,10 @@ void MainWindow::initMenu()
     connect(ui->actionAbout,&QAction::triggered,this,&QApplication::aboutQt);
     connect(ui->actionNewProject,&QAction::triggered,projectDialog,&ProjectDialog::show);
     connect(ui->actionOpen,&QAction::triggered,this,&MainWindow::pbOpenAction);
+
+    QObject::connect(this,&MainWindow::redirectMsg,this,[&](QString text){
+        ui->pte_output->appendPlainText(text);
+    });
 }
 
 void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon){
@@ -77,7 +89,7 @@ void MainWindow::initTreeView()
     for(int i=0;i<list_root.size();i++){
         QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
         twi->setText(0,list_root[i].first);
-//        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
+        //        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
         recursionQJsonObject(list_root[i].second,twi);
     }
 
@@ -186,6 +198,8 @@ void MainWindow::initToolbar()
     ui->tw_toolbar->setTabText(3,"OnlineCalibration");
     ui->tw_toolbar->setTabText(4,"CustomModules");
 
+    ui->tw_toolbar->setCurrentIndex(0);
+
     //显示node模块的窗口
     connect(ui->pb_library_browser,&QPushButton::clicked,this,[&]{
         nodeTreeDialog->show();
@@ -193,17 +207,34 @@ void MainWindow::initToolbar()
 
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
-
-        QJsonObject jo = getConfig();
-
-        std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
-        if(!file){
-            QMessageBox::critical(Q_NULLPTR,"发生错误","打开文件失败");
-            return;
-        }
-
+        //generate cpp code
         AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
-        SourceGenerator::generate(*(fv->scene()),file);
+        std::filesystem::path dir(QApplication::applicationDirPath().append("/generate").toStdString());
+        SourceGenerator::generateCMakeProject(dir,*(fv->scene()),_moduleLibrary->packageLibrary());
+
+        //generate shell script
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
+
+        QMessageBox msgBox;
+        QString msg = "The code is generated.Build path in '";
+        msg.append(QApplication::applicationDirPath());
+        msg.append("/generate/'");
+        msgBox.setText(msg);
+        msgBox.exec();
+
+        //        QJsonObject jo = getConfig();
+
+        //        std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
+        //        if(!file){
+        //            QMessageBox::critical(Q_NULLPTR,"发生错误","打开文件失败");
+        //            return;
+        //        }*(f
+
+        //TODO:源码生成操作
+        //        AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
+        //        SourceGenerator::generate(*(fv->scene()),file);
     });
 
     //导入脚本按钮
@@ -254,16 +285,115 @@ void MainWindow::initToolbar()
 
     ///平台选择下拉框
     connect(ui->cb_select_platform,&QComboBox::currentTextChanged,this,[&](const QString &text){
-        if(text==QString::fromLocal8Bit("--请选择平台--"))
+        if(text==QString::fromLocal8Bit("SelectPlatform"))
             ui->tb_code_compiler->setEnabled(false);
         else
             ui->tb_code_compiler->setEnabled(true);
     });
 
     ///代码编译按钮code compiler
-//    connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
+    connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
+        QString bash = "bash ";
+        bash.append(QApplication::applicationDirPath());
+        bash.append("/generate/");
+        switch(ui->cb_select_platform->currentIndex()){
+        case 1:
+            bash.append("build_bst.sh");
+            _process->start(bash);
+            break;
+        case 2:
+            bash.append("build_jetson.sh");
+            _process->start(bash);
+            break;
+        case 3:
+            bash.append("build_mdc.sh");
+            _process->start(bash);
+            break;
+        default:
+            break;
+        }
+    });
+    //TODO:temp code
+    connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
+        QString bash = "bash ";
+        bash.append(QApplication::applicationDirPath());
+        bash.append("/generate/");
+        switch(ui->cb_select_platform->currentIndex()){
+        case 1:
+            bash.append("deploy_bst.sh");
+            _process->start(bash);
+            break;
+        case 2:
+            bash.append("deploy_jetson.sh");
+            _process->start(bash);
+            break;
+        case 3:
+            bash.append("deploy_mdc.sh");
+            _process->start(bash);
+            break;
+        default:
+            break;
+        }
+    });
 
-//    });
+    //TODO:temp code
+    connect(ui->tb_run,&QToolButton::clicked,this,[&](){
+        QString bash="bash ";
+        bash.append(QApplication::applicationDirPath());
+        bash.append("/generate/");
+        switch(ui->cb_select_platform->currentIndex()){
+        case 1:
+            bash.append("run_bst.sh");
+            _process->start(bash);
+            break;
+        case 2:
+            bash.append("run_jetson.sh");
+            _process->start(bash);
+            break;
+        case 3:
+            bash.append("run_mdc.sh");
+            _process->start(bash);
+            break;
+        default:
+            break;
+        }
+    });
+    //stop
+    connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
+        QString bash="bash ";
+        bash.append(QApplication::applicationDirPath());
+        bash.append("/generate/");
+
+        QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
+        switch(ui->cb_select_platform->currentIndex()){
+        case 1:
+            bash.append("stop_bst.sh");
+            _process->terminate();
+            if(_process->waitForFinished())
+                _process->start(bash);
+            else
+                _process->start(killprocess);
+            break;
+        case 2:
+            bash.append("stop_jetson.sh");
+            _process->terminate();
+            if(_process->waitForFinished())
+                _process->start(bash);
+            else
+                _process->start(killprocess);
+            break;
+        case 3:
+            bash.append("stop_mdc.sh");
+            _process->terminate();
+            if(_process->waitForFinished())
+                _process->start(bash);
+            else
+                _process->start(killprocess);
+            break;
+        default:
+            break;
+        }
+    });
 
     ///测试dialog显示
     //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
@@ -372,11 +502,38 @@ void MainWindow::initProjectDialog(){
 
 ///NodeEditor数据处理部分
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
+//TODO:
 void MainWindow::initNodeEditor(){
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
-    //1:先解析文件，准备好解析文件中的node数据
+
+    //1:解析pakage文件
+    const QString path = QApplication::applicationDirPath()+"/install/";
+    QStringList files = getADASPackagesFileList(path);
+
+    //2:执行加载前的准备动作
+    ui->statusbar->showMessage("Start load node moduls data...");
+    ui->tw_toolbar->setEnabled(false);
+
+    //3:创建单独线程，耗时操作放到其中，防止界面卡死
+    QtConcurrent::run([&,files](){
+        _moduleLibrary->importFiles(files);
+        std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
+        emit scriptParserCompleted(parserResult);
+    });
+    qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
+    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
+    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
+    //加载过程中显示当前进度
+    //        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
+    //        ui->statusbar->showMessage("")
+    //    });
+
+
+    /*old code
+
+    //1:先解析package文件，准备好解析文件中的node数据
     const QString path = QApplication::applicationDirPath()+"/nodeconfig/";
-    QStringList files = getFlieList(path);
+    QStringList files = getFileList(path);
 
     //0:执行加载前准备动作
     ui->statusbar->showMessage("Start load node moduls data...");
@@ -398,6 +555,8 @@ void MainWindow::initNodeEditor(){
         //加载过程中显示当前进度
         ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
     });
+
+    */
 }
 
 ///生成右键菜单
@@ -435,10 +594,11 @@ void MainWindow::initImportScriptDialog(){
     });
 
     //文件解析百分比
-    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count,const int index,const QString filename){
-        isDialog->setImportProcess(index,count);
-        isDialog->setListModels(_moduleLibrary.get());
-    });
+    //TODO:此处可能要处理
+    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count,const int index,const QString filename){
+    //        isDialog->setImportProcess(index,count);
+    //        isDialog->setListModels(_moduleLibrary.get());
+    //    });
 }
 
 ///初始化数据检查窗口
@@ -452,12 +612,14 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
     AICCSqlite sqlite;
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
+        qDebug() << "AutoPlatform" << QString::fromStdString(inv.getName());
         QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
         if(squery.next()){
             QString caption = squery.value(1).toString();
             QString className = squery.value(2).toString();
             auto f = [inv,caption](){
                 std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+
                 p->setCaption(caption);
                 return p;
             };
@@ -502,6 +664,34 @@ QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<I
         }
     }
     return ret;
+}
+
+void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
+    QString omsg;
+    omsg.append(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+" ");
+    switch(type){
+    case QtInfoMsg:
+    case QtDebugMsg:
+        omsg.append("Debug:");
+        break;
+    case QtWarningMsg:
+        omsg.append("Warning:");
+        break;
+    case QtCriticalMsg:
+        omsg.append("Critical:");
+        break;
+    case QtFatalMsg:
+        omsg.append("Fatal:");
+    }
+    omsg.append(msg);
+    write(omsg);
+    //    emit redirectMsg(msg);
+    //    ui->pte_output->appendPlainText(msg);
+}
+
+void MainWindow::write(QString str){
+    //    text = str;
+    pte_out->appendPlainText(str);
 }
 
 

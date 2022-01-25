@@ -30,7 +30,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent 
 find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
-find_package(Boost REQUIRED COMPONENTS system graph)
+find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 
 
 set ( PROJECT_SOURCES
@@ -67,6 +67,7 @@ set ( PROJECT_SOURCES
     nodeparser/module_library.hpp
     nodeparser/module_library.cpp
     nodeparser/source_generator.hpp
+    nodeparser/package_library.h nodeparser/package_library.cpp
 
     sqlite/aiccsqlite.hpp
 
@@ -105,6 +106,33 @@ target_link_libraries(AutoPlatform
     clangFrontend
     clangSerialization
     clangTooling
-    Boost::headers Boost::system Boost::graph
+    Boost::headers Boost::system Boost::graph Boost::json
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

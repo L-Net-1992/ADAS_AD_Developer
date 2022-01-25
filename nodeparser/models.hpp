@@ -273,6 +273,7 @@ public:
             }
             _input->setLayout(l);
         }
+
     }
 
 
@@ -280,11 +281,10 @@ public:
 
     QString
     caption() const override {
-//        return QString::fromStdString(_invocable.getName());
-        return _caption;
+        return QString::fromStdString(_invocable.getName());
     }
 
-    void setCaption(QString c) {
+    void setCaption(QString c){
         _caption = c;
     }
 

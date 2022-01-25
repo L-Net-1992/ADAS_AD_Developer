@@ -3,6 +3,7 @@
         "runtime":"/home/fc/works/CLionProjects/runtime",
         "boost":"/usr/local/boost_1_76_0",
         "clang":"/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0"
+
     },
     "win64Path":{
         "runtime":"D:/works/runtime",

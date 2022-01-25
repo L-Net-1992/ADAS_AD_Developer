@@ -120,6 +120,17 @@ private:
     Type _type;
     std::string _name;
     std::string _header_file;
+    std::string _package;
+public:
+    const std::string &getPackage() const {
+        return _package;
+    }
+
+    void setPackage(const std::string &package) {
+        _package = package;
+    }
+
+private:
     std::vector<Port> _portList;
     std::vector<Param> _paramList;
 public:

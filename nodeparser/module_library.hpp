@@ -5,8 +5,6 @@
 #ifndef NODEDRIVING_MODULE_LIBRARY_HPP
 #define NODEDRIVING_MODULE_LIBRARY_HPP
 #include <QStringList>
-#include <QApplication>
-#include <QString>
 #include <filesystem>
 #include <list>
 #include <vector>
@@ -21,6 +19,7 @@
 #include "invocable.hpp"
 #include "models.hpp"
 #include <iostream>
+#include "package_library.h"
 class ModuleLibrary: public QAbstractListModel {
     Q_OBJECT
 public Q_SLOTS:
@@ -28,18 +27,24 @@ public Q_SLOTS:
 Q_SIGNALS:
     void errorOccured(const QString &error_message);
     void importCompleted();
-    void fileParserCompleted(const int count,const int index,const QString filename);
+    void fileParserCompleted(const int count,const int index);
 
 private:
-    std::filesystem::path _includePaths{(QApplication::applicationDirPath()+"/nodeconfig").toStdString()};
     std::vector<Invocable> _invocableList;
     std::list<Invocable> _parseResult;
     bool fileInIncludePaths(const std::filesystem::path & file);
     void setInvocables(const std::list<Invocable> & list);
+    PackageLibrary _packageLibrary;
+
 
 public:
     int rowCount(const QModelIndex &parent) const override;
+
     QVariant data(const QModelIndex &index, int role) const override;
+    const PackageLibrary & packageLibrary() {
+        return _packageLibrary;
+    }
+
 
     std::shared_ptr<QtNodes::DataModelRegistry> test2() {
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
@@ -49,6 +54,7 @@ public:
 
             }
         return ret;
+
     }
 
     std::list<Invocable> getParseResult(){return _parseResult;}

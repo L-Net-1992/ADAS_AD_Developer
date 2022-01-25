@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by 刘典 on 2021/9/12.
 //
 
@@ -12,21 +12,23 @@
 #include <clang/Tooling/Tooling.h>
 #include <clang/Tooling/CompilationDatabase.h>
 #include "invocable.hpp"
-#include "utils.h"
 #include <filesystem>
 #include <list>
 #include <optional>
-#include <QJsonObject>
+#include "package_library.h"
+#include "utils.h"
 
 
 class FindInvocableContext {
 private:
     std::list<Invocable> &_result;
     const std::filesystem::path &_includePaths, &_file;
+    std::string _package;
 public:
     FindInvocableContext(std::list<Invocable> &result, const std::filesystem::path &includePaths,
-                         const std::filesystem::path &file) : _result(result), _includePaths(includePaths),
-        _file(file) {}
+                         const std::filesystem::path &file, std::string package) : _result(result),
+                                                                                   _includePaths(includePaths),
+                                                                                   _file(file), _package(package) {}
 
     FindInvocableContext(const FindInvocableContext &other) = delete;
 
@@ -49,14 +51,17 @@ public:
         return std::filesystem::relative(_file, _includePaths);
     };
 
+    const std::string &getPackage() {
+        return _package;
+    }
+
 };
 
 class FindInvocableVisitor
         : public clang::RecursiveASTVisitor<FindInvocableVisitor> {
 public:
     explicit FindInvocableVisitor(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-        : _context(context), _findContext(findInvocableContext) {}
-
+            : _context(context), _findContext(findInvocableContext) {}
 
 
     bool VisitCXXRecordDecl(clang::CXXRecordDecl *decl) {
@@ -66,19 +71,19 @@ public:
         invocable.setType(Invocable::Class);
         invocable.setName(decl->getQualifiedNameAsString());
         invocable.setHeaderFile(_findContext.getHeaderFile().string());
-        for(const auto *method: decl->methods()) {
+        invocable.setPackage(_findContext.getPackage());
+        for (const auto *method: decl->methods()) {
             const auto *ctor = clang::dyn_cast<clang::CXXConstructorDecl>(method);
-            if(!ctor)
+            if (!ctor)
                 continue;
-            if(ctor->getAccess()!=clang::AS_public)
+            if (ctor->getAccess() != clang::AS_public)
                 continue;
-            if(ctor->isDefaultConstructor() || ctor->isCopyOrMoveConstructor())
+            if (ctor->isDefaultConstructor() || ctor->isCopyOrMoveConstructor())
                 continue;
-            llvm::outs() << "constructor: " << ctor->getNameAsString() << " params: " << ctor->getNumParams() << "\n";
             parseConstructorParams(ctor, invocable);
 
         }
-        if(parseFields(decl, invocable)) {
+        if (parseFields(decl, invocable)) {
             _findContext.getResult().push_back(invocable);
         }
 
@@ -88,52 +93,52 @@ public:
 
 private:
     std::optional<Port> parsePort(const clang::FieldDecl *field) {
-        if(field->getAccess() != clang::AS_public)
+        if (field->getAccess() != clang::AS_public)
             return {};
         Port ret;
         ret.setName(field->getNameAsString());
         clang::QualType type = field->getType();
         const auto *tst = type->getAs<clang::TemplateSpecializationType>();
-        if(!tst)
+        if (!tst)
             return {};
-        if(!tst->isRecordType())
+        if (!tst->isRecordType())
             return {};
-        std::string temp_name =  tst->getAs<clang::RecordType>()->getDecl()->getQualifiedNameAsString();
-        if(temp_name == "adas::node::out")
+        std::string temp_name = tst->getAs<clang::RecordType>()->getDecl()->getQualifiedNameAsString();
+        if (temp_name == "adas::node::out")
             ret.setDirection(Port::Out);
-        else if(temp_name == "adas::node::in")
+        else if (temp_name == "adas::node::in")
             ret.setDirection(Port::In);
         else
             return {};
-        if(tst->getNumArgs() != 1)
+        if (tst->getNumArgs() != 1)
             return {};
         if (tst->getArg(0).getKind() != clang::TemplateArgument::Type)
             return {};
         ret.setType(tst->getArg(0).getAsType().getAsString());
         return ret;
     }
+
     bool parseFields(const clang::CXXRecordDecl *decl, Invocable &invocable) {
         std::vector<Port> ports;
         for (const auto *field: decl->fields()) {
             auto port_opt = parsePort(field);
-            if(!port_opt)
+            if (!port_opt)
                 continue;
             ports.push_back(*port_opt);
         }
-        if(ports.empty())
+        if (ports.empty())
             return false;
         invocable.setPortList(ports);
         return true;
     }
 
-    void parseConstructorParams(const clang::CXXConstructorDecl *decl, Invocable & invocable) {
+    void parseConstructorParams(const clang::CXXConstructorDecl *decl, Invocable &invocable) {
         std::vector<Param> params(decl->getNumParams());
         for (int i = 0; i < decl->getNumParams(); ++i) {
-            auto & p = params[i];
+            auto &p = params[i];
             const clang::ParmVarDecl *parmVarDecl = decl->getParamDecl(i);
             p.setType(parmVarDecl->getType().getAsString());
             p.setName(parmVarDecl->getNameAsString());
-            llvm::outs() << "type: " << p.getType() << " name: " << p.getName() << "\n";
         }
         invocable.setParamList(params);
 
@@ -158,7 +163,7 @@ private:
 class FindInvocableConsumer : public clang::ASTConsumer {
 public:
     explicit FindInvocableConsumer(clang::ASTContext *context, FindInvocableContext &findInvocableContext)
-        : _visitor(context, findInvocableContext) {}
+            : _visitor(context, findInvocableContext) {}
 
     void HandleTranslationUnit(clang::ASTContext &context) override {
         _visitor.TraverseDecl(context.getTranslationUnitDecl());
@@ -193,44 +198,74 @@ private:
     FindInvocableContext &_findContext;
 };
 
+class DiagnosticConsumer : public clang::DiagnosticConsumer {
+public:
+    void HandleDiagnostic(clang::DiagnosticsEngine::Level DiagLevel, const clang::Diagnostic &Info) override {
+        clang::DiagnosticConsumer::HandleDiagnostic(DiagLevel, Info);
+        if (Info.hasSourceManager()) {
+            llvm::outs() << Info.getLocation().printToString(Info.getSourceManager()) << ": ";
+        }
+        switch (DiagLevel) {
+
+            case clang::DiagnosticsEngine::Ignored:
+                llvm::outs() << "ignored: ";
+                break;
+            case clang::DiagnosticsEngine::Note:
+                llvm::outs() << "note: ";
+                break;
+            case clang::DiagnosticsEngine::Remark:
+                llvm::outs() << "remark: ";
+                break;
+            case clang::DiagnosticsEngine::Warning:
+                llvm::outs() << "warning: ";
+                break;
+            case clang::DiagnosticsEngine::Error:
+                llvm::outs() << "error: ";
+                break;
+            case clang::DiagnosticsEngine::Fatal:
+                llvm::outs() << "fatal: ";
+                break;
+        }
+        llvm::SmallVector<char> str;
+        Info.FormatDiagnostic(str);
+        llvm::outs() << str << "\n";
+    }
+
+};
+
 class InvocableParser {
 private:
     std::filesystem::path _includePaths;
-public:
-    void setIncludePaths(const std::filesystem::path &includePaths) {
-        _includePaths = includePaths;
-    }
 
-    bool parse(const std::filesystem::path &file, std::list<Invocable> &result, std::string &error_message) {
-        FindInvocableContext findInvocableContext(result, _includePaths, file);
+    bool parse(const PackageNode &node, const std::string &package,
+               const std::vector<std::filesystem::path> &include_directories, std::list<Invocable> &result,
+               std::string &error_message) {
+        std::cout << "parse: " << package << std::endl;
+        std::cout << "include_directories: " << std::endl;
+        for(const auto &inc: include_directories)
+            std::cout << inc << std::endl;
+        const auto &file = node.header_file_path();
+        FindInvocableContext findInvocableContext(result, node.include_directory, file, package);
         clang::tooling::FixedCompilationDatabase compilation(".", {});
         clang::tooling::ClangTool tool(compilation, {file.string()});
         tool.appendArgumentsAdjuster(
                 getInsertArgumentAdjuster("-std=c++17",
                                           clang::tooling::ArgumentInsertPosition::END));
+        for (const auto &inc: include_directories) {
+            tool.appendArgumentsAdjuster(
+                    getInsertArgumentAdjuster(
+                            {"-I", inc.string()},
+                            clang::tooling::ArgumentInsertPosition::END));
+        }
 
+        ///获得配置信息
         QJsonObject jo = getConfig();
-        //runtime path
-        tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", jo.value("runtime").toString().append("/include").toStdString()},
-                                          clang::tooling::ArgumentInsertPosition::END));
-        //boost path
-#ifdef Q_OS_LINUX
-        tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", jo.value("boost").toString().toStdString()},
-                                          clang::tooling::ArgumentInsertPosition::END));
-#endif
-#ifdef Q_OS_WIN64
-        tool.appendArgumentsAdjuster(
-                    getInsertArgumentAdjuster({"-I", jo.value("boost").toString().toStdString()},
-                                              clang::tooling::ArgumentInsertPosition::END));
-#endif
 
-        //llvm compiler
 #ifdef Q_OS_LINUX
         tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", jo.value("clang").toString().append("/include").toStdString()},
-                                          clang::tooling::ArgumentInsertPosition::END));
+                getInsertArgumentAdjuster(
+                        {"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
+                        clang::tooling::ArgumentInsertPosition::END));
 #endif
 #ifdef Q_OS_WIN64
         tool.appendArgumentsAdjuster(
@@ -244,12 +279,13 @@ public:
                                               clang::tooling::ArgumentInsertPosition::END));
 #endif
 
-        tool.appendArgumentsAdjuster(
-                getInsertArgumentAdjuster({"-I", _includePaths.string()},
-                                          clang::tooling::ArgumentInsertPosition::END));
-
+        //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("-v", // Verbose
+        //                                                               clang::tooling::ArgumentInsertPosition::END));
+        //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++
+        //                                                               clang::tooling::ArgumentInsertPosition::END));
         FindInvocableActionFactory factory(findInvocableContext);
-        //tool.setDiagnosticConsumer(nullptr);
+        DiagnosticConsumer dc;
+        tool.setDiagnosticConsumer(&dc);
         int ret = tool.run(&factory);
         if (ret != 0) {
             error_message = "编译错误，请查看编译日志";
@@ -257,6 +293,24 @@ public:
         }
         return true;
     }
+
+
+public:
+
+
+    bool parse(const PackageLibrary &package_library, std::list<Invocable> &result, std::string &error_message) {
+        for (const auto &p: package_library.packages()) {
+            const auto &package_name = p.first;
+            for (const auto &n: p.second.import.nodes) {
+
+                if (!parse(n, package_name, package_library.package_include_directories(package_name), result,
+                           error_message))
+                    return false;
+            }
+        }
+        return true;
+    }
+
 
 };
 

@@ -106,7 +106,7 @@ target_link_libraries(AutoPlatform
     clangFrontend
     clangSerialization
     clangTooling
-    Boost::headers Boost::system Boost::graph Boost::json
+    Boost::json Boost::headers Boost::system Boost::graph
     )
 
 

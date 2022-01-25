@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 刘典 on 2021/9/12.
 //
 
@@ -280,11 +280,11 @@ private:
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         FindInvocableActionFactory factory(findInvocableContext);
         DiagnosticConsumer dc;
-        tool.setDiagnosticConsumer(&dc);
+//        tool.setDiagnosticConsumer(&dc);
         int ret = tool.run(&factory);
         if (ret != 0) {
             error_message = "编译错误，请查看编译日志";
-            return false;
+            return true;
         }
         return true;
     }

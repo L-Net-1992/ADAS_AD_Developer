@@ -1,13 +1,9 @@
 ﻿{
     "ubuntuPath":{
-        "runtime":"/home/fc/works/CLionProjects/runtime",
-        "boost":"/usr/local/boost_1_76_0",
         "clang":"/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0"
 
     },
     "win64Path":{
-        "runtime":"D:/works/runtime",
-        "boost":"D:/Boost/boost_1_76_0",
         "clang":"D:/clang/gcc/lib/clang/14.0.0",
         "clangCXX":"D:/clang/gcc/aarch64-none-linux-gnu/include/c++/10.3.1",
         "clangCXXAarch64":"D:/clang/gcc/aarch64-none-linux-gnu/include/c++/10.3.1/aarch64-none-linux-gnu"

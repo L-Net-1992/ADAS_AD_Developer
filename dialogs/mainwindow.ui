@@ -187,7 +187,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -910,7 +910,7 @@ Browser</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -950,7 +950,7 @@ Browser</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -985,7 +985,7 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <item>
@@ -1020,7 +1020,7 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -1054,7 +1054,7 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
          <property name="focusPolicy">

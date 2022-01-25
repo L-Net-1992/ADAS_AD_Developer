@@ -6,18 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>388</height>
+    <width>1055</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="font">
-   <font>
-    <family>方正准圆简体</family>
-   </font>
+   <font/>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Generate Editor</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPlainTextEdit" name="pte_editor">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

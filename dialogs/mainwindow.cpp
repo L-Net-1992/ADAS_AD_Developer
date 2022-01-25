@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
+    eDialog = new EditorDialog(this);
     _process = new QProcess(this);
 
     MainWindow::pte_out = ui->pte_output;
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_process,&QProcess::readyRead,this,[&](){
         ui->pte_output->appendPlainText(_process->readAll());
+
     });
 
 
@@ -209,7 +211,8 @@ void MainWindow::initToolbar()
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //generate cpp code
         AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
-        std::filesystem::path dir(QApplication::applicationDirPath().append("/generate").toStdString());
+        std::string generatePath = QApplication::applicationDirPath().append("/generate").toStdString();
+        std::filesystem::path dir(generatePath);
         SourceGenerator::generateCMakeProject(dir,*(fv->scene()),_moduleLibrary->packageLibrary());
 
         //generate shell script
@@ -217,24 +220,17 @@ void MainWindow::initToolbar()
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
 
-        QMessageBox msgBox;
-        QString msg = "The code is generated.Build path in '";
-        msg.append(QApplication::applicationDirPath());
-        msg.append("/generate/'");
-        msgBox.setText(msg);
-        msgBox.exec();
+        generatePath.append("/generate.cpp");
+        eDialog->openTextFile(QString::fromStdString(generatePath));
+        eDialog->show();
 
-        //        QJsonObject jo = getConfig();
+//        QMessageBox msgBox;
+//        QString msg = "The code is generated.Build path in '";
+//        msg.append(QString::fromStdString(generatePath));
+//        msgBox.setText(msg);
+//        msgBox.exec();
 
-        //        std::ofstream file(jo.value("runtime").toString().append("/test/generate.cpp").toStdString());
-        //        if(!file){
-        //            QMessageBox::critical(Q_NULLPTR,"发生错误","打开文件失败");
-        //            return;
-        //        }*(f
 
-        //TODO:源码生成操作
-        //        AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
-        //        SourceGenerator::generate(*(fv->scene()),file);
     });
 
     //导入脚本按钮
@@ -684,14 +680,15 @@ void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,cons
         omsg.append("Fatal:");
     }
     omsg.append(msg);
-    write(omsg);
+    pte_out->appendPlainText(omsg);
+//    write(omsg);
     //    emit redirectMsg(msg);
     //    ui->pte_output->appendPlainText(msg);
 }
 
 void MainWindow::write(QString str){
     //    text = str;
-    pte_out->appendPlainText(str);
+
 }
 
 

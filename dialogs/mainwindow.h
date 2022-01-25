@@ -39,6 +39,7 @@
 #include <dialogs/nodetreedialog.h>
 #include <dialogs/testdialog.h>
 #include <dialogs/datainspectordialog.h>
+#include <dialogs/editordialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "aicctreewidget.hpp"
@@ -83,6 +84,7 @@ private:
     NodeTreeDialog *nodeTreeDialog;
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;
+    EditorDialog *eDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
     QProcess * _process;
 

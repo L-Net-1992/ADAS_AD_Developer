@@ -39,7 +39,7 @@ void DataInspectorDialog::initTableWidget(){
         ui->tw_output->setCellWidget(i,0,wckb);
 
         //Name
-        QTableWidgetItem *itemName = new QTableWidgetItem("Output"+i);
+        QTableWidgetItem *itemName = new QTableWidgetItem("Output"+QString::number(i));
         ui->tw_output->setItem(i,1,itemName);
 
         //Line
@@ -102,10 +102,6 @@ void DataInspectorDialog::initCharts(){
     chart->setAnimationOptions(QChart::SeriesAnimations);
     chart->legend()->hide();
     chart->addSeries(series);
-    chart->setAxisX(axisX,series);
-    chart->setAxisY(axisY,series);
-
-//    QHBoxLayout *layout = new QHBoxLayout();
     ui->chartView->setRenderHint(QPainter::Antialiasing);
 }
 

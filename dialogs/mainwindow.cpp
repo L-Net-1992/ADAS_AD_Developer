@@ -95,50 +95,6 @@ void MainWindow::initTreeView()
         recursionQJsonObject(list_root[i].second,twi);
     }
 
-    /*
-    QTreeWidgetItem* rootGroupSource = new QTreeWidgetItem(tw);
-    rootGroupSource->setText(0,QStringLiteral("数据源"));
-    QTreeWidgetItem* itemSource1 = new QTreeWidgetItem(rootGroupSource);
-    itemSource1->setText(0,QStringLiteral("设备"));
-    QTreeWidgetItem* itemSource2 = new QTreeWidgetItem(rootGroupSource);
-    itemSource2->setText(0, QStringLiteral("ECU"));
-    QTreeWidgetItem* itemSourceCalculator = new QTreeWidgetItem(rootGroupSource);
-    itemSourceCalculator->setText(0, QStringLiteral("四则运算源数据"));
-    itemSourceCalculator->setData(0,Qt::UserRole+1, QStringLiteral("AICCNumberSource"));
-
-
-    QTreeWidgetItem* rootGroupProcess = new QTreeWidgetItem(tw);
-    rootGroupProcess->setText(0,QStringLiteral("过程"));
-    QTreeWidgetItem* itemProcess1 = new QTreeWidgetItem(rootGroupProcess);
-    itemProcess1->setText(0, QStringLiteral("驱动"));
-
-    QTreeWidgetItem* itemProcess2 = new QTreeWidgetItem(rootGroupProcess);
-    itemProcess2->setText(0, QStringLiteral("算法"));
-    QTreeWidgetItem* itemProcessCalculatorAddition = new QTreeWidgetItem(itemProcess2);
-    itemProcessCalculatorAddition->setText(0, QStringLiteral("加法"));
-    itemProcessCalculatorAddition->setData(0,Qt::UserRole+1, QStringLiteral("AICCAdditionOperation"));
-    QTreeWidgetItem* itemProcessCalculatorSubstraction = new QTreeWidgetItem(itemProcess2);
-    itemProcessCalculatorSubstraction->setText(0, QStringLiteral("减法"));
-    itemProcessCalculatorSubstraction->setData(0,Qt::UserRole+1, QStringLiteral("AICCSubtractionOperation"));
-    QTreeWidgetItem* itemProcessCalculatorMultiplication = new QTreeWidgetItem(itemProcess2);
-    itemProcessCalculatorMultiplication->setText(0, QStringLiteral("乘法"));
-    itemProcessCalculatorMultiplication->setData(0,Qt::UserRole+1, QStringLiteral("AICCMultiplicationOperation"));
-    QTreeWidgetItem* itemProcessCaculatorDivision = new QTreeWidgetItem(itemProcess2);
-    itemProcessCaculatorDivision->setText(0, QStringLiteral("除法"));
-    itemProcessCaculatorDivision->setData(0,Qt::UserRole+1, QStringLiteral("AICCDivisionOperation"));
-
-    QTreeWidgetItem* itemProcess3 = new QTreeWidgetItem(rootGroupProcess);
-    itemProcess3->setText(0, QStringLiteral("信号"));
-    QTreeWidgetItem* itemProcess4 = new QTreeWidgetItem(rootGroupProcess);
-    itemProcess4->setText(0, QStringLiteral("IO"));
-
-
-    QTreeWidgetItem* rootGroupResult = new QTreeWidgetItem(tw);
-    rootGroupResult->setText(0,QStringLiteral("数据目标"));
-    QTreeWidgetItem* itemResultCalculator = new QTreeWidgetItem(rootGroupResult);
-    itemResultCalculator->setText(0, QStringLiteral("四则运算结果"));
-    itemResultCalculator->setData(0,Qt::UserRole+1, QStringLiteral("AICCNumberResult"));
-*/
     ui->tw_node->expandAll();
     //    QTreeWidgetItemIterator it(ui->treeWidget);
     //    while(*it)
@@ -264,7 +220,7 @@ void MainWindow::initToolbar()
             return;
         }
 
-        for(QString ssf :projectDialog->getFlowSceneSaveFiles()){
+        for(const QString &ssf :projectDialog->getFlowSceneSaveFiles()){
             QString saveFileName = projectDialog->getProjectPath()+"/"+projectDialog->getProjectName()+"/"+ssf;
             qDebug() << "save file name:" << saveFileName;
             QFile file(saveFileName);
@@ -361,6 +317,7 @@ void MainWindow::initToolbar()
         bash.append("/generate/");
 
         QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
+
         switch(ui->cb_select_platform->currentIndex()){
         case 1:
             bash.append("stop_bst.sh");
@@ -405,7 +362,7 @@ void MainWindow::initBreadcrumbNavigation(){
     ui->l_breadcrumb_navigation->makeNavigationData(lpath);
     ui->l_breadcrumb_navigation->refreshNavigationView();
 
-    //相应点击链接的操作
+    ///相应点击链接的操作
     connect(ui->l_breadcrumb_navigation,&AICCBreadcrumbNavigation::linkActivated,this,[&](const QString &link){
         ui->sw_flowscene->setCurrPagePathName(link);
         qDebug() << "clicked link:" << link ;

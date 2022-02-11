@@ -57,7 +57,8 @@ protected:
     };
     void dropEvent(QDropEvent *e) {
         QStringList formats = e->mimeData()->formats();
-        //        qDebug() << "flow view drop" << formats;
+//                qDebug() << "flow view drop" << formats;
+        qDebug() << e->mimeData();
         if(e->mimeData()->hasFormat("Data/name"))
         {
             QByteArray itemData = e->mimeData()->data("Data/name");

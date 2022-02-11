@@ -74,5 +74,6 @@
         <file>res/platform.png</file>
         <file>res/deploy.png</file>
         <file>res/stop.png</file>
+        <file>res/function.png</file>
     </qresource>
 </RCC>

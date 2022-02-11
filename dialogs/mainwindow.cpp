@@ -265,6 +265,8 @@ void MainWindow::initToolbar()
             break;
         }
     });
+
+
     //TODO:temp code
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         QString bash = "bash ";
@@ -310,6 +312,7 @@ void MainWindow::initToolbar()
             break;
         }
     });
+
     //stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
         QString bash="bash ";

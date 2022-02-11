@@ -247,15 +247,18 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>240</width>
+     <width>350</width>
      <height>524287</height>
     </size>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+   </property>
    <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
+    <set>Qt::LeftDockWidgetArea</set>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -392,6 +395,9 @@ gridline-color:#FFFFFF;
          <property name="dragDropMode">
           <enum>QAbstractItemView::DragOnly</enum>
          </property>
+         <property name="indentation">
+          <number>10</number>
+         </property>
          <attribute name="headerVisible">
           <bool>false</bool>
          </attribute>
@@ -425,6 +431,9 @@ gridline-color:#FFFFFF;
      <width>240</width>
      <height>524287</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::RightDockWidgetArea</set>

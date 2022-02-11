@@ -71,11 +71,6 @@ set ( PROJECT_SOURCES
 
     sqlite/aiccsqlite.hpp
 
-    nodeconfig/adas/node.hpp
-    nodeconfig/adas/asio_can.h
-    nodeconfig/adas/can.h
-    nodeconfig/adas/runtime.hpp
-
     nlohmann/json.hpp
     conf/config.json
     conf/model_menu.json

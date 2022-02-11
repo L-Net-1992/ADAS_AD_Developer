@@ -72,5 +72,8 @@ void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
     for(int i=0;i<ja.size();i++){
         QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
         ctwi->setText(0,ja[i].toString());
+        QIcon icon;
+        icon.addPixmap(QPixmap("/res/function.png"));
+        ctwi->setIcon(0,icon);
     }
 }

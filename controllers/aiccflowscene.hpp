@@ -35,7 +35,7 @@ public:
     ~AICCFlowScene(){}
 
     ///在FlowScene中创建node
-    void dropCreateNode(QString const &name,const QPointF posView)
+    void dropCreateNode(const QString  &name,const QString &caption,const QPointF posView)
     {
         auto type = this->registry().create(name);
         if(type){

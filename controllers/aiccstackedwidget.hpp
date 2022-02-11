@@ -117,10 +117,10 @@ public:
         _allViews.push_front(view);
 
         //接受view的node创建完成消息增加新的page
-        connect(view,&AICCFlowView::checkSubSystemName,this,[&](const QString &name,const QPoint pos,const AICCFlowView *cview){
+        connect(view,&AICCFlowView::checkSubSystemName,this,[&](const QString &name,const QString &caption,const QPoint pos,const AICCFlowView *cview){
             //如果为其他普通节点,直接通知FlowView创建节点
             if(name!="subsystem::SubSystem"){
-                cview->createNode(name,pos);
+                cview->createNode(name,caption,pos);
                 return;
             }else{
                 if(_routeDataMap.contains(_currPagePathName+"/"+name)){
@@ -128,7 +128,7 @@ public:
                     return;
                 }
 
-                cview->createNode(name,pos);
+                cview->createNode(name,caption,pos);
                 this->addNewPageFlowScene(name);
             }
 

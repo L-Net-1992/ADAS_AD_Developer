@@ -19,7 +19,7 @@
 #include "stdio.h"
 #include "controllers/aicctoolbutton.hpp"
 #include "controllers/aiccstackedwidget.hpp"
-#include "aicctreewidget.hpp"
+#include "controllers/aicctreewidget.hpp"
 #include "sqlite/aiccsqlite.hpp"
 #include "utils.h"
 #include <dialogs/importscriptdialog.h>

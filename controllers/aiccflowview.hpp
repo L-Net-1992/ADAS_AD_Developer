@@ -12,7 +12,6 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 #include "qvariant.h"
-#include "aiccmodel.hpp"
 #include "controllers/aiccflowscene.hpp"
 
 
@@ -47,7 +46,7 @@ public:
 Q_SIGNALS:
 //    void getNodeDataModel(NodeDataModel *nodeDataModel);
     //该信号需要将view对象以参数方式传递过去使用,否则会有问题
-    void checkSubSystemName(const QString &name,const QPoint mousePos,const AICCFlowView *cview);
+    void checkSubSystemName(const QString &name,const QString &caption,const QPoint mousePos,const AICCFlowView *cview);
 
 protected:
     void dragMoveEvent(QDragMoveEvent *e)
@@ -74,7 +73,7 @@ protected:
             qDebug() << "caption:" << caption;
 
             //如果当前节点为子系统,通知上层AICCStackedWidget判断是否有重名,是否可创建新的page
-            emit checkSubSystemName(name,e->pos(),this);
+            emit checkSubSystemName(name,caption,e->pos(),this);
 
             //处理消息传递
             if(e->source() == this)
@@ -85,15 +84,17 @@ protected:
                 e->acceptProposedAction();
             }
         }
-        else
+        else{
+            qInfo() << "Mould not implemented";
             e->ignore();
+        }
     };
 public:
     ///在FlowScene中创建node
-    void createNode(QString const &name,const QPoint pos) const
+    void createNode(QString const &name,QString const &caption,const QPoint pos) const
     {
             QPointF posView = this->mapToScene(pos);
-            _scene->dropCreateNode(name,posView);
+            _scene->dropCreateNode(name,caption,posView);
     }
 
     ///view的缩放复原为原始大小

@@ -424,7 +424,7 @@ gridline-color:#FFFFFF;
   <customwidget>
    <class>AICCTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>aicctreewidget.hpp</header>
+   <header>controllers/aicctreewidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

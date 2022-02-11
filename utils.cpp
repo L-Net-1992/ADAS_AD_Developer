@@ -69,9 +69,22 @@ void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
 }
 
 void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
+    AICCSqlite sqlite;
     for(int i=0;i<ja.size();i++){
         QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
-        ctwi->setText(0,ja[i].toString());
+        QString name = "";
+        QString caption = ja[i].toString();
+        ctwi->setText(0,caption);
+        //检索数据库中对应名称的node模块
+        QString query = QString("select id,name,caption from node where caption = '%0' and class_id = 0 ").arg(caption);
+        QSqlQuery squery = sqlite.query(query);
+        if(squery.next()){
+            name = squery.value(1).toString();
+        }else{
+            name="";
+        }
+        ctwi->setData(0,Qt::UserRole+1,QVariant::fromValue(name));
+
         QIcon icon;
         icon.addPixmap(QPixmap("/res/function.png"));
         ctwi->setIcon(0,icon);

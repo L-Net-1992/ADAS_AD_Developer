@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QTreeWidgetItem>
 #include <QJsonArray>
+#include "sqlite/aiccsqlite.hpp"
 
  QStringList getFileList(const QString &path);
  QStringList getADASPackagesFileList(const QString &path);

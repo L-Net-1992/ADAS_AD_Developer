@@ -23,10 +23,10 @@ public:
 
 
 
-//    AICCTreeWidget(QSplitter *parent = nullptr)
-//    {
-//        connect(this,&QTreeWidget::customContextMenuRequested,this,&AICCTreeWidget::onTreeWidgetCustomContextMenuRequested);
-//    }
+    //    AICCTreeWidget(QSplitter *parent = nullptr)
+    //    {
+    //        connect(this,&QTreeWidget::customContextMenuRequested,this,&AICCTreeWidget::onTreeWidgetCustomContextMenuRequested);
+    //    }
 
 protected:
     /**
@@ -50,29 +50,27 @@ protected:
             QString sidata = _selectItem->data(0,Qt::UserRole+1).toString();
             dataStreamName << sidata;
 
-            if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR && QString::compare(sidata,"")!=0)
+            if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR &&QString::compare(sidata,"")!=0)
             {
-                QDrag* drag = new QDrag(this);
-                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
+                    QDrag* drag = new QDrag(this);
+                    qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
 
-                QMimeData* mimeData = new QMimeData;
-                mimeData->setData("Data/text",dataItem);
-                //将要生成的flowview节点的名字代入Data/name字段
-                mimeData->setData("Data/name",dataItemName);
+                    QMimeData* mimeData = new QMimeData;
+                    mimeData->setData("Data/caption",dataItem);
+                    //将要生成的flowview节点的名字代入Data/name字段
+                    mimeData->setData("Data/name",dataItemName);
 
+                    //            QtGuiDrag* dragPiamap = new QtGuiDrag(nullptr);
+                    //            dragPiamap->setShowText(_selectItem->text(0));
+                    //            QPixmap pixmap = dragPiamap->grab();
 
-                //            QtGuiDrag* dragPiamap = new QtGuiDrag(nullptr);
-                //            dragPiamap->setShowText(_selectItem->text(0));
-                //            QPixmap pixmap = dragPiamap->grab();
-
-
-                drag->setMimeData(mimeData);
-                drag->exec(Qt::MoveAction);
+                    drag->setMimeData(mimeData);
+                    drag->exec(Qt::MoveAction);
             }
         }
-//        else if(event->button() && Qt::RightButton){
+        //        else if(event->button() && Qt::RightButton){
         QTreeWidget::mousePressEvent(event);
-//        }
+        //        }
 
     };
     /**

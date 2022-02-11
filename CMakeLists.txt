@@ -45,20 +45,16 @@ set ( PROJECT_SOURCES
     dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
 
     image.qrc
-    TextData.hpp
     itemreadonlydelegate.h
-    aicctreewidget.hpp
-    aiccmodel.hpp
     utils.h utils.cpp
     calculator/aicccalculator.hpp
-    datamodel/aiccsourcedatamodel.hpp
-    datamodel/aiccdisplaydatamodel.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
     controllers/aiccflowview.hpp
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
+    controllers/aicctreewidget.hpp
 
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp

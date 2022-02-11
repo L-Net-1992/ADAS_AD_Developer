@@ -247,7 +247,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>350</width>
+     <width>240</width>
      <height>524287</height>
     </size>
    </property>
@@ -1284,7 +1284,7 @@ Deploy</string>
   <customwidget>
    <class>AICCTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>aicctreewidget.hpp</header>
+   <header>controllers/aicctreewidget.hpp</header>
   </customwidget>
   <customwidget>
    <class>AICCBreadcrumbNavigation</class>

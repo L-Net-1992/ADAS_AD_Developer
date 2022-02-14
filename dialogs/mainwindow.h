@@ -39,6 +39,7 @@
 #include <dialogs/testdialog.h>
 #include <dialogs/datainspectordialog.h>
 #include <dialogs/editordialog.h>
+#include <dialogs/calibrationdialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "controllers/aicctreewidget.hpp"
@@ -84,6 +85,7 @@ private:
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;
     EditorDialog *eDialog;
+    CalibrationDialog *cDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
     QProcess * _process;
 

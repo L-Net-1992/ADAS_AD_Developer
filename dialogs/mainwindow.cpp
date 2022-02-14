@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
     eDialog = new EditorDialog(this);
+    cDialog = new CalibrationDialog(this);
     _process = new QProcess(this);
 
     MainWindow::pte_out = ui->pte_output;
@@ -349,6 +350,11 @@ void MainWindow::initToolbar()
         default:
             break;
         }
+    });
+
+    //在线标定按钮OnlineCalibration->Calibration
+    connect(ui->tb_calibration,&QToolButton::clicked,this,[&](){
+        cDialog->show();
     });
 
     ///测试dialog显示

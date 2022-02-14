@@ -17,12 +17,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
-
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
-
-file(GLOB allCopyFiles "${CMAKE_CURRENT_SOURCE_DIR}/nodeconfig/*.hpp")
+#file(GLOB allCopyFiles "${CMAKE_CURRENT_SOURCE_DIR}/nodeconfig/*.hpp")
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
 #find_package(Qt5 COMPONENTS Widgets Xml Sql REQUIRED)
 find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql ChartsConcurrent REQUIRED)
@@ -43,6 +42,7 @@ set ( PROJECT_SOURCES
     dialogs/importscriptdialog.h dialogs/importscriptdialog.cpp dialogs/importscriptdialog.ui
     dialogs/testdialog.h dialogs/testdialog.cpp dialogs/testdialog.ui
     dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
+    dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
 
     image.qrc
     itemreadonlydelegate.h

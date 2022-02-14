@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.12)
 
-project(AutoPlatform VERSION 0.1 LANGUAGES CXX)
+project(ADAS_AD_Developer VERSION 0.1 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_BUILD_RPATH "$ORIGIN")
@@ -77,13 +77,13 @@ add_executable(AutoPlatform
     ${PROJECT_SOURCES}
     )
 
-target_compile_options(AutoPlatform PRIVATE -Wall -fvisibility=hidden -fno-rtti)
-target_include_directories(AutoPlatform
+target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti)
+target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
     )
-target_link_libraries(AutoPlatform
+target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Xml

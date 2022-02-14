@@ -73,7 +73,7 @@ set ( PROJECT_SOURCES
     conf/Config.hpp
     )
 
-add_executable(AutoPlatform
+add_executable(ADAS_AD_Developer
     ${PROJECT_SOURCES}
     )
 

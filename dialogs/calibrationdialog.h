@@ -2,6 +2,7 @@
 #define CALIBRATIONDIALOG_H
 
 #include <QDialog>
+#include <QChartView>
 
 namespace Ui {
 class CalibrationDialog;

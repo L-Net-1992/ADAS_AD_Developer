@@ -23,11 +23,12 @@ MainWindow::MainWindow(QWidget *parent)
     MainWindow::pte_out = ui->pte_output;
     qInstallMessageHandler(logOutput);
 
+    //获得Process的标准输出
     connect(_process,&QProcess::readyRead,this,[&](){
         ui->pte_output->appendPlainText(_process->readAll());
-
     });
 
+//    connect(_process,&QProcess::readyReadStandardOutput())
 
     this->initMenu();
     this->initTreeView();
@@ -244,8 +245,12 @@ void MainWindow::initToolbar()
             ui->tb_code_compiler->setEnabled(true);
     });
 
+
+//    connect(_process,QProcess::readyReadStandardOutput,this,[&]())
+
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
+
         QString bash = "bash ";
         bash.append(QApplication::applicationDirPath());
         bash.append("/generate/");

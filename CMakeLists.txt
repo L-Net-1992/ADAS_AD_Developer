@@ -23,8 +23,8 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_C
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
-#find_package(Qt5 COMPONENTS Widgets Xml Sql REQUIRED)
-find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql ChartsConcurrent REQUIRED)
+#find_package(Qt5 COMPONENTS Widgets Xml Sql REQUIRED)-
+find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)

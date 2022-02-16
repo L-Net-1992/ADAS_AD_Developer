@@ -151,13 +151,6 @@ void MainWindow::initToolbar()
     ui->dw_toolbar->setTitleBarWidget(nullTitleBarWidget);
     delete titleBarWidget;
 
-    //初始化tab标签
-    ui->tw_toolbar->setTabText(0,"Editor");
-    ui->tw_toolbar->setTabText(1,"Compiler");
-    ui->tw_toolbar->setTabText(2,"Emulator");
-    ui->tw_toolbar->setTabText(3,"OnlineCalibration");
-    ui->tw_toolbar->setTabText(4,"CustomModules");
-
     ui->tw_toolbar->setCurrentIndex(0);
 
     //显示node模块的窗口

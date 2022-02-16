@@ -592,7 +592,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>3</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1129,41 +1129,12 @@ Deploy</string>
          <font/>
         </property>
         <attribute name="title">
-         <string>OnlineCalibration</string>
+         <string>Calibration</string>
         </attribute>
-        <widget class="QToolButton" name="pb_update">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>Update</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/update.png</normaloff>:/res/update.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
         <widget class="QToolButton" name="tb_calibration">
          <property name="geometry">
           <rect>
-           <x>110</x>
+           <x>10</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>

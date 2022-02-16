@@ -33,7 +33,7 @@
     <number>9</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>9</number>
    </property>
    <property name="rightMargin">
     <number>9</number>
@@ -41,6 +41,181 @@
    <property name="bottomMargin">
     <number>9</number>
    </property>
+   <item>
+    <widget class="QTableWidget" name="tw_params">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderCascadingSectionResizes">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderMinimumSectionSize">
+      <number>57</number>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>150</number>
+     </attribute>
+     <attribute name="horizontalHeaderHighlightSections">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderCascadingSectionResizes">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>30</number>
+     </attribute>
+     <attribute name="verticalHeaderHighlightSections">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>3</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>4</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Parameter</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Default Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Current Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>New Value</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </item>
+     <item row="2" column="3">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </item>
+     <item row="3" column="3">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </item>
+    </widget>
+   </item>
    <item>
     <widget class="QToolBar" name="toolBar">
      <property name="sizePolicy">
@@ -58,161 +233,54 @@
      <property name="windowTitle">
       <string>toolBar</string>
      </property>
-     <addaction name="action_monitor"/>
-     <addaction name="action_run"/>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QTableWidget" name="tw_params">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>260</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="horizontalHeaderCascadingSectionResizes">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderMinimumSectionSize">
-         <number>57</number>
-        </attribute>
-        <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>63</number>
-        </attribute>
-        <attribute name="horizontalHeaderHighlightSections">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="verticalHeaderCascadingSectionResizes">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderDefaultSectionSize">
-         <number>30</number>
-        </attribute>
-        <attribute name="verticalHeaderHighlightSections">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>参数名</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>原值</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>新值</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>监测</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" name="w_mainWindow" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QChartView" name="qcv_new"/>
-         </item>
-         <item>
-          <widget class="QChartView" name="qcv_old"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
+     <property name="allowedAreas">
+      <set>Qt::BottomToolBarArea</set>
+     </property>
     </widget>
    </item>
   </layout>
-  <action name="action_monitor">
+  <action name="action_apply_default">
    <property name="text">
-    <string>监测选择</string>
+    <string>Apply Default</string>
    </property>
    <property name="toolTip">
-    <string>监测选择</string>
+    <string>Apply Default</string>
    </property>
   </action>
-  <action name="action_run">
+  <action name="action_save">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>设定运行</string>
+    <string>Save</string>
    </property>
    <property name="toolTip">
-    <string>设定运行</string>
+    <string>Save </string>
+   </property>
+  </action>
+  <action name="action_load">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="action_update">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Update</string>
+   </property>
+   <property name="toolTip">
+    <string>Update</string>
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QChartView</class>
-   <extends>QGraphicsView</extends>
-   <header>QtCharts</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

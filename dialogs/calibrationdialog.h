@@ -18,6 +18,10 @@ public:
 
 private:
     Ui::CalibrationDialog *ui;
+
+private:
+    void init();
+    void initButton();
 };
 
 #endif // CALIBRATIONDIALOG_H

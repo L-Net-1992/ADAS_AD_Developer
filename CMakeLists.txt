@@ -47,7 +47,7 @@ set ( PROJECT_SOURCES
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp
-    calculator/aicccalculator.hpp
+#    calculator/aicccalculator.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
@@ -67,7 +67,7 @@ set ( PROJECT_SOURCES
 
     sqlite/aiccsqlite.hpp
 
-    nlohmann/json.hpp
+#    nlohmann/json.hpp
     conf/config.json
     conf/model_menu.json
     conf/Config.hpp

@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QChartView>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 namespace Ui {
 class CalibrationDialog;

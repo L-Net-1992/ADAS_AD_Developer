@@ -8,10 +8,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
-using ordered_json = nlohmann::ordered_json;
 
 class Config
 {
@@ -108,30 +105,6 @@ private:
 
 //using json  = nlohmann::json;
 
-
-class ModernJson {
-
-public:
-    ModernJson(const QString &fileName):m_fileName(fileName){
-        open(fileName);
-    }
-    ~ModernJson(){
-    }
-public:
-    bool open(const QString &fileName){
-        std::ifstream jfile(fileName.toStdString());
-        jfile >> m_cache;
-        jfile.close();
-        return true;
-    }
-
-    json readRootJsonObject(){
-        return m_cache;
-    }
-private:
-    QString m_fileName;
-    ordered_json m_cache;
-};
 
 #endif // CONFIG_H
 

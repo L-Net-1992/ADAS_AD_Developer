@@ -48,13 +48,24 @@ void CalibrationDialog::initButton(){
 
     //Save按钮
     connect(ui->action_save,&QAction::triggered,this,[&]{
-        for(int i=0;i<ui->tw_params->rowCount();i++){
-            for(int j=0;j<ui->tw_params->columnCount();j++){
-                if(ui->tw_params->item(i,j)!=Q_NULLPTR){
-
+        QJsonObject json_save ;
+        QTableWidget * tw = ui->tw_params;
+        for(int i=0;i<tw->rowCount();i++){
+            QString param_name;
+            QString current_value;
+            for(int j=0;j<tw->columnCount();j++){
+                if(tw->item(i,j)!=Q_NULLPTR){
+                    if(j==0) param_name = tw->item(i,j)->text();
+                    if(j==2) current_value = tw->item(i,j)->text();
                 }
             }
+            json_save.insert(param_name,current_value);
         }
+
+        QJsonDocument qjdoc;
+        qjdoc.setObject(json_save);
+
+
     });
 
     //Load按钮

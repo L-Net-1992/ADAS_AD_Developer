@@ -28,9 +28,6 @@
 #include <nodes/NodeStyle>
 #include <nodes/ConnectionStyle>
 #include <nodes/DataModelRegistry>
-//#include <datamodel/aiccsourcedatamodel.hpp>
-//#include <datamodel/aiccdisplaydatamodel.hpp>
-#include <calculator/aicccalculator.hpp>
 #include <controllers/aiccflowview.hpp>
 #include <controllers/aiccstackedwidget.hpp>
 #include <dialogs/projectdialog.h>

@@ -24,8 +24,8 @@ void CalibrationDialog::init(){
     //工具条按钮靠右
     QWidget *spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    ui->toolBar->addAction(ui->action_sync_to_module);
     ui->toolBar->addWidget(spacer);
-    ui->toolBar->addAction(ui->action_apply_default);
     ui->toolBar->addAction(ui->action_save);
     ui->toolBar->addAction(ui->action_load);
     ui->toolBar->addAction(ui->action_update);
@@ -41,8 +41,8 @@ void CalibrationDialog::init(){
 
 ///初始化按钮事件
 void CalibrationDialog::initButton(){
-    //Apply Default按钮
-    connect(ui->action_apply_default,&QAction::triggered,this,[&]{
+    //Sync to Module按钮
+    connect(ui->action_sync_to_module,&QAction::triggered,this,[&]{
 
     });
 

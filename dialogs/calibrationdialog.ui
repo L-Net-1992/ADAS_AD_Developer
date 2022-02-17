@@ -121,11 +121,6 @@
      </column>
      <column>
       <property name="text">
-       <string>Default Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
        <string>Current Value</string>
       </property>
      </column>
@@ -149,11 +144,6 @@
        <string>1</string>
       </property>
      </item>
-     <item row="0" column="3">
-      <property name="text">
-       <string>1</string>
-      </property>
-     </item>
      <item row="1" column="0">
       <property name="text">
        <string>2</string>
@@ -165,11 +155,6 @@
       </property>
      </item>
      <item row="1" column="2">
-      <property name="text">
-       <string>2</string>
-      </property>
-     </item>
-     <item row="1" column="3">
       <property name="text">
        <string>2</string>
       </property>
@@ -189,11 +174,6 @@
        <string>3</string>
       </property>
      </item>
-     <item row="2" column="3">
-      <property name="text">
-       <string>3</string>
-      </property>
-     </item>
      <item row="3" column="0">
       <property name="text">
        <string>4</string>
@@ -205,11 +185,6 @@
       </property>
      </item>
      <item row="3" column="2">
-      <property name="text">
-       <string>4</string>
-      </property>
-     </item>
-     <item row="3" column="3">
       <property name="text">
        <string>4</string>
       </property>
@@ -239,12 +214,12 @@
     </widget>
    </item>
   </layout>
-  <action name="action_apply_default">
+  <action name="action_sync_to_module">
    <property name="text">
-    <string>Apply Default</string>
+    <string>Sync to Module</string>
    </property>
    <property name="toolTip">
-    <string>Apply Default</string>
+    <string>Sync to Module</string>
    </property>
   </action>
   <action name="action_save">

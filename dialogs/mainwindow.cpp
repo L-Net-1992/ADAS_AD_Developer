@@ -17,15 +17,15 @@ MainWindow::MainWindow(QWidget *parent)
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
     eDialog = new EditorDialog(this);
-    cDialog = new CalibrationDialog(this);
-    _process = new QProcess(this);
+    cDialog = new CalibrationDialog(this,projectDialog->getProjectPath());
+    process = new QProcess(this);
 
     MainWindow::pte_out = ui->pte_output;
     qInstallMessageHandler(logOutput);
 
     //获得Process的标准输出
-    connect(_process,&QProcess::readyRead,this,[&](){
-        ui->pte_output->appendPlainText(_process->readAll());
+    connect(process,&QProcess::readyRead,this,[&](){
+        ui->pte_output->appendPlainText(process->readAll());
     });
 
 //    connect(_process,&QProcess::readyReadStandardOutput())
@@ -250,15 +250,15 @@ void MainWindow::initToolbar()
         switch(ui->cb_select_platform->currentIndex()){
         case 1:
             bash.append("build_bst.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 2:
             bash.append("build_jetson.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 3:
             bash.append("build_mdc.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         default:
             break;
@@ -274,15 +274,15 @@ void MainWindow::initToolbar()
         switch(ui->cb_select_platform->currentIndex()){
         case 1:
             bash.append("deploy_bst.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 2:
             bash.append("deploy_jetson.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 3:
             bash.append("deploy_mdc.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         default:
             break;
@@ -297,15 +297,15 @@ void MainWindow::initToolbar()
         switch(ui->cb_select_platform->currentIndex()){
         case 1:
             bash.append("run_bst.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 2:
             bash.append("run_jetson.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         case 3:
             bash.append("run_mdc.sh");
-            _process->start(bash);
+            process->start(bash);
             break;
         default:
             break;
@@ -323,27 +323,27 @@ void MainWindow::initToolbar()
         switch(ui->cb_select_platform->currentIndex()){
         case 1:
             bash.append("stop_bst.sh");
-            _process->terminate();
-            if(_process->waitForFinished())
-                _process->start(bash);
+            process->terminate();
+            if(process->waitForFinished())
+                process->start(bash);
             else
-                _process->start(killprocess);
+                process->start(killprocess);
             break;
         case 2:
             bash.append("stop_jetson.sh");
-            _process->terminate();
-            if(_process->waitForFinished())
-                _process->start(bash);
+            process->terminate();
+            if(process->waitForFinished())
+                process->start(bash);
             else
-                _process->start(killprocess);
+                process->start(killprocess);
             break;
         case 3:
             bash.append("stop_mdc.sh");
-            _process->terminate();
-            if(_process->waitForFinished())
-                _process->start(bash);
+            process->terminate();
+            if(process->waitForFinished())
+                process->start(bash);
             else
-                _process->start(killprocess);
+                process->start(killprocess);
             break;
         default:
             break;

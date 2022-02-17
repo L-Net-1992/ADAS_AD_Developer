@@ -84,7 +84,7 @@ private:
     EditorDialog *eDialog;
     CalibrationDialog *cDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QProcess * _process;
+    QProcess * process;
 
     //nodeeditor部分
     QMap<QString,QSet<QString>> nodeMap;

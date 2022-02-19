@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QFileDialog>
 #include <QDebug>
+#include <QFile>
 
 
 namespace Ui {

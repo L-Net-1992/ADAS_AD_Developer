@@ -32,11 +32,11 @@ void CalibrationDialog::init(){
     ui->toolBar->addAction(ui->action_update);
 
     //设置第三列为只读,但此方法会覆盖掉原来的数据
-    for(int i=0;i<ui->tw_params->columnCount();i++){
+    for(int i=0;i<ui->tw_params->rowCount();i++){
         QTableWidgetItem *item = new QTableWidgetItem();
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         item->setText("3");
-        ui->tw_params->setItem(i,2,item);
+        ui->tw_params->setItem(i,1,item);
     }
 }
 
@@ -57,7 +57,7 @@ void CalibrationDialog::initButton(){
             for(int j=0;j<tw->columnCount();j++){
                 if(tw->item(i,j)!=Q_NULLPTR){
                     if(j==0) param_name = tw->item(i,j)->text();
-                    if(j==2) current_value = tw->item(i,j)->text();
+                    if(j==1) current_value = tw->item(i,j)->text();
                 }
             }
             json_save.insert(param_name,current_value);
@@ -69,8 +69,8 @@ void CalibrationDialog::initButton(){
 
         //TODO::此处保存文件位置以后可以设置到项目目录中
         QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.json)"));
-//        spath.
-        spath+=".json";
+        if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
+            spath+=".json";
         QSharedPointer<QFile> save_file(new QFile(spath));
         save_file->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);
         save_file->write(qjdoc.toJson());
@@ -79,7 +79,31 @@ void CalibrationDialog::initButton(){
 
     //Load按钮
     connect(ui->action_load,&QAction::triggered,this,[&]{
+        QString param_name;
+        QTableWidget * tw = ui->tw_params;
 
+        //save the path of the selected file and open it.
+        QString lpath = QFileDialog::getOpenFileName(this,tr("Load File"),QApplication::applicationDirPath(),tr("Calibration Data (*.json)"));
+        QFile load_file(lpath);
+        load_file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+        QByteArray value=load_file.readAll();
+
+        QJsonParseError err;
+        QJsonDocument json_doc=QJsonDocument::fromJson(value,&err);
+        if(json_doc.isNull()){
+            qDebug()<<err.errorString();
+        }
+
+        //fill the new value from the seclectd file to calibration table followed the key value
+        QJsonObject json_load=json_doc.object();
+            for(int i=0;i<tw->rowCount();i++){
+                param_name = tw->item(i,0)->text();
+                if(!json_load.value(param_name).isNull()){
+                    tw->setItem(i,2,new QTableWidgetItem(json_load.value(param_name).toString()));
+                }
+            }
     });
+
     //Update按钮
 }

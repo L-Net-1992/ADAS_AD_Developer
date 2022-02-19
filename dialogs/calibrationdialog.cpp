@@ -69,6 +69,7 @@ void CalibrationDialog::initButton(){
 
         //TODO::此处保存文件位置以后可以设置到项目目录中
         QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.json)"));
+//        spath.
         spath+=".json";
         QSharedPointer<QFile> save_file(new QFile(spath));
         save_file->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);

@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QApplication::addLibraryPath("./plugins");
     QApplication a(argc, argv);
 
-    //load app style file
+    //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");
         QFile file(":/qss/lightblue.css");
 //            QFile file(":/qss/blacksoft.css");
@@ -19,8 +19,10 @@ int main(int argc, char *argv[])
     QString styleSheet = QString::fromLatin1(file.readAll());
     a.setStyleSheet(styleSheet);
 
+
     MainWindow w;
     w.show();
+
 
     return a.exec();
 }

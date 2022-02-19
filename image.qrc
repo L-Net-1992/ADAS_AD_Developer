@@ -75,5 +75,6 @@
         <file>res/deploy.png</file>
         <file>res/stop.png</file>
         <file>res/function.png</file>
+        <file>res/replay.png</file>
     </qresource>
 </RCC>

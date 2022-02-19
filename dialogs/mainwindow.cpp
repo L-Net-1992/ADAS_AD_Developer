@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
+    monitorDialog = new Dialog(this);
     eDialog = new EditorDialog(this);
     cDialog = new CalibrationDialog(this,projectDialog->getProjectPath());
     process = new QProcess(this);
@@ -219,7 +220,8 @@ void MainWindow::initToolbar()
 
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
-        diDialog->show();
+//        diDialog->show();
+        monitorDialog->show();
     });
 
     ///平台选择下拉框

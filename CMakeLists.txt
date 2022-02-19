@@ -43,6 +43,7 @@ set ( PROJECT_SOURCES
     dialogs/testdialog.h dialogs/testdialog.cpp dialogs/testdialog.ui
     dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
+    dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
 
     image.qrc
     itemreadonlydelegate.h

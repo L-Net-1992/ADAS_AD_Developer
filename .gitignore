@@ -77,3 +77,15 @@ install/*
 conf/config.json
 
 
+*.bag
+*.tar
+**empty.cpp
+.vscode/*
+**/log/*
+**/output/*
+**/build/*
+**/install/*
+**/Debug/*
+**/generate/*
+/.metadata/
+__pycache__/

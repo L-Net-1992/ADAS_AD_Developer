@@ -109,11 +109,16 @@ private:
     //动作函数部分
     void pbOpenAction();
 
+    /* xlguo debug*/
+    std::string modules_path_ = "/home/guopeng/code/liudian/adas_node/output/"; // /home/guopeng/code/xlguo/install
+    std::string common_library_path_ = "/home/guopeng/code/liudian/adas_node/output/"; 
+
 private:
     void initNodeEditor();
     std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+
 
 private:
 //    static QString directMsg;

@@ -167,9 +167,9 @@ void MainWindow::initToolbar()
         SourceGenerator::generateCMakeProject(dir,*(fv->scene()),_moduleLibrary->packageLibrary());
 
         //generate shell script
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-jetson.json"),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-bst.json"),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-mdc.json"),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -467,9 +467,9 @@ void MainWindow::initNodeEditor(){
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
 
     //1:解析pakage文件
-    const QString path = QApplication::applicationDirPath()+"/install/";
-    QStringList files = getADASPackagesFileList(path);
+    const QString path = QString::fromStdString(modules_path_); //QApplication::applicationDirPath()+"/install/";
 
+    QStringList files = getADASPackagesFileList(path);
     //2:执行加载前的准备动作
     ui->statusbar->showMessage("Start load node moduls data...");
     ui->tw_toolbar->setEnabled(false);

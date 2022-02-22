@@ -261,8 +261,12 @@ private:
         ///获得配置信息
         QJsonObject jo = getConfig();
 
+        // tool.appendArgumentsAdjuster(
+        //             getInsertArgumentAdjuster({"-I",jo.value("clang").toString().append("/include").toStdString()},
+        //                                       clang::tooling::ArgumentInsertPosition::END));
+
         tool.appendArgumentsAdjuster(
-                    getInsertArgumentAdjuster({"-I",jo.value("clang").toString().append("/include").toStdString()},
+                    getInsertArgumentAdjuster({"-I", "/home/guopeng/environment/llvm/lib/clang/12.0.0/include"},
                                               clang::tooling::ArgumentInsertPosition::END));
 
 #ifdef Q_OS_WIN64

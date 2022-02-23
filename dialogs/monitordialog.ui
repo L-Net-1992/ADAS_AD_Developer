@@ -23,7 +23,7 @@
          <string>run</string>
         </property>
         <property name="icon">
-         <iconset resource="res.qrc">
+         <iconset resource="../image.qrc">
           <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
         </property>
         <property name="iconSize">
@@ -43,7 +43,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="res.qrc">
+         <iconset resource="../image.qrc">
           <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
         </property>
         <property name="iconSize">
@@ -56,11 +56,20 @@
       </item>
       <item>
        <widget class="QToolButton" name="btn_replay">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>...</string>
+         <string>Replay</string>
         </property>
         <property name="icon">
-         <iconset resource="res.qrc">
+         <iconset resource="../image.qrc">
           <normaloff>:/res/replay.png</normaloff>:/res/replay.png</iconset>
         </property>
         <property name="iconSize">
@@ -69,18 +78,36 @@
           <height>40</height>
          </size>
         </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoRepeat">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::NoArrow</enum>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="btn_save">
         <property name="text">
-         <string>...</string>
+         <string>Save</string>
         </property>
         <property name="icon">
-         <iconset resource="res.qrc">
+         <iconset resource="../image.qrc">
           <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
         </property>
         <property name="iconSize">
@@ -232,7 +259,7 @@
   </layout>
   <action name="actionrun">
    <property name="icon">
-    <iconset theme=":/res/Run_24.png">
+    <iconset theme=":/res/Save.png">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -253,7 +280,7 @@
     <string>stop</string>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/res/stop.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>stop</string>
    </property>
   </action>
   <action name="actionreplay">
@@ -265,6 +292,18 @@
     <string>replay</string>
    </property>
   </action>
+  <action name="actionsave">
+   <property name="icon">
+    <iconset theme=":/res/Save.png">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>save</string>
+   </property>
+   <property name="toolTip">
+    <string>save</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -274,7 +313,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../image.qrc"/>
  </resources>
  <connections/>
 </ui>

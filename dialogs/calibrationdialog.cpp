@@ -32,12 +32,12 @@ void CalibrationDialog::init(){
     ui->toolBar->addAction(ui->action_update);
 
     //设置第三列为只读,但此方法会覆盖掉原来的数据
-    for(int i=0;i<ui->tw_params->rowCount();i++){
-        QTableWidgetItem *item = new QTableWidgetItem();
-        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-        item->setText("3");
-        ui->tw_params->setItem(i,1,item);
-    }
+//    for(int i=0;i<ui->tw_params->rowCount();i++){
+//        QTableWidgetItem *item = new QTableWidgetItem();
+//        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
+//        //item->setText("3");
+//        ui->tw_params->setItem(i,1,item);
+//    }
 }
 
 ///初始化按钮事件

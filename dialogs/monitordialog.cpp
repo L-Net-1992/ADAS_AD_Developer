@@ -70,7 +70,8 @@ Dialog::Dialog(QWidget *parent)
     ui->tb_signal->setHorizontalHeaderLabels(headers);
 
     //Temp Data
-    ui->tb_signal->setRowCount(3);
+//    ui->tb_signal->setRowCount(3);
+//    for(int i=0;i<ui->tb_signal->rowCount();i++){
     for(int i=0;i<ui->tb_signal->rowCount();i++){
     //Checkbox
         QCheckBox *ckb = new QCheckBox(this);
@@ -87,8 +88,9 @@ Dialog::Dialog(QWidget *parent)
 
 
     //Name
-        QTableWidgetItem *itemName = new QTableWidgetItem("Output"+QString::number(i*99));
-        ui->tb_signal->setItem(i,2,itemName);
+//        QTableWidgetItem *itemName = new QTableWidgetItem("Output"+QString::number(i*99));
+//        ui->tb_signal->setItem(i,2,itemName);
+        QTableWidgetItem *itemName=ui->tb_signal->item(i,2);
         QString item = itemName->text();
         //qDebug()<<item;
     //Line

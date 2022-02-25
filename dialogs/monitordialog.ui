@@ -105,7 +105,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="btn_save">
+       <widget class="QToolButton" name="btn_open">
         <property name="text">
          <string>Save</string>
         </property>

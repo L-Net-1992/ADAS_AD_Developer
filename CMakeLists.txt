@@ -30,7 +30,7 @@ find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
-
+find_package(HDF5 REQUIRED )
 
 set ( PROJECT_SOURCES
     main.cpp
@@ -44,6 +44,8 @@ set ( PROJECT_SOURCES
     dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
+
+    hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
 
     image.qrc
     itemreadonlydelegate.h
@@ -83,6 +85,7 @@ target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
+#    ${HDF5_INCLUDE_DIRS}
     )
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
@@ -99,6 +102,7 @@ target_link_libraries(ADAS_AD_Developer
     clangSerialization
     clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
+    ${HDF5_LIBRARIES}
     )
 
 

@@ -76,5 +76,6 @@
         <file>res/stop.png</file>
         <file>res/function.png</file>
         <file>res/replay.png</file>
+        <file>res/pause.png</file>
     </qresource>
 </RCC>

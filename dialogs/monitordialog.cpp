@@ -7,6 +7,9 @@
 #include <QByteArray>
 #include <QDebug>
 #include <QChart>
+#include "hdf5/hdf5files_handle.h"
+
+using namespace utility;
 
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
@@ -14,42 +17,99 @@ Dialog::Dialog(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // clear buffer
+    signal_name_list_.clear();
+    signals_data_int.clear();
+    signals_data_float.clear();
+
     // btn_replay
+    ui->btn_replay->setText("replay");
     connect(ui->btn_replay, &QPushButton::clicked, this, [=](){
-        QString str = QFileDialog::getOpenFileName(this,"open file","./","*.hdf5");
+        if(ui->btn_replay->text() == "replay"){
+            ui->btn_replay->setText("stop");
+            QIcon icon;
+            icon.addFile(QString::fromUtf8(":/res/pause.png"), QSize(), QIcon::Normal, QIcon::Off);
+            ui->btn_replay->setIcon(icon);
+            ui->btn_replay->setIconSize(QSize(40, 40));
+            ui->btn_replay->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            ui->btn_replay->setAutoRaise(false);
 
-        QFile file(str);
-        file.open(QIODevice::ReadOnly);
+            timer1->start();
 
-        QByteArray array;
-        std::map<std::string,int>mp;
-        while(!file.atEnd()) {
-            array = file.readLine();
-            QString str(array);
-            //qDebug() << str;
         }
+        else {
+            ui->btn_replay->setText("replay");
+            QIcon icon;
+            icon.addFile(QString::fromUtf8(":/res/replay.png"), QSize(), QIcon::Normal, QIcon::Off);
+            ui->btn_replay->setIcon(icon);
+            ui->btn_replay->setIconSize(QSize(40, 40));
+            ui->btn_replay->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            ui->btn_replay->setAutoRaise(false);
 
-        //qDebug() << "path: " << str;
-        file.close();
+            timer1->stop();
+        }
     });
 
-    //Record data
-    connect(ui->btn_save,&QPushButton::clicked,this,[&]{
-        QJsonObject hdf5_save;
+    // btn_open
+    connect(ui->btn_open, &QPushButton::clicked, this, [=](){
+        Hdf5Handle file1;
+        QString str = QFileDialog::getOpenFileName(this,"open file", QApplication::applicationDirPath(),tr("HDF5 (*.h5 *.hdf5)"));
 
-        QJsonDocument qjdoc;
-        qjdoc.setObject(hdf5_save);
-        qDebug() << hdf5_save;
+        //
+        if(str == "") {
+            return;
+        }
+        hid_t ret = file1.open(str.toStdString());
+        if(ret == 1) {
+            // new_file.read();
+            signal_name_list_.clear();
+            signal_name_list_ = file1.get_list("/Signal");
 
-        //TODO::此处保存文件位置以后可以设置到项目目录中
-        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.hdf5)"));
-        if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
-            spath+=".hdf5";
-        QSharedPointer<QFile> save_file(new QFile(spath));
-        save_file->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);
-        //save_file->write(qjdoc.toJson());
-        save_file->close();
+            // update table content
+            set_table_content(signal_name_list_.size());
+            for(int i=0; i<signal_name_list_.size();++i) {
+                // display the signal on the table
+                QTableWidgetItem *it = new QTableWidgetItem("");
+                QString str = signal_name_list_.at(i).c_str();
+                it->setText(str);
+                ui->tb_signal->setItem(i,2,it);
+
+                // save files date to buffer
+                int val = file1.get_class(signal_name_list_[i], "/Signal");
+                if(val==0) {
+                    std::vector<int> arr_int = file1.get_data<int>(signal_name_list_[i], "/Signal");
+                    signals_data_int[signal_name_list_[i]] = arr_int;
+                } else {
+                    std::vector<float> arr_float = file1.get_data<float>(signal_name_list_[i], "/Signal");
+                    signals_data_float[signal_name_list_[i]] = arr_float;
+                }
+            }
+
+            file1.close();
+        }
+        else {
+            QMessageBox msg = QMessageBox(this);
+            msg.warning(this, "warning", "wrong file", QMessageBox::Ok, QMessageBox::Ok);
+        }
     });
+
+//    //Record data
+//    connect(ui->btn_save,&QPushButton::clicked,this,[&]{
+//        QJsonObject hdf5_save;
+
+//        QJsonDocument qjdoc;
+//        qjdoc.setObject(hdf5_save);
+//        qDebug() << hdf5_save;
+
+//        //TODO::此处保存文件位置以后可以设置到项目目录中
+//        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.hdf5)"));
+//        if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
+//            spath+=".hdf5";
+//        QSharedPointer<QFile> save_file(new QFile(spath));
+//        save_file->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);
+//        //save_file->write(qjdoc.toJson());
+//        save_file->close();
+//    });
 
 
     // table
@@ -70,10 +130,8 @@ Dialog::Dialog(QWidget *parent)
     ui->tb_signal->setHorizontalHeaderLabels(headers);
 
     //Temp Data
-//    ui->tb_signal->setRowCount(3);
-//    for(int i=0;i<ui->tb_signal->rowCount();i++){
     for(int i=0;i<ui->tb_signal->rowCount();i++){
-    //Checkbox
+        //Checkbox
         QCheckBox *ckb = new QCheckBox(this);
         QHBoxLayout *hLayout = new QHBoxLayout();
         hLayout->addWidget(ckb);
@@ -82,19 +140,13 @@ Dialog::Dialog(QWidget *parent)
         QWidget *wckb = new QWidget(ui->tb_signal);
         wckb->setLayout(hLayout);
         ui->tb_signal->setCellWidget(i,0,wckb);
-//        QTableWidgetItem *ckb=new QTableWidgetItem();
-//        ckb->setCheckState(Qt::Unchecked);
-//        ui->tb_signal->setItem(i,0,ckb);
 
 
-    //Name
-//        QTableWidgetItem *itemName = new QTableWidgetItem("Output"+QString::number(i*99));
-//        ui->tb_signal->setItem(i,2,itemName);
+        //Name
         QTableWidgetItem *itemName=ui->tb_signal->item(i,2);
         QString item = itemName->text();
-        //qDebug()<<item;
-    //Line
-    //        ▃▃▃▃▃
+
+        //Line  ▃▃▃▃▃
         QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
         //itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
         QByteArray byte = item.toUtf8();
@@ -105,10 +157,6 @@ Dialog::Dialog(QWidget *parent)
         itemLine->setTextColor(QColor((color*2)%256,(color*3)%256,(color*5)%256));
         ui->tb_signal->setItem(i,1,itemLine);
     }
-    //
-    //QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
-    //itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
-   // ui->tb_signal->setItem(0,1,itemLine);
 
     // chart
     QChart *chart = new QChart();
@@ -151,6 +199,33 @@ Dialog::Dialog(QWidget *parent)
     chart->addSeries(series);
     ui->chart->setRenderHint(QPainter::Antialiasing);
 
+    // timer1
+    timer1 = new QTimer(this);
+    timer1->setInterval(200);
+    connect(timer1, &QTimer::timeout, this, [=](){
+        // update signal list
+        if(signal_name_list_.size()) {
+            for(int i=0; i<signal_name_list_.size();++i) {
+                QTableWidgetItem *it = new QTableWidgetItem("");
+                QString str = signal_name_list_.at(i).c_str();
+                it->setText(str);
+                ui->tb_signal->setItem(i,2,it);
+            }
+        }
+
+        //
+
+    });
+
+
+    // timer2
+    timer2 = new QTimer(this);
+    timer2->setInterval(200);
+    connect(timer2, &QTimer::timeout, this, [=](){
+            qDebug() << "timer2 update";
+    });
+    //timer2->start();
+
 }
 
 QCheckBox * Dialog::getCheckBox(int row, int column)
@@ -162,3 +237,38 @@ Dialog::~Dialog()
     delete ui;
 }
 
+void Dialog::set_table_content(int number)
+{
+    ui->tb_signal->removeColumn(0);
+    ui->tb_signal->removeColumn(0);
+    ui->tb_signal->removeColumn(0);
+    ui->tb_signal->removeColumn(0);
+
+    ui->tb_signal->setColumnCount(4);
+    ui->tb_signal->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+    ui->tb_signal->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
+    ui->tb_signal->setColumnWidth(2,150);
+    ui->tb_signal->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
+
+    QStringList headers;
+    headers << QStringLiteral("Check") << QStringLiteral("Legend") << QStringLiteral("Name") << QStringLiteral("Value") ;
+    ui->tb_signal->setHorizontalHeaderLabels(headers);
+
+    //Temp Data
+    for(int i=0;i<number;i++){
+        //Checkbox
+        QCheckBox *ckb = new QCheckBox(this);
+        QHBoxLayout *hLayout = new QHBoxLayout();
+        hLayout->addWidget(ckb);
+        hLayout->setMargin(0);
+        hLayout->setAlignment(ckb,Qt::AlignCenter);
+        QWidget *wckb = new QWidget(ui->tb_signal);
+        wckb->setLayout(hLayout);
+        ui->tb_signal->setCellWidget(i,0,wckb);
+
+        // color
+        QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
+        itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
+        ui->tb_signal->setItem(i,1,itemLine);
+    }
+}

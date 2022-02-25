@@ -77,5 +77,8 @@
         <file>res/function.png</file>
         <file>res/replay.png</file>
         <file>res/calibration.png</file>
+        <file>res/export-module.png</file>
+        <file>res/import-module.png</file>
+        <file>res/merge-mould.png</file>
     </qresource>
 </RCC>

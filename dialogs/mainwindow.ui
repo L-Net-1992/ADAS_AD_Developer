@@ -1214,7 +1214,7 @@ Deploy</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
-           <normaloff>:/res/Import_24.png</normaloff>:/res/Import_24.png</iconset>
+           <normaloff>:/res/import-module.png</normaloff>:/res/import-module.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -1243,7 +1243,7 @@ Deploy</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
-           <normaloff>:/res/Import_24.png</normaloff>:/res/Import_24.png</iconset>
+           <normaloff>:/res/export-module.png</normaloff>:/res/export-module.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -1306,11 +1306,11 @@ Deploy</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>合并模块</string>
+          <string>组合模块</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
-           <normaloff>:/res/Import_24.png</normaloff>:/res/Import_24.png</iconset>
+           <normaloff>:/res/merge-mould.png</normaloff>:/res/merge-mould.png</iconset>
          </property>
          <property name="iconSize">
           <size>

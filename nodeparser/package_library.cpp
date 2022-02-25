@@ -14,7 +14,8 @@ void PackageLibrary::add_prefix_path(const std::filesystem::path &path) {
     if(!std::filesystem::is_directory(path)) {
         throw std::runtime_error(path.generic_string() + " not a directory");
     }
-    auto share_path = path / "share_config";
+    // xlguo debug
+    auto share_path = path / "share";
     if(!std::filesystem::is_directory(share_path))
         return;
     for(const auto & e:std::filesystem::recursive_directory_iterator(share_path)) {

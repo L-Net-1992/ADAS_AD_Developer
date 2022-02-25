@@ -11,9 +11,7 @@
    </rect>
   </property>
   <property name="font">
-   <font>
-    <family>方正准圆简体</family>
-   </font>
+   <font/>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -26,8 +24,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>741</width>
-     <height>461</height>
+     <width>381</width>
+     <height>231</height>
     </rect>
    </property>
    <property name="maximumSize">
@@ -37,9 +35,7 @@
     </size>
    </property>
    <property name="font">
-    <font>
-     <family>方正准圆简体</family>
-    </font>
+    <font/>
    </property>
    <property name="selectionMode">
     <enum>QAbstractItemView::NoSelection</enum>

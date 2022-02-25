@@ -75,5 +75,11 @@
         <file>res/deploy.png</file>
         <file>res/stop.png</file>
         <file>res/function.png</file>
+        <file>res/replay.png</file>
+        <file>res/calibration.png</file>
+        <file>res/export-module.png</file>
+        <file>res/import-module.png</file>
+        <file>res/merge-mould.png</file>
+        <file>res/pause.png</file>
     </qresource>
 </RCC>

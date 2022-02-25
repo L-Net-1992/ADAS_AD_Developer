@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
+    monitorDialog = new Dialog(this);
     eDialog = new EditorDialog(this);
     cDialog = new CalibrationDialog(this,projectDialog->getProjectPath());
     process = new QProcess(this);
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent)
         ui->pte_output->appendPlainText(process->readAll());
     });
 
+//    connect(this,&MainWindow::redirectMsg,this,[&](QString text){
+//        ui->pte_output->appendPlainText(text);
+//    });
 //    connect(_process,&QProcess::readyReadStandardOutput())
 
     this->initMenu();
@@ -47,14 +51,15 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     sqlite.closeConnection();
-    delete projectDialog;
-    delete npDialog;
-    delete nodeTreeDialog;
-    delete isDialog;
+//    delete projectDialog;
+//    delete npDialog;
+//    delete nodeTreeDialog;
+//    delete isDialog;
     delete ui;
 
 }
 
+///初始化菜单
 void MainWindow::initMenu()
 {
     connect(ui->actionExit,&QAction::triggered,this,&QWidget::close);
@@ -63,10 +68,6 @@ void MainWindow::initMenu()
     connect(ui->actionAbout,&QAction::triggered,this,&QApplication::aboutQt);
     connect(ui->actionNewProject,&QAction::triggered,projectDialog,&ProjectDialog::show);
     connect(ui->actionOpen,&QAction::triggered,this,&MainWindow::pbOpenAction);
-
-    QObject::connect(this,&MainWindow::redirectMsg,this,[&](QString text){
-        ui->pte_output->appendPlainText(text);
-    });
 }
 
 void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon){
@@ -75,7 +76,6 @@ void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon
     QIcon icon;
     icon.addPixmap(QPixmap(picon));
     pItem->setIcon(0,icon);
-
     tw->addTopLevelItem(pItem);
 }
 
@@ -175,14 +175,7 @@ void MainWindow::initToolbar()
         eDialog->openTextFile(QString::fromStdString(generatePath));
         eDialog->show();
 
-//        QMessageBox msgBox;
-//        QString msg = "The code is generated.Build path in '";
-//        msg.append(QString::fromStdString(generatePath));
-//        msgBox.setText(msg);
-//        msgBox.exec();
-
-
-    });
+    },Qt::UniqueConnection);
 
     //导入脚本按钮
     connect(ui->pb_import,&QPushButton::clicked,this,[&]{
@@ -227,7 +220,8 @@ void MainWindow::initToolbar()
 
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
-        diDialog->show();
+//        diDialog->show();
+        monitorDialog->show();
     });
 
     ///平台选择下拉框
@@ -473,6 +467,7 @@ void MainWindow::initNodeEditor(){
     //2:执行加载前的准备动作
     ui->statusbar->showMessage("Start load node moduls data...");
     ui->tw_toolbar->setEnabled(false);
+    ui->tw_node->setEnabled(false);
 
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
@@ -533,9 +528,9 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
 
     //4:启用工具栏
-    //    ui->tw_toolbar->setTabEnabled(true);
-    qDebug() << "tw_toolbar->setEnabled(true)";
+    ui->statusbar->showMessage("Node modules data load complete.");
     ui->tw_toolbar->setEnabled(true);
+    ui->tw_node->setEnabled(true);
     ui->menubar->setEnabled(true);
 }
 
@@ -645,14 +640,10 @@ void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,cons
     }
     omsg.append(msg);
     pte_out->appendPlainText(omsg);
-//    write(omsg);
-    //    emit redirectMsg(msg);
-    //    ui->pte_output->appendPlainText(msg);
 }
 
 void MainWindow::write(QString str){
     //    text = str;
-
 }
 
 

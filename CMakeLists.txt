@@ -30,7 +30,7 @@ find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
-
+find_package(HDF5 REQUIRED)
 
 set ( PROJECT_SOURCES
     main.cpp

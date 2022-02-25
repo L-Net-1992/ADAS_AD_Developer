@@ -592,7 +592,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1148,7 +1148,7 @@ Deploy</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
-           <normaloff>:/res/update.png</normaloff>:/res/update.png</iconset>
+           <normaloff>:/res/calibration.png</normaloff>:/res/calibration.png</iconset>
          </property>
          <property name="iconSize">
           <size>

@@ -22,36 +22,44 @@ Dialog::Dialog(QWidget *parent)
     signals_data_int.clear();
     signals_data_float.clear();
 
-    // btn_replay
-    ui->btn_replay->setText("replay");
-    connect(ui->btn_replay, &QPushButton::clicked, this, [=](){
-        if(ui->btn_replay->text() == "replay"){
-            ui->btn_replay->setText("stop");
+    // btn_monitor_start
+    ui->btn_monitor_start->setText("run");
+    connect(ui->btn_monitor_start, &QPushButton::clicked, this, [=](){
+        QHeaderView *header_view = ui->tb_signal->verticalHeader();
+        header_view->setHidden(true);
+        ui->tb_signal->horizontalHeader()->setStretchLastSection(true);
+    });
+
+    // btn_replay_start
+    ui->btn_replay_start->setText("replay");
+    connect(ui->btn_replay_start, &QPushButton::clicked, this, [=](){
+        if(ui->btn_replay_start->text() == "replay"){
+            ui->btn_replay_start->setText("stop");
             QIcon icon;
             icon.addFile(QString::fromUtf8(":/res/pause.png"), QSize(), QIcon::Normal, QIcon::Off);
-            ui->btn_replay->setIcon(icon);
-            ui->btn_replay->setIconSize(QSize(40, 40));
-            ui->btn_replay->setToolButtonStyle(Qt::ToolButtonIconOnly);
-            ui->btn_replay->setAutoRaise(false);
+            ui->btn_replay_start->setIcon(icon);
+            ui->btn_replay_start->setIconSize(QSize(40, 40));
+            ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            ui->btn_replay_start->setAutoRaise(false);
 
             timer1->start();
 
         }
         else {
-            ui->btn_replay->setText("replay");
+            ui->btn_replay_start->setText("replay");
             QIcon icon;
             icon.addFile(QString::fromUtf8(":/res/replay.png"), QSize(), QIcon::Normal, QIcon::Off);
-            ui->btn_replay->setIcon(icon);
-            ui->btn_replay->setIconSize(QSize(40, 40));
-            ui->btn_replay->setToolButtonStyle(Qt::ToolButtonIconOnly);
-            ui->btn_replay->setAutoRaise(false);
+            ui->btn_replay_start->setIcon(icon);
+            ui->btn_replay_start->setIconSize(QSize(40, 40));
+            ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            ui->btn_replay_start->setAutoRaise(false);
 
             timer1->stop();
         }
     });
 
-    // btn_open
-    connect(ui->btn_open, &QPushButton::clicked, this, [=](){
+    // btn_replay_open
+    connect(ui->btn_replay_open, &QPushButton::clicked, this, [=](){
         Hdf5Handle file1;
         QString str = QFileDialog::getOpenFileName(this,"open file", QApplication::applicationDirPath(),tr("HDF5 (*.h5 *.hdf5)"));
 
@@ -66,15 +74,10 @@ Dialog::Dialog(QWidget *parent)
             signal_name_list_ = file1.get_list("/Signal");
 
             // update table content
-            set_table_content(signal_name_list_.size());
-            for(int i=0; i<signal_name_list_.size();++i) {
-                // display the signal on the table
-                QTableWidgetItem *it = new QTableWidgetItem("");
-                QString str = signal_name_list_.at(i).c_str();
-                it->setText(str);
-                ui->tb_signal->setItem(i,2,it);
+            update_table_content(signal_name_list_.size());
 
-                // save files date to buffer
+            // save files date to buffer
+            for(int i=0; i<signal_name_list_.size();++i) {
                 int val = file1.get_class(signal_name_list_[i], "/Signal");
                 if(val==0) {
                     std::vector<int> arr_int = file1.get_data<int>(signal_name_list_[i], "/Signal");
@@ -92,6 +95,7 @@ Dialog::Dialog(QWidget *parent)
             msg.warning(this, "warning", "wrong file", QMessageBox::Ok, QMessageBox::Ok);
         }
     });
+
 
 //    //Record data
 //    connect(ui->btn_save,&QPushButton::clicked,this,[&]{
@@ -126,7 +130,7 @@ Dialog::Dialog(QWidget *parent)
 //    ui->tb_signal->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QStringList headers;
-    headers << QStringLiteral("Check") << QStringLiteral("Legend") << QStringLiteral("Name") << QStringLiteral("Value") ;
+    headers << QStringLiteral("选择") << QStringLiteral("图例") << QStringLiteral("信号") << QStringLiteral("值") ;
     ui->tb_signal->setHorizontalHeaderLabels(headers);
 
     //Temp Data
@@ -237,22 +241,9 @@ Dialog::~Dialog()
     delete ui;
 }
 
-void Dialog::set_table_content(int number)
+void Dialog::update_table_content(int number)
 {
-    ui->tb_signal->removeColumn(0);
-    ui->tb_signal->removeColumn(0);
-    ui->tb_signal->removeColumn(0);
-    ui->tb_signal->removeColumn(0);
-
-    ui->tb_signal->setColumnCount(4);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
-    ui->tb_signal->setColumnWidth(2,150);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
-
-    QStringList headers;
-    headers << QStringLiteral("Check") << QStringLiteral("Legend") << QStringLiteral("Name") << QStringLiteral("Value") ;
-    ui->tb_signal->setHorizontalHeaderLabels(headers);
+    ui->tb_signal->clearContents();
 
     //Temp Data
     for(int i=0;i<number;i++){
@@ -270,5 +261,11 @@ void Dialog::set_table_content(int number)
         QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
         itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
         ui->tb_signal->setItem(i,1,itemLine);
+
+        // name
+        QTableWidgetItem *it = new QTableWidgetItem("");
+        QString str = signal_name_list_.at(i).c_str();
+        it->setText(str);
+        ui->tb_signal->setItem(i,2,it);
     }
 }

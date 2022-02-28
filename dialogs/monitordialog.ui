@@ -197,7 +197,7 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <property name="text">
-            <string>Signals Table</string>
+            <string>信号列表</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -303,22 +303,22 @@
            </row>
            <column>
             <property name="text">
-             <string>Check</string>
+             <string>选择</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Legend</string>
+             <string>图例</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Name</string>
+             <string>信号</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Value</string>
+             <string>值</string>
             </property>
            </column>
            <item row="0" column="2">
@@ -454,7 +454,7 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <property name="text">
-            <string>Signals Graphic</string>
+            <string>信号图表</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>

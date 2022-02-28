@@ -201,17 +201,17 @@
      </row>
      <column>
       <property name="text">
-       <string>Parameter</string>
+       <string>参数</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Current Value</string>
+       <string>当前值</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>New Value</string>
+       <string>新值</string>
       </property>
      </column>
      <item row="0" column="0">

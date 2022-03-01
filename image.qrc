@@ -81,5 +81,6 @@
         <file>res/import-module.png</file>
         <file>res/merge-mould.png</file>
         <file>res/pause.png</file>
+        <file>res/edit_script.png</file>
     </qresource>
 </RCC>

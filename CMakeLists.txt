@@ -45,6 +45,7 @@ set ( PROJECT_SOURCES
     dialogs/datainspectordialog.h dialogs/datainspectordialog.cpp dialogs/datainspectordialog.ui
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
+    dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
 
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
 

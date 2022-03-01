@@ -24,7 +24,7 @@ void ProjectDialog::initButton()
     ui->pb_project_finish->hide();
     int nCount = ui->sw_project->count();
 
-    //back button event
+    //返回按钮事件
     connect(ui->pb_project_back,&QPushButton::clicked,this,[&]()
     {
         int nIndex = ui->sw_project->currentIndex();
@@ -36,7 +36,7 @@ void ProjectDialog::initButton()
         ui->sw_project->setCurrentIndex(nIndex);
     });
 
-    //next button event
+    //下一步按钮事件
     connect(ui->pb_project_next,&QPushButton::clicked,this,[&,nCount]()
     {
         int nIndex = ui->sw_project->currentIndex();
@@ -50,14 +50,14 @@ void ProjectDialog::initButton()
         ui->sw_project->setCurrentIndex(nIndex);
     });
 
-    //cancel button event
+    //取消按钮事件
     connect(ui->pb_project_cancel,&QPushButton::clicked,this,[&]()
     {
         this->close();
     });
 
 
-    //finish button event
+    //完成按钮事件
     connect(ui->pb_project_finish,&QPushButton::clicked,this,[&,this]()
     {
         //create folder
@@ -93,7 +93,7 @@ void ProjectDialog::initButton()
         }
 
 
-        //create project file
+        //创建项目文件
         QFile file(projectConfigFolder+"/project.xml");
         bool file_exist = file.exists();
         if(!file_exist)

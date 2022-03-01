@@ -51,10 +51,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     sqlite.closeConnection();
-//    delete projectDialog;
-//    delete npDialog;
-//    delete nodeTreeDialog;
-//    delete isDialog;
     delete ui;
 
 }
@@ -152,6 +148,9 @@ void MainWindow::initToolbar()
     delete titleBarWidget;
 
     ui->tw_toolbar->setCurrentIndex(0);
+
+    //设置New按钮显示项目子窗口
+    connect(ui->tb_new,&QToolButton::clicked,projectDialog,&ProjectDialog::show);
 
     //显示node模块的窗口
     connect(ui->pb_library_browser,&QPushButton::clicked,this,[&]{
@@ -397,6 +396,8 @@ void MainWindow::initStackedWidget(){
         if(nodeDataModel->name()=="subsystem::SubSystem"){
             return;
         }
+
+
 
         npDialog->show();
         QTableWidget *nptw =  npDialog->getTableNodeParameters();

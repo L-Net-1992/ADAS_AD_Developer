@@ -1171,7 +1171,7 @@ Deploy</string>
         <widget class="QToolButton" name="pb_import">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>110</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1200,7 +1200,7 @@ Deploy</string>
         <widget class="QToolButton" name="pb_import_module">
          <property name="geometry">
           <rect>
-           <x>220</x>
+           <x>320</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1229,7 +1229,7 @@ Deploy</string>
         <widget class="QToolButton" name="pb_export_module">
          <property name="geometry">
           <rect>
-           <x>120</x>
+           <x>220</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1261,7 +1261,7 @@ Deploy</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>110</x>
+           <x>210</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1280,7 +1280,7 @@ Deploy</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>320</x>
+           <x>420</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1296,7 +1296,7 @@ Deploy</string>
         <widget class="QToolButton" name="pb_merge_module">
          <property name="geometry">
           <rect>
-           <x>330</x>
+           <x>430</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1311,6 +1311,35 @@ Deploy</string>
          <property name="icon">
           <iconset resource="../image.qrc">
            <normaloff>:/res/merge-mould.png</normaloff>:/res/merge-mould.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="pb_edit_script">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>91</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>编写脚本</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/edit_script.png</normaloff>:/res/edit_script.png</iconset>
          </property>
          <property name="iconSize">
           <size>

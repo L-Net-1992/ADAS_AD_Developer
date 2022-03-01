@@ -20,7 +20,7 @@ public:
 
     QCheckBox * getCheckBox(int row, int column);
 
-    void set_table_content(int number);
+    void update_table_content(int number);
 
 private:
     Ui::Dialog *ui;

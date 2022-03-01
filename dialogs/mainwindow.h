@@ -32,6 +32,7 @@
 #include <controllers/aiccstackedwidget.hpp>
 #include <dialogs/projectdialog.h>
 #include <dialogs/nodeparametersdialog.h>
+#include <dialogs/nodeparametersmildialog.h>
 #include <dialogs/nodetreedialog.h>
 #include <dialogs/testdialog.h>
 #include <dialogs/datainspectordialog.h>
@@ -79,6 +80,7 @@ private:
     AICCSqlite sqlite;
     ProjectDialog *projectDialog;
     NodeParametersDialog *npDialog;
+    NodeParametersMILDialog *npmilDialog;
     NodeTreeDialog *nodeTreeDialog;
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;

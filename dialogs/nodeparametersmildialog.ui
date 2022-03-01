@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>导入数据文件</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="spacing">
@@ -49,7 +49,11 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="le_sensor1"/>
+          <widget class="QLineEdit" name="le_sensor1">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="tb_sensor1">
@@ -106,7 +110,11 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="le_sensor2"/>
+          <widget class="QLineEdit" name="le_sensor2">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="tb_sensor2">
@@ -166,7 +174,11 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="le_sensor3"/>
+          <widget class="QLineEdit" name="le_sensor3">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="tb_sensor3">
@@ -229,7 +241,11 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="le_sensor4"/>
+          <widget class="QLineEdit" name="le_sensor4">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="tb_sensor4">

@@ -10,9 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
+    this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
     projectDialog = new ProjectDialog(this);
     npDialog = new NodeParametersDialog(this);
+    npmilDialog = new NodeParametersMILDialog(this);
     isDialog = new ImportScriptDialog(this);
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
@@ -29,10 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
         ui->pte_output->appendPlainText(process->readAll());
     });
 
-//    connect(this,&MainWindow::redirectMsg,this,[&](QString text){
-//        ui->pte_output->appendPlainText(text);
-//    });
-//    connect(_process,&QProcess::readyReadStandardOutput())
+    //    connect(this,&MainWindow::redirectMsg,this,[&](QString text){
+    //        ui->pte_output->appendPlainText(text);
+    //    });
+    //    connect(_process,&QProcess::readyReadStandardOutput())
 
     this->initMenu();
     this->initTreeView();
@@ -219,7 +221,7 @@ void MainWindow::initToolbar()
 
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
-//        diDialog->show();
+        //        diDialog->show();
         monitorDialog->show();
     });
 
@@ -232,7 +234,7 @@ void MainWindow::initToolbar()
     });
 
 
-//    connect(_process,QProcess::readyReadStandardOutput,this,[&]())
+    //    connect(_process,QProcess::readyReadStandardOutput,this,[&]())
 
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
@@ -397,11 +399,15 @@ void MainWindow::initStackedWidget(){
             return;
         }
 
-
-
-        npDialog->show();
-        QTableWidget *nptw =  npDialog->getTableNodeParameters();
-        fillTableData(nptw,nodeDataModel);
+        //如果点击的是MIL模块，显示特殊的文件加载子窗口
+        else if(nodeDataModel->name()=="business_package::mil_import"){
+            npmilDialog->show();
+        }
+        else {
+            npDialog->show();
+            QTableWidget *nptw =  npDialog->getTableNodeParameters();
+            fillTableData(nptw,nodeDataModel);
+        }
     });
 
 

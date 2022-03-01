@@ -2,6 +2,7 @@
 #define NODEPARAMETERSMILDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 namespace Ui {
 class NodeParametersMILDialog;

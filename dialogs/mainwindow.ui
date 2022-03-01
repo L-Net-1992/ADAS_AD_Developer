@@ -592,7 +592,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -734,7 +734,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -768,7 +768,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -802,7 +802,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -836,7 +836,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -870,7 +870,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -899,7 +899,7 @@ gridline-color:#FFFFFF;
          <font/>
         </property>
         <attribute name="title">
-         <string>编译</string>
+         <string>部署</string>
         </attribute>
         <widget class="QToolButton" name="tb_code_compiler">
          <property name="enabled">
@@ -915,7 +915,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -955,7 +955,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -989,7 +989,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
@@ -1024,7 +1024,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -1058,7 +1058,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
@@ -1370,7 +1370,7 @@ gridline-color:#FFFFFF;
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>关于</string>
    </property>
    <property name="font">
     <font/>
@@ -1400,7 +1400,7 @@ gridline-color:#FFFFFF;
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>NodeWindow</string>
+    <string>节点窗口</string>
    </property>
    <property name="font">
     <font/>
@@ -1414,7 +1414,7 @@ gridline-color:#FFFFFF;
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>PropertyWindow</string>
+    <string>属性窗口</string>
    </property>
    <property name="font">
     <font/>

@@ -14,7 +14,7 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>Generate Editor</string>
+   <string>代码编辑器</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout"/>
  </widget>

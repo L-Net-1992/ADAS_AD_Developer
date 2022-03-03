@@ -430,7 +430,7 @@ void MainWindow::initStackedWidget(){
 ///动作函数部分
 void MainWindow::pbOpenAction(){
     //1：加载配置文件初始化各项数据
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Open Project"),QDir::homePath(),tr("Project (*.xml)"));
+    QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
     if(!QFileInfo::exists(fileName)) return;
     QFile file(fileName);
     projectDialog->readProjectXml(file);
@@ -476,7 +476,7 @@ void MainWindow::initNodeEditor(){
     QStringList files = getADASPackagesFileList(path);
 
     //2:执行加载前的准备动作
-    ui->statusbar->showMessage("Start load node moduls data...");
+    ui->statusbar->showMessage("正在加载节点模块数据");
     ui->tw_toolbar->setEnabled(false);
     ui->tw_node->setEnabled(false);
 
@@ -539,7 +539,7 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
 
     //4:启用工具栏
-    ui->statusbar->showMessage("Node modules data load complete.");
+    ui->statusbar->showMessage("节点模型数据加载已完成");
     ui->tw_toolbar->setEnabled(true);
     ui->tw_node->setEnabled(true);
     ui->menubar->setEnabled(true);

@@ -1102,7 +1102,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Inject</string>
+          <string>注入</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1354,7 +1354,7 @@ gridline-color:#FFFFFF;
   </widget>
   <action name="actionNewProject">
    <property name="text">
-    <string>Project</string>
+    <string>项目</string>
    </property>
    <property name="font">
     <font/>

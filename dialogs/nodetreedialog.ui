@@ -23,7 +23,7 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>Modules Browser</string>
+   <string>模块浏览器</string>
   </property>
   <property name="modal">
    <bool>false</bool>

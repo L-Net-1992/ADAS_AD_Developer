@@ -32,7 +32,7 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>Import</string>
+   <string>导入脚本</string>
   </property>
   <widget class="QPushButton" name="pb_import">
    <property name="geometry">

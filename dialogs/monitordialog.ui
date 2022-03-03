@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>信号监测&amp;回放</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -43,7 +43,7 @@
         <property name="currentIndex">
          <number>1</number>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="widget">
          <attribute name="title">
           <string>信号监测</string>
          </attribute>

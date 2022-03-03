@@ -71,7 +71,7 @@ void ProjectDialog::initButton()
         bool existProjectFolder = folder.exists(projectFolder);
         if(existProjectFolder)
         {
-            QMessageBox::information(this,tr("create folder"),tr("the folder is existed,please select other path"));
+            QMessageBox::information(this,tr("建立文件夹"),tr("文件夹已经存在，请选择其他路径"));
             return;
         }
         else
@@ -79,7 +79,7 @@ void ProjectDialog::initButton()
             bool pfok = folder.mkdir(projectFolder);
             if(!pfok)
             {
-                QMessageBox::information(this,tr("create folder"),tr("create folder failed:").append(projectFolder));
+                QMessageBox::information(this,tr("建立文件夹"),tr("建立文件夹失败：").append(projectFolder));
                 return;
             }
             //创建配置信息文件夹
@@ -87,7 +87,7 @@ void ProjectDialog::initButton()
             bool pcfok = folder.mkdir(projectConfigFolder);
             if(!pcfok)
             {
-                QMessageBox::information(this,tr("create .ap folder"),tr("create .ap folder failed:").append(projectConfigFolder));
+                QMessageBox::information(this,tr("建立 .ap 文件夹"),tr("建立 .ap 文件夹失败：").append(projectConfigFolder));
                 return;
             }
         }
@@ -145,7 +145,7 @@ void ProjectDialog::initOpenPath()
 {
     connect(ui->pb_project_path,&QPushButton::clicked,this,[&]()
     {
-        QString path = QFileDialog::getExistingDirectory(this,"Choose Directory","./");
+        QString path = QFileDialog::getExistingDirectory(this,"选择目录","./");
         if(path.isEmpty()) return;
         else ui->le_project_path->setText(path);
     });
@@ -207,14 +207,15 @@ void ProjectDialog::readProjectXml(QFile &file){
     this->setProjectPath(qsl[0]);
 
     if(this->projectName==""){
-        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
+        QMessageBox::critical(Q_NULLPTR,"危险","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
+//        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
         return;
     }
 
     QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
     for(int i=0;i<flowScenes.count();i++){
         QDomNode flowScene = flowScenes.item(i);
-        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
+        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("保存文件").value());
     }
 
 }

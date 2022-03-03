@@ -179,7 +179,7 @@ void MainWindow::initToolbar()
     },Qt::UniqueConnection);
 
     //导入脚本按钮
-    connect(ui->pb_import,&QPushButton::clicked,this,[&]{
+    connect(ui->tb_import,&QPushButton::clicked,this,[&]{
         isDialog->show();
     });
 
@@ -233,6 +233,10 @@ void MainWindow::initToolbar()
             ui->tb_code_compiler->setEnabled(true);
     });
 
+
+    connect(ui->tb_edit_script,&QToolButton::clicked,this,[&]{
+        eDialog->show();
+    });
 
     //    connect(_process,QProcess::readyReadStandardOutput,this,[&]())
 

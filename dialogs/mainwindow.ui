@@ -592,7 +592,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1163,7 +1163,7 @@ gridline-color:#FFFFFF;
         <attribute name="title">
          <string>自定义模块</string>
         </attribute>
-        <widget class="QToolButton" name="pb_import">
+        <widget class="QToolButton" name="tb_import">
          <property name="geometry">
           <rect>
            <x>110</x>
@@ -1192,7 +1192,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_import_module">
+        <widget class="QToolButton" name="tb_import_module">
          <property name="geometry">
           <rect>
            <x>320</x>
@@ -1221,7 +1221,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_export_module">
+        <widget class="QToolButton" name="tb_export_module">
          <property name="geometry">
           <rect>
            <x>220</x>
@@ -1288,7 +1288,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::Vertical</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_merge_module">
+        <widget class="QToolButton" name="tb_merge_module">
          <property name="geometry">
           <rect>
            <x>430</x>
@@ -1317,7 +1317,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_edit_script">
+        <widget class="QToolButton" name="tb_edit_script">
          <property name="geometry">
           <rect>
            <x>10</x>

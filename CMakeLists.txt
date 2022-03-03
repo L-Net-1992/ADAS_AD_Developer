@@ -23,7 +23,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_C
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
-#find_package(Qt5 COMPONENTS Widgets Xml Sql REQUIRED)-
 find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(NodeEditor REQUIRED)
@@ -31,7 +30,10 @@ find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
+#find_package(qscintilla2 REQUIRED MODULE)
+#find_package(QsciScintilla REQUIRED MODULE)
 
+#add_library(QsciScintilla INTERFACE IMPORTED)
 
 set ( PROJECT_SOURCES
     main.cpp
@@ -52,7 +54,6 @@ set ( PROJECT_SOURCES
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp
-#    calculator/aicccalculator.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
@@ -87,7 +88,6 @@ target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
-#    ${HDF5_INCLUDE_DIRS}
     )
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
@@ -105,6 +105,7 @@ target_link_libraries(ADAS_AD_Developer
     clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
+    libqscintilla2_qt5.so
     )
 
 

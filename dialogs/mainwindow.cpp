@@ -364,7 +364,7 @@ void MainWindow::initToolbar()
 ///初始化面包屑导航
 void MainWindow::initBreadcrumbNavigation(){
     QStringList lpath;
-    lpath << "root";
+    lpath << "源";
     ui->l_breadcrumb_navigation->makeNavigationData(lpath);
     ui->l_breadcrumb_navigation->refreshNavigationView();
 
@@ -453,7 +453,7 @@ void MainWindow::initProjectDialog(){
     connect(projectDialog,&ProjectDialog::projectCreateCompleted,this,[&](bool success){
         //1:处理面包屑导航
         QStringList lpath;
-        lpath << "root";
+        lpath << "源";
         ui->l_breadcrumb_navigation->makeNavigationData(lpath);
         ui->l_breadcrumb_navigation->refreshNavigationView();
 

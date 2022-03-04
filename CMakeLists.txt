@@ -30,10 +30,7 @@ find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
-#find_package(qscintilla2 REQUIRED MODULE)
-#find_package(QsciScintilla REQUIRED MODULE)
 
-#add_library(QsciScintilla INTERFACE IMPORTED)
 
 set ( PROJECT_SOURCES
     main.cpp

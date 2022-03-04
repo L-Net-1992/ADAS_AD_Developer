@@ -6,14 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>信号监测&amp;回放</string>
+   <string>信号监测及回放</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
    <item>
     <widget class="QWidget" name="widget_6" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -24,13 +36,13 @@
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>3</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QTabWidget" name="tabWidget">
@@ -80,11 +92,14 @@
              </property>
              <item>
               <widget class="QToolButton" name="btn_monitor_start">
+               <property name="toolTip">
+                <string>start</string>
+               </property>
                <property name="text">
                 <string>run</string>
                </property>
                <property name="icon">
-                <iconset resource="../image.qrc">
+                <iconset resource="res.qrc">
                  <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
                </property>
                <property name="iconSize">
@@ -100,11 +115,14 @@
              </item>
              <item>
               <widget class="QToolButton" name="btn_monitor_stop">
+               <property name="toolTip">
+                <string>stop</string>
+               </property>
                <property name="text">
                 <string>...</string>
                </property>
                <property name="icon">
-                <iconset resource="../image.qrc">
+                <iconset resource="res.qrc">
                  <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
                </property>
                <property name="iconSize">
@@ -112,6 +130,35 @@
                  <width>40</width>
                  <height>40</height>
                 </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="btn_monitor_record">
+               <property name="toolTip">
+                <string>signal record</string>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
+               <property name="text">
+                <string>record</string>
+               </property>
+               <property name="icon">
+                <iconset resource="res.qrc">
+                 <normaloff>:/res/Save.png</normaloff>:/res/Save.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>40</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -185,11 +232,14 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>开始</string>
+               </property>
                <property name="text">
                 <string>Replay</string>
                </property>
                <property name="icon">
-                <iconset resource="../image.qrc">
+                <iconset resource="res.qrc">
                  <normaloff>:/res/replay.png</normaloff>:/res/replay.png</iconset>
                </property>
                <property name="iconSize">
@@ -225,29 +275,15 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="btn_replay_stop">
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../image.qrc">
-                 <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>40</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QToolButton" name="btn_replay_open">
+               <property name="toolTip">
+                <string>打开文件</string>
+               </property>
                <property name="text">
                 <string>Save</string>
                </property>
                <property name="icon">
-                <iconset resource="../image.qrc">
+                <iconset resource="res.qrc">
                  <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
                </property>
                <property name="iconSize">
@@ -618,12 +654,15 @@
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="toolButton">
+             <widget class="QToolButton" name="btn_add_chart">
+              <property name="toolTip">
+               <string>New Chart</string>
+              </property>
               <property name="text">
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../image.qrc">
+               <iconset resource="res.qrc">
                 <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
               </property>
               <property name="iconSize">
@@ -703,7 +742,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../image.qrc"/>
+  <include location="res.qrc"/>
  </resources>
  <connections/>
 </ui>

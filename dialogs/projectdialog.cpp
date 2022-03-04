@@ -215,7 +215,7 @@ void ProjectDialog::readProjectXml(QFile &file){
     QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
     for(int i=0;i<flowScenes.count();i++){
         QDomNode flowScene = flowScenes.item(i);
-        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("保存文件").value());
+        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
     }
 
 }

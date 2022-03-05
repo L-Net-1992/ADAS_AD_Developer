@@ -62,11 +62,11 @@ void ProjectDialog::initButton()
     {
         //create folder
         QDir folder;
-        //        QString fullpath = projectPath+"/"+projectName+"/.ap";
+        //        QString fullpath = projectPath+"/"+projectName+"/ap";
 
         //创建项目文件夹
         QString projectFolder = projectPath+"/"+projectName;
-        QString projectConfigFolder = projectFolder+"/.ap";
+        QString projectConfigFolder = projectFolder+"/ap";
 
         bool existProjectFolder = folder.exists(projectFolder);
         if(existProjectFolder)
@@ -203,7 +203,7 @@ void ProjectDialog::readProjectXml(QFile &file){
     this->projectName = root.attributeNode("name").value();
 
     //获取项目路径
-    QStringList qsl = file.fileName().split("/"+this->projectName+"/.ap");
+    QStringList qsl = file.fileName().split("/"+this->projectName+"/ap");
     this->setProjectPath(qsl[0]);
 
     if(this->projectName==""){

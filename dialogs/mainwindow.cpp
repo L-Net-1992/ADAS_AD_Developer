@@ -7,6 +7,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     qDebug() << "debug----------------";
+
+    auto AA_modules_path = getenv("AA_PLATFORM_MODULES_PATH");
+    if (nullptr != AA_modules_path) {
+        std::cout << "AA_PLATFORM_MODULES_PATH = " << AA_modules_path << std::endl;
+        modules_path_ = AA_modules_path;
+    } else {
+        std::cout << "AA_PLATFORM_MODULES_PATH is nullptr " << std::endl;
+    }
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);

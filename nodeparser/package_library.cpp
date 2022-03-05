@@ -152,6 +152,7 @@ void PackageLibrary::load_prefix_paths_from_config_file(const std::filesystem::p
     }
     auto prefix = json.as_object()["prefix_paths"].as_array();
     for(const auto & elem: prefix) {
+        std::cout << "xlguo debug module " << prefix << std::endl;
         std::filesystem::path prefix_path(elem.as_string().c_str());
         if(prefix_path.is_relative())
             prefix_path = config_dir / prefix_path;

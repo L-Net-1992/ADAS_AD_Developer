@@ -37,7 +37,7 @@
 #include <dialogs/testdialog.h>
 #include <dialogs/datainspectordialog.h>
 #include <dialogs/monitordialog.h>
-#include <dialogs/editordialog.h>
+#include <dialogs/editorwindow.h>
 #include <dialogs/calibrationdialog.h>
 #include "stdio.h"
 #include "utils.h"
@@ -85,7 +85,7 @@ private:
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;
     Dialog *monitorDialog;
-    EditorDialog *eDialog;
+    EditorWindow *eDialog;
     CalibrationDialog *cDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
     QProcess * process;

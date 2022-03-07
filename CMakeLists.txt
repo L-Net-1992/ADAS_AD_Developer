@@ -36,7 +36,8 @@ set ( PROJECT_SOURCES
     main.cpp
     dialogs/mainwindow.h dialogs/mainwindow.cpp dialogs/mainwindow.ui
     dialogs/projectdialog.h dialogs/projectdialog.cpp dialogs/projectdialog.ui
-    dialogs/editordialog.h dialogs/editordialog.cpp dialogs/editordialog.ui
+#    dialogs/editordialog.h dialogs/editordialog.cpp dialogs/editordialog.ui
+    dialogs/editorwindow.h dialogs/editorwindow.cpp dialogs/editorwindow.ui
     dialogs/nodeparametersdialog.h dialogs/nodeparametersdialog.cpp dialogs/nodeparametersdialog.ui
     dialogs/nodetreedialog.h dialogs/nodetreedialog.cpp dialogs/nodetreedialog.ui
     dialogs/importscriptdialog.h dialogs/importscriptdialog.cpp dialogs/importscriptdialog.ui

@@ -32,6 +32,7 @@ private slots:
 
 private:
     void initEditor(QWidget *parent = nullptr);
+    void initAction();
     bool maybeSave();
     void loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);

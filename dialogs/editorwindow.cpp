@@ -6,11 +6,34 @@ EditorWindow::EditorWindow(QWidget *parent) :
     ui(new Ui::EditorWindow)
 {
     ui->setupUi(this);
+    initEditor();
+    initAction();
 }
 
 EditorWindow::~EditorWindow()
 {
     delete ui;
+}
+
+void EditorWindow::initAction(){
+    connect(ui->actionNew,&QAction::triggered,this,[&](){
+        newFile();
+    });
+    connect(ui->actionOpen,&QAction::triggered,this,[&](){
+        open();
+    });
+    connect(ui->actionSave,&QAction::triggered,this,[&](){
+        save();
+    });
+    connect(ui->actionCopy,&QAction::triggered,this,[&](){
+        _editor->copy();
+    });
+    connect(ui->actionCut,&QAction::triggered,this,[&](){
+       _editor->cut();
+    });
+    connect(ui->actionPaste,&QAction::triggered,this,[&](){
+       _editor->paste();
+    });
 }
 
 void EditorWindow::newFile()
@@ -194,7 +217,4 @@ void EditorWindow::initEditor(QWidget *parent){
     _editor->setAutoCompletionThreshold(1);                                //每输入一个字符就会出现自动补全的提示
 
     this->setCentralWidget(_editor);
-//    ui->verticalLayout->addWidget(_editor);
-
-//    setCentralwidget(editor);
 }

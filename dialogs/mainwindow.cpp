@@ -233,7 +233,7 @@ void MainWindow::initToolbar()
             ui->tb_code_compiler->setEnabled(true);
     });
 
-
+    //显示脚本编辑器
     connect(ui->tb_edit_script,&QToolButton::clicked,this,[&]{
         eDialog->show();
     });
@@ -242,111 +242,31 @@ void MainWindow::initToolbar()
 
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
-
-        QString bash = "bash ";
-        bash.append(QApplication::applicationDirPath());
-        bash.append("/generate/");
-        switch(ui->cb_select_platform->currentIndex()){
-        case 1:
-            bash.append("build_bst.sh");
-            process->start(bash);
-            break;
-        case 2:
-            bash.append("build_jetson.sh");
-            process->start(bash);
-            break;
-        case 3:
-            bash.append("build_mdc.sh");
-            process->start(bash);
-            break;
-        default:
-            break;
-        }
+        QVector<QString> v;
+        v << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh";
+        processStart(v,ui->cb_select_platform->currentIndex());
     });
 
 
-    //TODO:temp code
+    ///deploy
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
-        QString bash = "bash ";
-        bash.append(QApplication::applicationDirPath());
-        bash.append("/generate/");
-        switch(ui->cb_select_platform->currentIndex()){
-        case 1:
-            bash.append("deploy_bst.sh");
-            process->start(bash);
-            break;
-        case 2:
-            bash.append("deploy_jetson.sh");
-            process->start(bash);
-            break;
-        case 3:
-            bash.append("deploy_mdc.sh");
-            process->start(bash);
-            break;
-        default:
-            break;
-        }
+        QVector<QString> v;
+        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh";
+        processStart(v,ui->cb_select_platform->currentIndex());
     });
 
-    //TODO:temp code
+    ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
-        QString bash="bash ";
-        bash.append(QApplication::applicationDirPath());
-        bash.append("/generate/");
-        switch(ui->cb_select_platform->currentIndex()){
-        case 1:
-            bash.append("run_bst.sh");
-            process->start(bash);
-            break;
-        case 2:
-            bash.append("run_jetson.sh");
-            process->start(bash);
-            break;
-        case 3:
-            bash.append("run_mdc.sh");
-            process->start(bash);
-            break;
-        default:
-            break;
-        }
+        QVector<QString> v;
+        v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh";
+        processStart(v,ui->cb_select_platform->currentIndex());
     });
 
-    //stop
+    ///stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
-        QString bash="bash ";
-        bash.append(QApplication::applicationDirPath());
-        bash.append("/generate/");
-
-        QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
-
-        switch(ui->cb_select_platform->currentIndex()){
-        case 1:
-            bash.append("stop_bst.sh");
-            process->terminate();
-            if(process->waitForFinished())
-                process->start(bash);
-            else
-                process->start(killprocess);
-            break;
-        case 2:
-            bash.append("stop_jetson.sh");
-            process->terminate();
-            if(process->waitForFinished())
-                process->start(bash);
-            else
-                process->start(killprocess);
-            break;
-        case 3:
-            bash.append("stop_mdc.sh");
-            process->terminate();
-            if(process->waitForFinished())
-                process->start(bash);
-            else
-                process->start(killprocess);
-            break;
-        default:
-            break;
-        }
+        QVector<QString> v;
+        v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh";
+        processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     //在线标定按钮OnlineCalibration->Calibration
@@ -359,6 +279,17 @@ void MainWindow::initToolbar()
     //        TestDialog *tdialog = new TestDialog(this);
     //        tdialog->show();
     //    });
+}
+
+void MainWindow::processStart(const QVector<QString> scriptNames,const int platformIndex){
+    QString bash="bash ";
+    bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
+    QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
+    process->terminate();
+    if(process->waitForFinished())
+        process->start(bash);
+    else
+        process->start(killprocess);
 }
 
 ///初始化面包屑导航

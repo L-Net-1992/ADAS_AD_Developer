@@ -8,6 +8,26 @@ EditorDialog::EditorDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    initEditor(parent);
+
+}
+
+EditorDialog::~EditorDialog()
+{
+    delete ui;
+}
+
+void EditorDialog::openTextFile(const QString pathName){
+    QFile file(pathName);
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
+        _editor->clear();
+        _editor->append(file.readAll());
+    }
+    else
+        qDebug() <<"The file open failed!";
+}
+
+void EditorDialog::initEditor(QWidget *parent){
     //定义QsciScintilla编辑器
     _editor = new QsciScintilla(parent);
 
@@ -62,23 +82,8 @@ EditorDialog::EditorDialog(QWidget *parent) :
     _editor->setAutoCompletionSource(QsciScintilla::AcsAll);     //对于所有Ascii字符自动补全
     _editor->setAutoCompletionThreshold(1);                                //每输入一个字符就会出现自动补全的提示
 
-    ui->verticalLayout->addWidget(_editor);
+
+//    ui->verticalLayout->addWidget(_editor);
 
 //    setCentralwidget(editor);
-
-}
-
-void EditorDialog::openTextFile(const QString pathName){
-    QFile file(pathName);
-    if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
-        _editor->clear();
-        _editor->append(file.readAll());
-    }
-    else
-        qDebug() <<"The file open failed!";
-}
-
-EditorDialog::~EditorDialog()
-{
-    delete ui;
 }

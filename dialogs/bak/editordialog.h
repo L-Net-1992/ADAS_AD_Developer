@@ -23,6 +23,9 @@ public:
     void openTextFile(const QString pathName);
 
 private:
+    void initEditor(QWidget *parent = nullptr);
+
+private:
     Ui::EditorDialog *ui;
     QsciScintilla *_editor;
 };

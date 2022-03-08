@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     nodeTreeDialog = new NodeTreeDialog(this);
     diDialog = new DataInspectorDialog(this);
     monitorDialog = new Dialog(this);
-    eDialog = new EditorDialog(this);
+    eDialog = new EditorWindow(this);
     cDialog = new CalibrationDialog(this,projectDialog->getProjectPath());
     process = new QProcess(this);
 

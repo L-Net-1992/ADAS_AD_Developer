@@ -11,6 +11,7 @@
 #include <QTableWidgetItem>
 #include "hdf5/hdf5files_handle.h"
 
+
 using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
@@ -59,6 +60,14 @@ Dialog::Dialog(QWidget *parent)
                 series_group_.at(i)->append(x_index_,signals_data_int_.begin()->second.at(count_));
             }
         }
+        double range=0,max=0,min=0;
+        for(int i=0;i<series_group_.at(2)->points().count();i++) {
+            if(series_group_.at(2)->points().value(i).y()>max) max = series_group_.at(2)->points().value(i).y();
+            if(series_group_.at(2)->points().value(i).y()<min) min= series_group_.at(2)->points().value(i).y();
+             range = max-min;
+             axisY_->setRange(min-range/4,max+range/4);
+        }
+//        qDebug()<<"range: "<<range<<"min: "<<min<<"max: "<<max;
 
         if(x_index_ > AXIS_X_SIZE_DEFAULT) {
            axisX_->setRange(0, x_index_);
@@ -165,6 +174,15 @@ void Dialog::init_chart()
     axisX_->setTitleText("Time(s)");
     axisX_->setGridLineVisible(true);
     axisY_->setRange(0,10);
+    // Y轴自适应数据
+        double range=0,max=0,min=0;
+        for(int i=0;i<series->points().count();i++) {
+            if(series->points().value(i).y()>max) max = series->points().value(i).y();
+            if(series->points().value(i).y()<min) min= series->points().value(i).y();
+             range = max-min;
+             axisY_->setRange(min-range/5,max+range/5);
+        }
+
     axisY_->setTickCount(6);
     axisY_->setTitleText("Value");
     axisY_->setGridLineVisible(true);
@@ -173,6 +191,8 @@ void Dialog::init_chart()
 
     ui->chart->setChart(chart);
     chart->setAnimationOptions(QChart::NoAnimation);
+//    ChartView *chartView = new ChartView(chart);
+//    chartView->setRenderHint(QPainter::Antialiasing);
     ui->chart->setRenderHint(QPainter::Antialiasing);
 
 }
@@ -294,6 +314,7 @@ void Dialog::init_button()
             // update table content
             update_table_content(signal_name_list_.size());
 
+
             // save files date to buffer
             for(size_t i=0; i<signal_name_list_.size();++i) {
                 int val = file1.get_class(signal_name_list_[i], "/Signal");
@@ -302,7 +323,7 @@ void Dialog::init_button()
                     signals_data_int_[signal_name_list_[i]] = arr_int;
                 } else {
                     std::vector<float> arr_float = file1.get_data<float>(signal_name_list_[i], "/Signal");
-                    signals_data_float_[signal_name_list_[i]] = arr_float;
+                    signals_data_float_[signal_name_list_[i]] = arr_float;             
                 }
             }
             if(!signals_data_float_.empty()) {
@@ -324,6 +345,16 @@ void Dialog::init_button()
                 series_group_.push_back(tmp);
                 ui->chart->chart()->addSeries(tmp);
                 tmp->attachAxis(axisX_);
+
+               double range=0,max=0,min=0;
+               for(int i=0;i<series_group_.at(0)->points().count();i++) {
+                    if(series_group_.at(0)->points().value(i).ry()>max) max = series_group_.at(0)->points().value(i).ry();
+                    if(series_group_.at(0)->points().value(i).ry()<min) min= series_group_.at(0)->points().value(i).ry();
+                    range = max-min;
+                    axisY_->setRange(min-range,max+range);
+        }
+        qDebug()<<"range: "<<range<<"min: "<<min<<"max: "<<max;
+
                 tmp->attachAxis(axisY_);
                 tmp->hide();
             }

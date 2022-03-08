@@ -33,6 +33,9 @@ public:
     void init_table();
     void update_table_content(int number);
 
+private slots:
+    void on_mouseMovePoint(QPoint point);
+
 private:
 
     Ui::Dialog *ui;
@@ -41,15 +44,14 @@ private:
     QTimer *timer1;
     QTimer *timer2 ;
     QLineSeries *myseries;
-    std::vector<QColor> color_group_;
-    std::vector<QLineSeries*> series_group_;
-    std::vector<std::string> signal_name_list_;
-    std::map<std::string, std::vector<int> > signals_data_int_;
-    std::map<std::string, std::vector<float> > signals_data_float_;
+    std::vector<QColor> color_group_;           // 保存信号颜色
+    std::vector<QLineSeries*> series_group_;    // 保存信号series
+    std::vector<std::string> signal_name_list_; // 保存信号名称清单
+    std::map<std::string, std::vector<float>> signals_dataset_; // 保存信号数据
 
+    std::vector<std::vector<float>> y_range_;   //保存y轴最大最小值<min,max>
     unsigned int x_index_ = 0;
-    size_t signal_num_ = 0; // total
+    size_t signal_num_ = 0;     // 信号数据长度
     bool replay_running_ = 0;
-    size_t count_ = 0;
 };
 #endif // DIALOG_H

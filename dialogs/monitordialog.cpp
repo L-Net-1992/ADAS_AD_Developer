@@ -11,7 +11,6 @@
 #include <QTableWidgetItem>
 #include "hdf5/hdf5files_handle.h"
 
-
 using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
@@ -24,8 +23,7 @@ Dialog::Dialog(QWidget *parent)
 
     // clear buffer
     signal_name_list_.clear();
-    signals_data_int_.clear();
-    signals_data_float_.clear();
+    signals_dataset_.clear();
     color_group_.clear();
     series_group_.clear();
 
@@ -35,12 +33,10 @@ Dialog::Dialog(QWidget *parent)
 
     // timer1
     timer1 = new QTimer(this);
-    timer1->setInterval(100);
+    timer1->setInterval(20);
     connect(timer1, &QTimer::timeout, this, [=](){
-
-        if(count_ >= signal_num_) {
-            timer1->stop();
-            return;
+        if(x_index_ >= signal_num_) {
+            replay_running_ = 0;
         }
 
         int rowcount = ui->tb_signal->rowCount();
@@ -51,30 +47,28 @@ Dialog::Dialog(QWidget *parent)
             } else {
                 series_group_.at(i)->setVisible(0);
             }
-            auto name = ui->tb_signal->item(i,2)->text();
-            auto it = signals_data_float_.find(name.toStdString());
-            if(it != signals_data_float_.end()) {
-                series_group_.at(i)->append(x_index_,it->second.at(count_));
-            }
-            else {
-                series_group_.at(i)->append(x_index_,signals_data_int_.begin()->second.at(count_));
-            }
-        }
-        double range=0,max=0,min=0;
-        for(int i=0;i<series_group_.at(2)->points().count();i++) {
-            if(series_group_.at(2)->points().value(i).y()>max) max = series_group_.at(2)->points().value(i).y();
-            if(series_group_.at(2)->points().value(i).y()<min) min= series_group_.at(2)->points().value(i).y();
-             range = max-min;
-             axisY_->setRange(min-range/4,max+range/4);
-        }
-//        qDebug()<<"range: "<<range<<"min: "<<min<<"max: "<<max;
 
-        if(x_index_ > AXIS_X_SIZE_DEFAULT) {
-           axisX_->setRange(0, x_index_);
+            // update series data
+            if(replay_running_){
+                auto name = ui->tb_signal->item(i,2)->text();
+                auto it = signals_dataset_.find(name.toStdString());
+                if(it != signals_dataset_.end()) {
+                    series_group_.at(i)->append(x_index_,it->second.at(x_index_));
+                }
+                if(it->second.at(x_index_) > y_range_.at(i).at(1)) y_range_.at(i).at(1) = it->second.at(x_index_);
+                if(it->second.at(x_index_) < y_range_.at(i).at(0)) y_range_.at(i).at(0) = it->second.at(x_index_);
+            }
         }
-        x_index_ ++;
-        count_++;
-        qDebug() << "cnt: " << count_ << " " << "num: " << signal_num_ << " " << "axisX:" << x_index_;
+
+        // update data index
+        if(replay_running_) {
+            x_index_ ++;
+            if(x_index_ > AXIS_X_SIZE_DEFAULT) {
+               axisX_->setRange(x_index_-AXIS_X_SIZE_DEFAULT, x_index_);
+            }
+            // TODO: select the series 0 as y-axis range
+            axisY_->setRange(y_range_.at(0).at(0)-2, y_range_.at(0).at(1)+2);
+        }
     });
 
 
@@ -85,6 +79,8 @@ Dialog::Dialog(QWidget *parent)
             qDebug() << "timer2 update";
     });
     //timer2->start();
+
+    connect(ui->chart, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_mouseMovePoint(QPoint)));
 
 }
 
@@ -174,15 +170,6 @@ void Dialog::init_chart()
     axisX_->setTitleText("Time(s)");
     axisX_->setGridLineVisible(true);
     axisY_->setRange(0,10);
-    // Y轴自适应数据
-        double range=0,max=0,min=0;
-        for(int i=0;i<series->points().count();i++) {
-            if(series->points().value(i).y()>max) max = series->points().value(i).y();
-            if(series->points().value(i).y()<min) min= series->points().value(i).y();
-             range = max-min;
-             axisY_->setRange(min-range/5,max+range/5);
-        }
-
     axisY_->setTickCount(6);
     axisY_->setTitleText("Value");
     axisY_->setGridLineVisible(true);
@@ -191,8 +178,6 @@ void Dialog::init_chart()
 
     ui->chart->setChart(chart);
     chart->setAnimationOptions(QChart::NoAnimation);
-//    ChartView *chartView = new ChartView(chart);
-//    chartView->setRenderHint(QPainter::Antialiasing);
     ui->chart->setRenderHint(QPainter::Antialiasing);
 
 }
@@ -263,6 +248,7 @@ void Dialog::init_button()
             ui->btn_replay_start->setToolTip("停止");
             if(!replay_running_) {
                 //TODO
+                replay_running_ = 1;
             }
             timer1->start();
 
@@ -277,12 +263,11 @@ void Dialog::init_button()
             ui->btn_replay_start->setAutoRaise(false);
             ui->btn_replay_start->setToolTip("开始");
 
-            if(count_ >= signal_num_) {
+            if(x_index_ >= signal_num_) {
                 int cnt = series_group_.size();
                 for(int i=0;i<cnt;i++) {
                     series_group_[i]->clear();
                 }
-                count_ = 0;
                 x_index_ = 0;
                 axisX_->setRange(0, AXIS_X_SIZE_DEFAULT);
                 timer1->stop();
@@ -314,25 +299,13 @@ void Dialog::init_button()
             // update table content
             update_table_content(signal_name_list_.size());
 
-
             // save files date to buffer
             for(size_t i=0; i<signal_name_list_.size();++i) {
-                int val = file1.get_class(signal_name_list_[i], "/Signal");
-                if(val==0) {
-                    std::vector<int> arr_int = file1.get_data<int>(signal_name_list_[i], "/Signal");
-                    signals_data_int_[signal_name_list_[i]] = arr_int;
-                } else {
-                    std::vector<float> arr_float = file1.get_data<float>(signal_name_list_[i], "/Signal");
-                    signals_data_float_[signal_name_list_[i]] = arr_float;             
-                }
+                std::vector<float> arr_float = file1.get_data<float>(signal_name_list_[i], "/Signal");
+                signals_dataset_[signal_name_list_[i]] = arr_float;
             }
-            if(!signals_data_float_.empty()) {
-                signal_num_ = signals_data_float_.begin()->second.size();
-            } else {
-                signal_num_ = signals_data_int_.begin()->second.size();
-            }
-            qDebug() << "num: " << signal_num_;
-
+            signal_num_ = signals_dataset_.begin()->second.size();
+            qDebug() << "data size: " << signal_num_;
             file1.close();
 
             // creat series for signals
@@ -345,21 +318,10 @@ void Dialog::init_button()
                 series_group_.push_back(tmp);
                 ui->chart->chart()->addSeries(tmp);
                 tmp->attachAxis(axisX_);
-
-               double range=0,max=0,min=0;
-               for(int i=0;i<series_group_.at(0)->points().count();i++) {
-                    if(series_group_.at(0)->points().value(i).ry()>max) max = series_group_.at(0)->points().value(i).ry();
-                    if(series_group_.at(0)->points().value(i).ry()<min) min= series_group_.at(0)->points().value(i).ry();
-                    range = max-min;
-                    axisY_->setRange(min-range,max+range);
-        }
-        qDebug()<<"range: "<<range<<"min: "<<min<<"max: "<<max;
-
                 tmp->attachAxis(axisY_);
                 tmp->hide();
             }
-
-            qDebug() <<"size: " << series_group_.size();
+            qDebug() <<"series size: " << series_group_.size();
         }
         else {
             QMessageBox::warning(this,"提示", "打开文件错误", QMessageBox::Close, QMessageBox::Close);
@@ -380,6 +342,13 @@ void Dialog::update_table_content(int number)
     qDebug() << ui->chart->chart()->series().size();
     series_group_.clear();
     ui->tb_signal->setRowCount(number);
+
+    y_range_.clear();
+    std::vector<float> tmp{0.0, 0.0};
+    for(int i=0;i<number;i++) {
+        y_range_.push_back(tmp);
+    }
+    qDebug() << "y_range_: " << y_range_.size();
 
     //Temp Data
     for(int i=0;i<number;i++){
@@ -406,4 +375,10 @@ void Dialog::update_table_content(int number)
         ui->tb_signal->setItem(i,2,it);
     }
 
+}
+
+void Dialog::on_mouseMovePoint(QPoint point)
+{
+    QPointF pt = ui->chart->chart()->mapToValue(point);
+//    qDebug() << pt.x() << " " << pt.y();
 }

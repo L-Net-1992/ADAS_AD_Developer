@@ -76,24 +76,7 @@ Q_SIGNALS:
 //    void
 
 private:
-    Ui::MainWindow *ui;
-    AICCSqlite sqlite;
-    ProjectDialog *projectDialog;
-    NodeParametersDialog *npDialog;
-    NodeParametersMILDialog *npmilDialog;
-    NodeTreeDialog *nodeTreeDialog;
-    ImportScriptDialog *isDialog;
-    DataInspectorDialog *diDialog;
-    Dialog *monitorDialog;
-    EditorWindow *eDialog;
-    CalibrationDialog *cDialog;
-    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QProcess * process;
 
-    //nodeeditor部分
-    QMap<QString,QSet<QString>> nodeMap;
-
-    AICCStackedWidget asw;
 
     void initMenu();
     void initTreeView();
@@ -113,14 +96,13 @@ private:
     //动作函数部分
     void pbOpenAction();
 
-private:
     void initNodeEditor();
     std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+    void processStart(const QVector<QString> scriptNames,const int platformIndex);
 
-private:
-//    static QString directMsg;
+
     static void write(QString str);
 
 public:
@@ -129,6 +111,25 @@ Q_SIGNALS:
 
 public:
     static inline QPlainTextEdit *pte_out = Q_NULLPTR;
+
+private:
+    Ui::MainWindow *ui;
+    AICCSqlite sqlite;
+    ProjectDialog *projectDialog;
+    NodeParametersDialog *npDialog;
+    NodeParametersMILDialog *npmilDialog;
+    NodeTreeDialog *nodeTreeDialog;
+    ImportScriptDialog *isDialog;
+    DataInspectorDialog *diDialog;
+    Dialog *monitorDialog;
+    EditorWindow *eDialog;
+    CalibrationDialog *cDialog;
+    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+    QProcess * process;
+
+    //nodeeditor部分
+    QMap<QString,QSet<QString>> nodeMap;
+    AICCStackedWidget asw;
 
 };
 

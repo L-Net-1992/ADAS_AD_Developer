@@ -68,7 +68,7 @@ void CalibrationDialog::initButton(){
         qDebug() << json_save;
 
         //TODO::此处保存文件位置以后可以设置到项目目录中
-        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.json)"));
+        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("标定数据json格式 (*.json)"));
         if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
             spath+=".json";
         QSharedPointer<QFile> save_file(new QFile(spath));
@@ -83,7 +83,7 @@ void CalibrationDialog::initButton(){
         QTableWidget * tw = ui->tw_params;
 
         //save the path of the selected file and open it.
-        QString lpath = QFileDialog::getOpenFileName(this,tr("Load File"),QApplication::applicationDirPath(),tr("Calibration Data (*.json)"));
+        QString lpath = QFileDialog::getOpenFileName(this,tr("Load File"),QApplication::applicationDirPath(),tr("标定数据json格式 (*.json)"));
         QFile load_file(lpath);
         load_file.open(QIODevice::ReadOnly | QIODevice::Text);
 

@@ -677,7 +677,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QChartView" name="chart"/>
+          <widget class="MyChartView" name="chart"/>
          </item>
         </layout>
        </widget>
@@ -736,9 +736,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
+   <class>MyChartView</class>
    <extends>QGraphicsView</extends>
-   <header>QtCharts</header>
+   <header>mychartview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

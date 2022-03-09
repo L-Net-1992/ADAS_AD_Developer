@@ -175,6 +175,7 @@ void PackageLibrary::package_include_directories(const std::string &package, std
     if(used.find(package) != used.end()){
         return;
     }
+    qDebug() << "load package:" << QString::fromStdString(package);
     const auto & p = packages_.at(package);
     for(const auto & inc:p.import.include_directories) {
         if(std::find(result.begin(), result.end(), inc) == result.end())

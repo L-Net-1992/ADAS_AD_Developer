@@ -37,7 +37,7 @@ QJsonObject getConfig(){
     return ret;
 }
 
-///order json
+///对 json数据进行排序
 QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
     QList<QPair<QString,QJsonObject>> list;
     QStringList keys = jo.keys();
@@ -52,7 +52,7 @@ QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
 }
 
 
-///recursion child node
+///递归 child node
 void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
     QStringList keys = jo.keys();
 //    for(auto key:keys){
@@ -64,10 +64,14 @@ void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
         if(jv.isObject())
             recursionQJsonObject(jv.toObject(),ctwi);
         else if(jv.isArray())
-            makeLeafNode(jv.toArray(),ctwi);
+            continue;
+//            makeLeafNode(jv.toArray(),ctwi);
     }
 }
 
+
+
+///创建功能的叶子节点
 void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
     AICCSqlite sqlite;
     for(int i=0;i<ja.size();i++){

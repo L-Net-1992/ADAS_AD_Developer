@@ -96,20 +96,6 @@ void MainWindow::initTreeView()
     }
 
     ui->tw_node->expandAll();
-    //    QTreeWidgetItemIterator it(ui->treeWidget);
-    //    while(*it)
-    //    {
-    //        (*it)->setCheckState(0,Qt::Checked);
-    //        ++it;
-    //    }
-
-
-    //    setTreeNode(tw,"设备",":/res/ticon1.png");
-    //    setTreeNode(tw,"ECU",":/res/ticon1.png");
-    //    setTreeNode(tw,"驱动",":/res/ticon1.png");
-    //    setTreeNode(tw,"算法",":/res/ticon1.png");
-    //    setTreeNode(tw,"信号",":/res/ticon1.png");
-    //    setTreeNode(tw,"IO",":/res/ticon1.png");
 }
 
 ///填充节点属性表格数据
@@ -238,7 +224,6 @@ void MainWindow::initToolbar()
         eDialog->show();
     });
 
-    //    connect(_process,QProcess::readyReadStandardOutput,this,[&]())
 
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
@@ -269,11 +254,30 @@ void MainWindow::initToolbar()
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
-    //在线标定按钮OnlineCalibration->Calibration
+    ///在线标定按钮OnlineCalibration->Calibration
     connect(ui->tb_calibration,&QToolButton::clicked,this,[&](){
         cDialog->show();
     });
 
+    ///注入按钮 仿真->注入
+    connect(ui->tb_inject,&QToolButton::clicked,this,[&]{
+        //生成node节点
+        FlowView *view = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
+        FlowScene *scene = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget())->scene();
+        auto type = scene->registry().create("business_package::mil_import");
+
+        //定位生成位置
+        QRectF rect = view->sceneRect();
+        float x = rect.x()+rect.width()/2;
+        float y = rect.y()+rect.height()/5;
+
+        if(type){
+            auto& node = scene->createNode(std::move(type));
+            node.nodeGraphicsObject().setPos(QPointF(x,y));
+            scene->nodePlaced(node);
+            this->npmilDialog->show();
+        }
+    });
     ///测试dialog显示
     //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
     //        TestDialog *tdialog = new TestDialog(this);
@@ -413,9 +417,14 @@ void MainWindow::initNodeEditor(){
 
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
+        try{
         _moduleLibrary->importFiles(files);
         std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
         emit scriptParserCompleted(parserResult);
+        }catch(const std::exception &e){
+            qDebug() << "exception:" << e.what();
+        }
+
     });
     qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);

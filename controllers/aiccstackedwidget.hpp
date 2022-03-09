@@ -178,7 +178,10 @@ public:
     void setCurrentUrl(const QString &url){
         this->setCurrentIndex(this->_routeDataMap[url]);
     }
-
+    ///返回当前的FlowView
+    AICCFlowView *getCurrentView(){
+        return _allViews[_routeDataMap.value(_currPagePathName)];
+    }
 private:
     ///填充nodeCategoryMap数据
     void insertNodeCategoryMap(const QString className,const QString nodeName){

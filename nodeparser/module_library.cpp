@@ -9,12 +9,14 @@
 namespace fs = std::filesystem;
 
 void ModuleLibrary::importFiles(const QStringList &files) {
-//    std::list<Invocable> parse_result;
+    //    std::list<Invocable> parse_result;
     InvocableParser parser;
     _packageLibrary.clear();
     _parseResult.clear();
-//    for(const auto & file: files)
+    //    for(const auto & file: files)
+
     for(int i=0;i<files.count();i++){
+        qDebug() << "********************************" << i;
         const auto &file = files[i];
         fs::path p = file.toStdString();
         _packageLibrary.load_prefix_paths_from_config_file(p);
@@ -23,7 +25,9 @@ void ModuleLibrary::importFiles(const QStringList &files) {
             emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(file, QString::fromStdString(error_message)));
         } else {
             qDebug() << "result size: " << _parseResult.size();
+            qDebug() << "result size++++++++++++++++++++++++++++++++++";
             setInvocables(_parseResult);
+            qDebug() << "result size----------------------------------";
         }
         emit fileParserCompleted(files.count(),i);
     }

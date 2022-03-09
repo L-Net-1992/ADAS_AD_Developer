@@ -282,8 +282,10 @@ private:
         DiagnosticConsumer dc;
 //        tool.setDiagnosticConsumer(&dc);
         int ret = tool.run(&factory);
+//        qDebug() << "if-----------------------------------" << ret;
         if (ret != 0) {
             error_message = "编译错误，请查看编译日志";
+//            qDebug() << "parser-------------------------";
             return true;
         }
         return true;

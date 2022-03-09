@@ -25,14 +25,14 @@ void NodeTreeDialog::initTreeWidget()
     //initToolBar();
     makeModelMenuItem(tw);
 
-    //原目录
-    AICCSqlite sqlite;
-    QSqlQuery squery = sqlite.query("select class_name,class_desc from nodeClass order by sort");
-    while(squery.next()){
-        QString className = squery.value(0).toString();
-        QString classDesc = squery.value(1).toString();
-        makeRootGroupItem(tw,className,classDesc);
-    }
+    //原一层分类目录
+//    AICCSqlite sqlite;
+//    QSqlQuery squery = sqlite.query("select class_name,class_desc from nodeClass order by sort");
+//    while(squery.next()){
+//        QString className = squery.value(0).toString();
+//        QString classDesc = squery.value(1).toString();
+//        makeRootGroupItem(tw,className,classDesc);
+//    }
 
     connect(ui->tw_nodeTree,&AICCTreeWidget::itemClicked,this,&NodeTreeDialog::treeWidgetItemClicked);
 

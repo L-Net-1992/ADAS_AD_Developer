@@ -488,7 +488,6 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
 void MainWindow::initImportScriptDialog(){
     //选择文本后响应函数
     connect(isDialog,&ImportScriptDialog::filesSelected,this,[&](const QStringList files){
-
         QtConcurrent::run([&,files](){
             //1:解析选择文件中的node
             _moduleLibrary->importFiles(files);

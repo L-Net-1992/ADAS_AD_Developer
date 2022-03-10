@@ -517,7 +517,8 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
     AICCSqlite sqlite;
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
-        QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
+        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
+        QSqlQuery squery = sqlite.query(sql);
         if(squery.next()){
             QString caption = squery.value(1).toString();
             QString className = squery.value(2).toString();
@@ -559,7 +560,8 @@ QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<I
     AICCSqlite sqlite;
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
-        QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
+        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
+        QSqlQuery squery = sqlite.query(sql);
         if(squery.next()){
             QString className = squery.value(2).toString();
             f_insertNodeCategoryMap(className,QString::fromStdString(inv.getName()));
@@ -583,7 +585,8 @@ QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::lis
     AICCSqlite sqlite;
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
-        QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
+        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
+        QSqlQuery squery = sqlite.query(sql);
 
         if(squery.next()){
             QString className = squery.value(2).toString();

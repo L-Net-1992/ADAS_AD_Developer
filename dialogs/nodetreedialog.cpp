@@ -118,7 +118,7 @@ void NodeTreeDialog::treeWidgetItemClicked(QTreeWidgetItem *item, int column){
 
         int i=0;
         foreach(QString name,nodes){
-            QSqlQuery squery = sqlite.query("select caption,node_icon from node where name = '"+name+"'");
+            QSqlQuery squery = sqlite.query(QString("select caption,node_icon from node where name = '%0'").arg(name));
             AICCToolButton *tb;
             if(squery.next()){
                 tb = createToolButton(name,squery.value(0).toString());

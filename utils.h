@@ -15,7 +15,8 @@
 
  QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo);
 
- void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi);
+ void makeLeafNode(QString path,QJsonArray ja,QTreeWidgetItem *twi);
 
- void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi);
+ void recursionQJsonObjectLeft(QString parentName,QJsonObject jo,QTreeWidgetItem *twi);
+ void recursionQJsonObjectModuleBrowser(QString parentName,QJsonObject jo,QTreeWidgetItem *twi);
 #endif // UTILS_H

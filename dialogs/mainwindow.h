@@ -99,6 +99,7 @@ private:
     void initNodeEditor();
     std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
+    QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
     void processStart(const QVector<QString> scriptNames,const int platformIndex);
 

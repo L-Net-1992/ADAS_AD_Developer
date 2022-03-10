@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    qDebug() << "debug----------------";
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
@@ -92,7 +91,7 @@ void MainWindow::initTreeView()
         QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
         twi->setText(0,list_root[i].first);
         //        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
-        recursionQJsonObject(list_root[i].second,twi);
+        recursionQJsonObjectLeft(list_root[i].first,list_root[i].second,twi);
     }
 
     ui->tw_node->expandAll();
@@ -475,7 +474,7 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     }
 
     //3:生成NodeTreeDialog的node菜单结构
-    QMap<QString,QSet<QString>> nodeCategoryDataModels = this->nodeCategoryDataModels(parserResult);
+    QMap<QString,QSet<QString>> nodeCategoryDataModels = this->newNodeCategoryDataModels(parserResult);
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
 
     //4:启用工具栏
@@ -518,7 +517,6 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
     AICCSqlite sqlite;
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
-        qDebug() << "AutoPlatform" << QString::fromStdString(inv.getName());
         QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
         if(squery.next()){
             QString caption = squery.value(1).toString();
@@ -548,7 +546,7 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
     return ret;
 }
 
-///只负责NodeTreeDialog的node模块分类
+///旧版只有一级分类信息，只负责NodeTreeDialog的node模块分类
 QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<Invocable> parserResult){
     QMap<QString,QSet<QString>> ret;
     //定义写入分类数据函数
@@ -567,6 +565,32 @@ QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<I
             f_insertNodeCategoryMap(className,QString::fromStdString(inv.getName()));
         }else{
             f_insertNodeCategoryMap("Other",QString::fromStdString(inv.getName()));
+        }
+    }
+    return ret;
+}
+
+///负责NodeTreeDialog的node模块分类信息
+QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::list<Invocable> parserResult){
+    QMap<QString,QSet<QString>> ret;
+    //写入分类数据
+    auto f_insertNodeClassMap = [&ret](const QString className,const QString nodeName){
+        QSet<QString> cn;
+        cn = ret.value(className);
+        cn.insert(nodeName);
+        ret.insert(className,cn);
+    };
+    AICCSqlite sqlite;
+    for(auto it = parserResult.begin();it!=parserResult.end();++it){
+        const auto &inv = *it;
+        QSqlQuery squery = sqlite.query("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '"+QString::fromStdString(inv.getName())+"'");
+
+        if(squery.next()){
+            QString className = squery.value(2).toString();
+            QString nodeName = squery.value(0).toString();
+            f_insertNodeClassMap(className,nodeName);
+        }else{
+            f_insertNodeClassMap("Other",QString::fromStdString(inv.getName()));
         }
     }
     return ret;

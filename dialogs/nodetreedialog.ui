@@ -317,14 +317,14 @@ gridline-color:#FFFFFF;}</string>
             <font/>
            </property>
            <property name="styleSheet">
-            <string notr="true">QTableWidget::item{padding:2px;
+            <string notr="true">padding:2px;
 border:1px solid #FFFFFF;
 selection-background-color:#FFFFFF;
 selection-color:#FFFFFF;
 alternate-background-color:#FFFFFF;
 background-color:#FFFFFF;
 gridline-color:#FFFFFF;
-}
+
 </string>
            </property>
            <property name="showGrid">

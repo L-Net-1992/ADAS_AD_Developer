@@ -51,6 +51,7 @@ void NodeTreeDialog::initNodeButtonTable(){
 }
 
 ///create class menu with json data
+///从json文件创建分类信息菜单
 void NodeTreeDialog::makeModelMenuItem(AICCTreeWidget *atw){
     Config config(QApplication::applicationDirPath() + "/conf/model_menu.json");
     QJsonObject jo_root = config.getJsonRoot();
@@ -58,12 +59,14 @@ void NodeTreeDialog::makeModelMenuItem(AICCTreeWidget *atw){
 
     for(int i =0 ;i<list_root.size();i++){
         QTreeWidgetItem *twi = new QTreeWidgetItem(atw);
+        //一级分类
         twi->setText(0,list_root[i].first);
-        recursionQJsonObject(list_root[i].second,twi);
+        //一级以下分类递归处理
+        recursionQJsonObjectModuleBrowser(list_root[i].first,list_root[i].second,twi);
     }
 }
 
-///创建属性结构的根目录分类
+///旧方法，只在root位置创建分类信息创建属性结构的根目录分类
 void NodeTreeDialog::makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text)
 {
     QTreeWidgetItem *rootGroupMathOperations = new QTreeWidgetItem(atw);
@@ -107,6 +110,7 @@ void NodeTreeDialog::treeWidgetItemClicked(QTreeWidgetItem *item, int column){
     QString itemData = item->data(0,Qt::UserRole+1).value<QString>();
     if(_nodeMap.contains(itemData)){
         AICCSqlite sqlite;
+//        void recursionQJsonObject(QString parentName,QJsonObject jo,QTreeWidgetItem *twi);
         QSet<QString> nodes = _nodeMap[itemData];
 
         int ncount = nodes.count();

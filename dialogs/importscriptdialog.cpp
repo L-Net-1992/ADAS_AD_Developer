@@ -17,7 +17,7 @@ ImportScriptDialog::~ImportScriptDialog()
 ///初始化导入按钮操作
 void ImportScriptDialog::initButton(){
     connect(ui->pb_import,&QPushButton::clicked,this,[&](){
-        QStringList files = QFileDialog::getOpenFileNames(this,"请选择C++头文件",QString(),"C++头文件(*.hpp)",Q_NULLPTR,QFileDialog::ReadOnly);
+        QStringList files = QFileDialog::getOpenFileNames(this,"请选择功能模块包文件adas-package.json",QString(),"adas-package.json(adas-package.json)",Q_NULLPTR,QFileDialog::ReadOnly);
         if(!files.isEmpty()){
             emit filesSelected(files);
         }

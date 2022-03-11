@@ -88,18 +88,16 @@ void recursionQJsonObjectModuleBrowser(QString parentName,QJsonObject jo,QTreeWi
 
 
 ///创建功能的叶子节点
-void makeLeafNode(QString path,QJsonArray ja,QTreeWidgetItem *twi){
+void makeLeafNode(const QString path,QJsonArray ja,QTreeWidgetItem *twi){
     AICCSqlite sqlite;
     for(int i=0;i<ja.size();i++){
         QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
         QString name = "";
-        QString caption = ja[i].toString();
+        const QString caption = ja[i].toString();
         ctwi->setText(0,caption);
         //检索数据库中对应名称的node模块
-//        QString query = QString("select id,name,caption from node where caption = '%0' and class_id = 0 ").arg(caption);
-        QString query = QString("select n.id,n.name,n.caption from node n inner join nodeClass nc on n.class_id = nc.id where n.caption = '%0' and nc.class_name = '%1'")
-                .arg(caption).arg(path);
-        QSqlQuery squery = sqlite.query(query);
+        QString sql = QString("select n.id,n.name,n.caption from node n inner join nodeClass nc on n.class_id = nc.id where n.caption = '%0' and nc.class_name = '%1'").arg(caption,path);
+        QSqlQuery squery = sqlite.query(sql);
         if(squery.next()){
             name = squery.value(1).toString();
         }else{

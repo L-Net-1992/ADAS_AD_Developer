@@ -232,8 +232,15 @@
     <addaction name="actionNodeWindow"/>
     <addaction name="actionPropertyWindow"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>子系统</string>
+    </property>
+    <addaction name="actionCreateSubSystem"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menu"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -598,7 +605,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1382,9 +1389,12 @@ gridline-color:#FFFFFF;
          </property>
         </widget>
         <widget class="QToolButton" name="tb_merge_module">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="geometry">
           <rect>
-           <x>430</x>
+           <x>530</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1428,6 +1438,35 @@ gridline-color:#FFFFFF;
          <property name="icon">
           <iconset resource="../image.qrc">
            <normaloff>:/res/edit_script.png</normaloff>:/res/edit_script.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="tb_create_subsystem">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>10</y>
+           <width>91</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>组合模块</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/subsystem.png</normaloff>:/res/subsystem.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -1519,6 +1558,11 @@ gridline-color:#FFFFFF;
    </property>
    <property name="font">
     <font/>
+   </property>
+  </action>
+  <action name="actionCreateSubSystem">
+   <property name="text">
+    <string>创建子系统</string>
    </property>
   </action>
  </widget>

@@ -49,6 +49,7 @@ Q_SIGNALS:
     void checkSubSystemName(const QString &name,const QString &caption,const QPoint mousePos,const AICCFlowView *cview);
 
 protected:
+    ///此函数不能删除，删除后拖放功能不好使
     void dragMoveEvent(QDragMoveEvent *e)
     {
         //        qDebug()<<"flow view drag move";

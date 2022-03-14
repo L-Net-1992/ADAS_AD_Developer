@@ -15,7 +15,7 @@ using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
 
-Dialog::Dialog(QWidget *parent)
+MonitorDialog::MonitorDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
 {
@@ -26,6 +26,7 @@ Dialog::Dialog(QWidget *parent)
     signals_dataset_.clear();
     color_group_.clear();
     series_group_.clear();
+    chartview_list_.clear();
 
     init_button();
     init_table();
@@ -81,19 +82,19 @@ Dialog::Dialog(QWidget *parent)
     //timer2->start();
 
     connect(ui->chart, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_mouseMovePoint(QPoint)));
-
+//    connect()
 }
 
-QCheckBox * Dialog::getCheckBox(int row, int column)
+QCheckBox * MonitorDialog::getCheckBox(int row, int column)
 {
 
 }
-Dialog::~Dialog()
+MonitorDialog::~MonitorDialog()
 {
     delete ui;
 }
 
-void Dialog::init_table()
+void MonitorDialog::init_table()
 {
     // table
     //ui->tb_signal->setRowCount(4);
@@ -142,9 +143,13 @@ void Dialog::init_table()
     }
 }
 
-void Dialog::init_chart()
+void MonitorDialog::init_chart()
 {
+//ui->chart->close();
     QChart *chart = new QChart();
+//    chart->setTheme(QChart::ChartThemeBrownSand);
+    chart->layout()->setContentsMargins(2,2,2,2);
+    chart->setMargins(QMargins(0,0,0,0));
     axisX_ = new QValueAxis();
     axisY_ = new QValueAxis();
 
@@ -160,19 +165,20 @@ void Dialog::init_chart()
     *series << QPointF(11,1) << QPointF(13,3) << QPointF(17,6) << QPointF(18,3) << QPointF(20,2);
 
     chart->addSeries(series);
-    chart->setTitle("信号波形");
+//    chart->setTitle("信号波形");
 
 //    chart->createDefaultAxes();
     chart->addAxis(axisX_, Qt::AlignBottom);
     chart->addAxis(axisY_, Qt::AlignLeft);
     axisX_->setRange(0, AXIS_X_SIZE_DEFAULT);
-    axisX_->setTickCount(11);
-    axisX_->setTitleText("Time(s)");
-    axisX_->setGridLineVisible(true);
-    axisY_->setRange(0,10);
-    axisY_->setTickCount(6);
+//    axisX_->setTickCount(11);
+//    axisX_->setMinorTickCount(9);
+//    axisX_->setTitleText("Time(s)");
+    axisX_->setGridLineVisible(1);
+    axisY_->setRange(-10,10);
+//    axisY_->setTickCount(6);
     axisY_->setTitleText("Value");
-    axisY_->setGridLineVisible(true);
+    axisY_->setGridLineVisible(1);
     series->attachAxis(axisX_);
     series->attachAxis(axisY_);
 
@@ -180,9 +186,23 @@ void Dialog::init_chart()
     chart->setAnimationOptions(QChart::NoAnimation);
     ui->chart->setRenderHint(QPainter::Antialiasing);
 
+    chartview_list_.emplace_back(std::move(ui->chart));
+    qDebug() << "chartview: " << chartview_list_.size();
+    connect(ui->chart, &AiccChartView::sendObjectAddr, this, [=](size_t addr){
+        for(auto it=chartview_list_.begin();it!=chartview_list_.end();it++) {
+            if( (*it) == (AiccChartView*)addr) {
+                qDebug() << "chartview erase: " << *it;
+                it = chartview_list_.erase(it);
+                break;
+            }
+        }
+    });
+    connect(ui->chart, &AiccChartView::currentSelect, this, [=](size_t addr){
+        current_chartview_ = (AiccChartView*)addr;
+    });
 }
 
-void Dialog::init_button()
+void MonitorDialog::init_button()
 {
     // btn_monitor_start
     ui->btn_monitor_start->setText("run");
@@ -311,7 +331,7 @@ void Dialog::init_button()
             // creat series for signals
             int rowcount = ui->tb_signal->rowCount();
             for(int i=0;i<rowcount;i++) {
-                QSplineSeries *tmp = new QSplineSeries(this);
+                QLineSeries *tmp = new QLineSeries(this);
                 auto color = color_group_.at(i);
                 tmp->setColor(color);
                 tmp->setName(QString::fromStdString(signal_name_list_.at(i)));
@@ -330,15 +350,16 @@ void Dialog::init_button()
 
     // btn_add_chart
     connect(ui->btn_add_chart, &QPushButton::clicked, this, [=](){
-
+        CreateNewChart();
     });
 }
 
-void Dialog::update_table_content(int number)
+void MonitorDialog::update_table_content(int number)
 {
     ui->tb_signal->clearContents();
     qDebug() << ui->chart->chart()->series().size();
     ui->chart->chart()->removeAllSeries();
+
     qDebug() << ui->chart->chart()->series().size();
     series_group_.clear();
     ui->tb_signal->setRowCount(number);
@@ -374,11 +395,96 @@ void Dialog::update_table_content(int number)
         it->setText(str);
         ui->tb_signal->setItem(i,2,it);
     }
-
 }
 
-void Dialog::on_mouseMovePoint(QPoint point)
+void MonitorDialog::update_table_content2(int number)
+{
+    ui->tb_signal->clearContents();
+    for(auto it=chartview_list_.rbegin();it!=chartview_list_.rend();it++) {
+        (*it)->chart()->removeAllSeries();
+        (*it)->close();
+    }
+    CreateNewChart();
+    current_chartview_ = chartview_list_.front();
+
+    series_group_.clear();
+    ui->tb_signal->setRowCount(number);
+
+    y_range_.clear();
+    std::vector<float> tmp{0.0, 0.0};
+    for(int i=0;i<number;i++) {
+        y_range_.push_back(tmp);
+    }
+    qDebug() << "y_range_: " << y_range_.size();
+
+    //Temp Data
+    for(int i=0;i<number;i++){
+        //Checkbox
+        QCheckBox *ckb = new QCheckBox(this);
+        QHBoxLayout *hLayout = new QHBoxLayout();
+        hLayout->addWidget(ckb);
+        hLayout->setMargin(0);
+        hLayout->setAlignment(ckb,Qt::AlignCenter);
+        QWidget *wckb = new QWidget(ui->tb_signal);
+        wckb->setLayout(hLayout);
+        ui->tb_signal->setCellWidget(i,0,wckb);
+
+        // color
+        QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
+        itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
+        ui->tb_signal->setItem(i,1,itemLine);
+        color_group_.push_back(itemLine->textColor());
+
+        // name
+        QTableWidgetItem *it = new QTableWidgetItem("");
+        QString str = signal_name_list_.at(i).c_str();
+        it->setText(str);
+        ui->tb_signal->setItem(i,2,it);
+    }
+}
+
+void MonitorDialog::on_mouseMovePoint(QPoint point)
 {
     QPointF pt = ui->chart->chart()->mapToValue(point);
-//    qDebug() << pt.x() << " " << pt.y();
+    //    qDebug() << pt.x() << " " << pt.y();
+}
+
+void MonitorDialog::CreateNewChart()
+{
+    QChart *chart = new QChart();
+    chart->setParent(this);
+//    chart->setTheme(QChart::ChartThemeBrownSand);
+    chart->layout()->setContentsMargins(2,2,2,2);
+    chart->setMargins(QMargins(0,0,0,0));
+    QValueAxis *axisX = new QValueAxis(this);
+    QValueAxis *axisY = new QValueAxis(this);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    axisX->setRange(0, AXIS_X_SIZE_DEFAULT);
+    axisX->setGridLineVisible(1);
+    axisY->setRange(-10,10);
+    axisY->setGridLineVisible(1);
+    axisY->setTitleText("Value");
+
+    AiccChartView *chartview = new AiccChartView(this);
+    chartview->setChart(chart);
+    chart->setAnimationOptions(QChart::NoAnimation);
+    ui->verticalLayout_2->addWidget(chartview);
+//    chartview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);//
+
+    chartview_list_.emplace_back(std::move(chartview));
+    qDebug() << "chartview: " << chartview_list_.size();
+    connect(chartview, &AiccChartView::sendObjectAddr, this, [=](size_t addr){
+        for(auto it=chartview_list_.begin();it!=chartview_list_.end();it++) {
+            if( (*it) == (AiccChartView*)addr) {
+                qDebug() << "chartview erase: " << *it;
+                it = chartview_list_.erase(it);
+                break;
+            }
+        }
+    });
+    connect(chartview, &AiccChartView::currentSelect, this, [=](size_t addr){
+        current_chartview_ = (AiccChartView*)addr;
+    });
+
 }

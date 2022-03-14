@@ -122,7 +122,7 @@ private:
     NodeTreeDialog *nodeTreeDialog;
     ImportScriptDialog *isDialog;
     DataInspectorDialog *diDialog;
-    Dialog *monitorDialog;
+    MonitorDialog *monitorDialog;
     EditorWindow *eDialog;
     CalibrationDialog *cDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据

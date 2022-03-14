@@ -46,7 +46,7 @@ set ( PROJECT_SOURCES
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
-    dialogs/mychartview.h dialogs/mychartview.cpp
+#    dialogs/mychartview.h dialogs/mychartview.cpp
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
 
     image.qrc
@@ -59,6 +59,7 @@ set ( PROJECT_SOURCES
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
+    controllers/aiccchartview.h
 
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp
@@ -86,7 +87,7 @@ target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/dialogs
+    ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     )
 target_link_libraries(ADAS_AD_Developer
     PRIVATE

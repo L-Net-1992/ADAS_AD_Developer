@@ -331,9 +331,15 @@
       </property>
       <item>
        <widget class="QWidget" name="widget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>350</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>300</width>
+          <width>350</width>
           <height>16777215</height>
          </size>
         </property>
@@ -377,6 +383,12 @@
          </item>
          <item>
           <widget class="QTableWidget" name="tb_signal">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <row>
             <property name="text">
              <string>1</string>
@@ -595,6 +607,9 @@
       <item>
        <widget class="QWidget" name="widget_2" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <property name="leftMargin">
           <number>9</number>
          </property>
@@ -677,7 +692,7 @@
           </widget>
          </item>
          <item>
-          <widget class="MyChartView" name="chart"/>
+          <widget class="AiccChartView" name="chart"/>
          </item>
         </layout>
        </widget>
@@ -736,9 +751,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyChartView</class>
+   <class>AiccChartView</class>
    <extends>QGraphicsView</extends>
-   <header>mychartview.h</header>
+   <header>aiccchartview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

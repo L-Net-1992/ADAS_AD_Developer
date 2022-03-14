@@ -8,8 +8,7 @@
 #include <QList>
 #include <QLineSeries>
 #include <QtCharts/QSplineSeries>
-#include <string>
-#include <map>
+#include "aiccchartview.h"
 
 using namespace QtCharts;
 
@@ -18,13 +17,13 @@ namespace Ui { class Dialog; }
 QT_END_NAMESPACE
 
 
-class Dialog : public QDialog
+class MonitorDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    Dialog(QWidget *parent = nullptr);
-    ~Dialog();
+    MonitorDialog(QWidget *parent = nullptr);
+    ~MonitorDialog();
 
     QCheckBox * getCheckBox(int row, int column);
 
@@ -32,9 +31,13 @@ public:
     void init_chart();
     void init_table();
     void update_table_content(int number);
+    void update_table_content2(int number);
 
 private slots:
     void on_mouseMovePoint(QPoint point);
+
+private:
+    void CreateNewChart();
 
 private:
 
@@ -43,11 +46,15 @@ private:
     QValueAxis *axisY_;
     QTimer *timer1;
     QTimer *timer2 ;
-    QLineSeries *myseries;
+//    QLineSeries *myseries;
     std::vector<QColor> color_group_;           // 保存信号颜色
     std::vector<QLineSeries*> series_group_;    // 保存信号series
     std::vector<std::string> signal_name_list_; // 保存信号名称清单
     std::map<std::string, std::vector<float>> signals_dataset_; // 保存信号数据
+    std::vector<AiccChartView*> chartview_list_;
+    AiccChartView *current_chartview_;
+    QValueAxis *current_axisX_;
+    QValueAxis *current_axisY_;
 
     std::vector<std::vector<float>> y_range_;   //保存y轴最大最小值<min,max>
     unsigned int x_index_ = 0;

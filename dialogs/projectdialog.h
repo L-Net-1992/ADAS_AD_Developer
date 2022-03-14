@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
 #include <cmath>
+#include <project/modelsproject.hpp>
 
 namespace Ui {
 class ProjectDialog;
@@ -32,7 +33,7 @@ public:
 
 Q_SIGNALS:
     void projectCreateCompleted(bool success);
-
+    void projectDialogCanceled();
 
 private:
     void initButton();
@@ -49,6 +50,7 @@ private:
     QString config1;
     QString config2;
     QStringList flowSceneSaveFiles;
+    ProjectDataModel *pDataModel;
 
 };
 

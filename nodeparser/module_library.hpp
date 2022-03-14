@@ -4,6 +4,7 @@
 
 #ifndef NODEDRIVING_MODULE_LIBRARY_HPP
 #define NODEDRIVING_MODULE_LIBRARY_HPP
+
 #include <QStringList>
 #include <filesystem>
 #include <list>
@@ -19,45 +20,68 @@
 #include "invocable.hpp"
 #include "models.hpp"
 #include <iostream>
+#include <QWidget>
+#include <filesystem>
 #include "package_library.h"
-class ModuleLibrary: public QAbstractListModel {
-    Q_OBJECT
+#include "subsystem_library.h"
+
+class ModuleLibrary : public QAbstractListModel {
+Q_OBJECT
 public Q_SLOTS:
+
     void importFiles(const QStringList &files);
+
+    void setSubsystemPath(const std::filesystem::path &path);
+
+    void newSubsystem(QWidget *parent);
+
+    void openSubsystem(QWidget *parent, const std::string &package, const std::string &name);
+
 Q_SIGNALS:
+
     void errorOccured(const QString &error_message);
+
     void importCompleted();
-    void fileParserCompleted(const int count,const int index);
+
+    void fileParserCompleted(int count, int index);
 
 private:
     std::vector<Invocable> _invocableList;
     std::list<Invocable> _parseResult;
-    bool fileInIncludePaths(const std::filesystem::path & file);
-    void setInvocables(const std::list<Invocable> & list);
+
+    void setInvocables(const std::list<Invocable> &list);
+
     PackageLibrary _packageLibrary;
+    SubsystemLibrary _subsystemLibrary;
 
 
 public:
     int rowCount(const QModelIndex &parent) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
-    const PackageLibrary & packageLibrary() {
+
+    const PackageLibrary &packageLibrary() {
         return _packageLibrary;
     }
 
 
     std::shared_ptr<QtNodes::DataModelRegistry> test2() {
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
-            for(const auto & inv: _invocableList) {
-                auto f = [inv](){return std::make_unique<InvocableDataModel>(inv);};
-                ret->registerModel<InvocableDataModel>(f, "test");
+        for (const auto &inv: _invocableList) {
+            auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
+            ret->registerModel<InvocableDataModel>(f, "test");
 
-            }
+        }
+        for (const auto &inv: _subsystemLibrary.getInvocableList()) {
+            auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
+            ret->registerModel<InvocableDataModel>(f, "test");
+
+        }
         return ret;
 
     }
 
-    std::list<Invocable> getParseResult(){return _parseResult;}
+    std::list<Invocable> getParseResult() { return _parseResult; }
 
 };
 

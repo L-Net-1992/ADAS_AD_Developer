@@ -137,7 +137,7 @@ public:
         //双击节点显示节点的属性窗口
         connect(scene,&FlowScene::nodeDoubleClicked,this,[&](Node &n){
             //如果为子系统,显示子系统对应的窗口
-            if(n.nodeDataModel()->name()=="subsystem::SubSystem"){
+            if(n.nodeDataModel()->name()=="business_package::sub_system"){
                 setCurrPagePathName(_currPagePathName+"/"+n.nodeDataModel()->caption());
             }
             // 此处要修改为向外发送消息，由主窗口来处理双击后的操作，以调用nodeParametersDialog

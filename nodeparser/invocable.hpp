@@ -115,12 +115,13 @@ public:
 
 class Invocable {
 public:
-    enum Type {Function, Class};
+    enum Type {Class, Subsystem};
 private:
     Type _type;
     std::string _name;
     std::string _header_file;
     std::string _package;
+    std::string _subsystem_name;
 public:
     const std::string &getPackage() const {
         return _package;
@@ -150,6 +151,13 @@ public:
         _name = name;
     }
 
+    const std::string &getSubsystemName() const {
+        return _subsystem_name;
+    }
+
+    void setSubsystemName(const std::string &name) {
+        _subsystem_name = name;
+    }
     const std::string &getHeaderFile() const {
         return _header_file;
     }

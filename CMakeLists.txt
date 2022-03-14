@@ -46,12 +46,15 @@ set ( PROJECT_SOURCES
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
-    dialogs/mychartview.h dialogs/mychartview.cpp
+#    dialogs/mychartview.h dialogs/mychartview.cpp
+    dialogs/recentprojectdialog.h dialogs/recentprojectdialog.cpp dialogs/recentprojectdialog.ui
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
 
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp
+
+    project/modelsproject.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
@@ -59,6 +62,7 @@ set ( PROJECT_SOURCES
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
+    controllers/aiccchartview.h
 
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp
@@ -68,6 +72,10 @@ set ( PROJECT_SOURCES
     nodeparser/module_library.cpp
     nodeparser/source_generator.hpp
     nodeparser/package_library.h nodeparser/package_library.cpp
+    nodeparser/subsystem_library.h nodeparser/subsystem_library.cpp
+    nodeparser/subsystem_window.ui nodeparser/subsystem_window.h nodeparser/subsystem_window.cpp
+    nodeparser/new_subsystem_dialog.ui nodeparser/new_subsystem_dialog.h nodeparser/new_subsystem_dialog.cpp
+
 
     sqlite/aiccsqlite.hpp
 
@@ -86,7 +94,7 @@ target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/dialogs
+    ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     )
 target_link_libraries(ADAS_AD_Developer
     PRIVATE

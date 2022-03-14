@@ -53,6 +53,7 @@ void ProjectDialog::initButton()
     //取消按钮事件
     connect(ui->pb_project_cancel,&QPushButton::clicked,this,[&]()
     {
+        emit projectDialogCanceled();
         this->close();
     });
 
@@ -190,52 +191,52 @@ void ProjectDialog::writeProjectXml(QFile &file)
 }
 
 ///读取项目文件，当前只读取project的name值
-void ProjectDialog::readProjectXml(QFile &file){
-    QDomDocument doc;
+//void ProjectDialog::readProjectXml(QFile &file){
+//    QDomDocument doc;
 
-    if(!doc.setContent(&file)){
-        file.close();
-        return;
-    }
+//    if(!doc.setContent(&file)){
+//        file.close();
+//        return;
+//    }
 
-    //获取项目名称
-    QDomElement root = doc.documentElement();
-    this->projectName = root.attributeNode("name").value();
+//    //获取项目名称
+//    QDomElement root = doc.documentElement();
+//    this->projectName = root.attributeNode("name").value();
 
-    //获取项目路径
-    QStringList qsl = file.fileName().split("/"+this->projectName+"/.ap");
-    this->setProjectPath(qsl[0]);
+//    //获取项目路径
+//    QStringList qsl = file.fileName().split("/"+this->projectName+"/.ap");
+//    this->setProjectPath(qsl[0]);
 
-    if(this->projectName==""){
-        QMessageBox::critical(Q_NULLPTR,"危险","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
-//        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
-        return;
-    }
+//    if(this->projectName==""){
+//        QMessageBox::critical(Q_NULLPTR,"危险","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
+////        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
+//        return;
+//    }
 
-    QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
-    for(int i=0;i<flowScenes.count();i++){
-        QDomNode flowScene = flowScenes.item(i);
-        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
-    }
+//    QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
+//    for(int i=0;i<flowScenes.count();i++){
+//        QDomNode flowScene = flowScenes.item(i);
+//        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
+//    }
 
-}
+//}
 
-const QString &ProjectDialog::getProjectPath() const
-{
-    return projectPath;
-}
+//const QString &ProjectDialog::getProjectPath() const
+//{
+//    return projectPath;
+//}
 
-const QString &ProjectDialog::getProjectName() const
-{
-    return projectName;
-}
+//const QString &ProjectDialog::getProjectName() const
+//{
+//    return projectName;
+//}
 
-const QStringList &ProjectDialog::getFlowSceneSaveFiles() const
-{
-    return flowSceneSaveFiles;
-}
+//const QStringList &ProjectDialog::getFlowSceneSaveFiles() const
+//{
+//    return flowSceneSaveFiles;
+//}
 
-void ProjectDialog::setProjectPath(const QString &newProjectPath)
-{
-    projectPath = newProjectPath;
-}
+//void ProjectDialog::setProjectPath(const QString &newProjectPath)
+//{
+//    projectPath = newProjectPath;
+//}

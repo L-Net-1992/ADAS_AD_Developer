@@ -31,6 +31,11 @@ public:
         });
 
 
+        //测试nodeCreated事件
+        connect(this, &FlowScene::nodeCreated, [&](QtNodes::Node & node){
+            qDebug() << "node created";
+        });
+
     }
     ~AICCFlowScene(){}
 

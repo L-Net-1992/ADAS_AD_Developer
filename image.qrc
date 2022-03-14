@@ -87,5 +87,6 @@
         <file>res/editor-open.png</file>
         <file>res/editor-paste.png</file>
         <file>res/editor-save.png</file>
+        <file>res/subsystem.png</file>
     </qresource>
 </RCC>

@@ -34,6 +34,8 @@ public:
     void setNodeName(QString name){_nodeName = name;}
     void setNodeCaption(QString caption){_nodeCaption = caption;}
 protected:
+
+
     void mousePressEvent(QMouseEvent *e)
     {
         if(e->button() & Qt::LeftButton){

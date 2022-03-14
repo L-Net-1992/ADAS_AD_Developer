@@ -1,10 +1,9 @@
 #include "calibrationdialog.h"
 #include "ui_calibrationdialog.h"
 
-CalibrationDialog::CalibrationDialog(QWidget *parent,QString pp) :
+CalibrationDialog::CalibrationDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::CalibrationDialog),
-    project_path(pp)
+    ui(new Ui::CalibrationDialog)
 {
     ui->setupUi(this);
     init();
@@ -15,6 +14,8 @@ CalibrationDialog::~CalibrationDialog()
 {
     delete ui;
 }
+
+
 
 ///初始化界面内容
 void CalibrationDialog::init(){
@@ -67,8 +68,7 @@ void CalibrationDialog::initButton(){
         qjdoc.setObject(json_save);
         qDebug() << json_save;
 
-        //TODO::此处保存文件位置以后可以设置到项目目录中
-        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("标定数据json格式 (*.json)"));
+        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),_projectDataModel->currentProjectPath(),tr("标定数据json格式 (*.json)"));
         if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
             spath+=".json";
         QSharedPointer<QFile> save_file(new QFile(spath));
@@ -106,4 +106,12 @@ void CalibrationDialog::initButton(){
     });
 
     //Update按钮
+
+
+
+}
+
+void CalibrationDialog::setProjectDataModel(ProjectDataModel *newProjectDataModel)
+{
+    _projectDataModel = newProjectDataModel;
 }

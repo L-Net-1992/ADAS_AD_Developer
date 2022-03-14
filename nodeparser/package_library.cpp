@@ -7,7 +7,6 @@
 #include <fstream>
 #include <algorithm>
 #include <iostream>
-#include "qdebug.h"
 
 void PackageLibrary::add_prefix_path(const std::filesystem::path &path) {
     if(!path.is_absolute())
@@ -33,14 +32,12 @@ void PackageLibrary::add_prefix_path(const std::filesystem::path &path) {
 }
 
 void PackageLibrary::load_package(const std::filesystem::path &config) {
-    //    qDebug() << "load package: " << config << std::endl;
     std::cout << "load package: " << config << std::endl;
     std::ifstream json_file{config.c_str()};
     std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
     boost::json::value json = boost::json::parse(json_text);
     Package package;
     package.name = config.parent_path().filename().string();
-    //    qInfo() << "package.name: " << package.name << std::endl;
     std::cout << "package.name: " << package.name << std::endl;
     package.prefix_path = config.parent_path().parent_path().parent_path();
     std::cout << "package.prefix: " << package.prefix_path << std::endl;
@@ -170,23 +167,18 @@ std::vector<std::filesystem::path> PackageLibrary::package_include_directories(c
 
 
 void PackageLibrary::package_include_directories(const std::string &package, std::vector<std::filesystem::path> &result,
-                                                 std::set<std::string> used) const {
-//    qDebug() << "front----------------------------" << QString::fromStdString(package);
-    if(used.find(package) != used.end()){
+                                            std::set<std::string> used) const {
+    if(used.find(package) != used.end())
         return;
-    }
-//    qDebug() << "load package:" << QString::fromStdString(package);
     const auto & p = packages_.at(package);
     for(const auto & inc:p.import.include_directories) {
         if(std::find(result.begin(), result.end(), inc) == result.end())
             result.emplace_back(inc);
     }
     used.emplace(package);
-//    qDebug() << "back------------------------------" << QString::fromStdString(package);
     for(const auto & dep: p.import.dependencies)
         package_include_directories(dep, result, used);
-
 }
 
 PackageNode::PackageNode(const std::filesystem::path &includeDirectory, const std::filesystem::path &headerFile)
-    : include_directory(includeDirectory), header_file(headerFile) {}
+        : include_directory(includeDirectory), header_file(headerFile) {}

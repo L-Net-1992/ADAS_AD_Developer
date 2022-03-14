@@ -42,6 +42,9 @@ public:
 //        });
 
     }
+    AICCFlowView(QWidget *parent):FlowView(parent){
+
+    }
 public:
 Q_SIGNALS:
 //    void getNodeDataModel(NodeDataModel *nodeDataModel);

@@ -92,11 +92,11 @@ void RecentProjectDialog::initObserver(){
 
 ///设置点击动作
 void RecentProjectDialog::setDoubleClickAction(QListWidgetItem *li){
-    connect(ui->lw_project,&QListWidget::itemClicked,this,[&](){});
+//    connect(ui->lw_project,&QListWidget::itemClicked,this,[&](){});
     connect(ui->lw_project,&QListWidget::itemDoubleClicked,this,[&](QListWidgetItem *item){
         this->openProject(item);
 
-        qDebug() << "item double clicked";
+//        qDebug() << "item double clicked";
     });
 }
 

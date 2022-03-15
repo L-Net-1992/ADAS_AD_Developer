@@ -14,7 +14,7 @@
    <font/>
   </property>
   <property name="windowTitle">
-   <string>Create Project</string>
+   <string>新建项目</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -37,7 +37,7 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="page">
+   <widget class="QWidget" name="page_1">
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
@@ -48,7 +48,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>Project</string>
+      <string>项目</string>
      </property>
      <widget class="QLabel" name="label_2">
       <property name="geometry">
@@ -60,7 +60,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Path:</string>
+       <string>路径：</string>
       </property>
      </widget>
      <widget class="QLabel" name="label">
@@ -73,7 +73,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Project name:</string>
+       <string>项目名称：</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="le_project_name">
@@ -106,7 +106,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Browse...</string>
+       <string>浏览</string>
       </property>
      </widget>
     </widget>
@@ -131,7 +131,7 @@
       <string notr="true">color:rgb(0, 55, 166)</string>
      </property>
      <property name="text">
-      <string>Create a New Project</string>
+      <string>新建项目</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
@@ -144,7 +144,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Project Details</string>
+      <string>项目信息</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
@@ -163,7 +163,7 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Configuration</string>
+      <string>配置</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -179,7 +179,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Summary</string>
+      <string>摘要</string>
      </property>
     </widget>
    </widget>
@@ -197,7 +197,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Summary</string>
+      <string>摘要</string>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_2">
@@ -210,7 +210,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>Configuration</string>
+      <string>配置</string>
      </property>
      <widget class="QLabel" name="label_8">
       <property name="geometry">
@@ -222,7 +222,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Config2:</string>
+       <string>配置2：</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_9">
@@ -235,7 +235,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Config1:</string>
+       <string>配置1：</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="le_config1">
@@ -280,7 +280,7 @@
       <string notr="true">color:rgb(0, 55, 166)</string>
      </property>
      <property name="text">
-      <string>Create a Configuration</string>
+      <string>新建配置</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_11">
@@ -299,7 +299,7 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Configuration</string>
+      <string>配置</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_12">
@@ -312,7 +312,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Project Details</string>
+      <string>项目信息</string>
      </property>
     </widget>
    </widget>
@@ -327,7 +327,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Project Details</string>
+      <string>项目信息</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_14">
@@ -346,7 +346,7 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Configuration</string>
+      <string>配置</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_15">
@@ -362,7 +362,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Summary</string>
+      <string>摘要</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_16">
@@ -386,7 +386,7 @@
       <string notr="true">color:rgb(0, 55, 166)</string>
      </property>
      <property name="text">
-      <string>Summary</string>
+      <string>摘要</string>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">
@@ -399,7 +399,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>Configuration</string>
+      <string>配置</string>
      </property>
      <widget class="QLabel" name="label_17">
       <property name="geometry">
@@ -411,7 +411,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>config2:</string>
+       <string>配置2：</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_18">
@@ -424,7 +424,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>config1:</string>
+       <string>配置1：</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="le_summary_config1">
@@ -464,7 +464,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>Project</string>
+      <string>项目</string>
      </property>
      <widget class="QLabel" name="label_19">
       <property name="geometry">
@@ -476,7 +476,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Path:</string>
+       <string>路径：</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_20">
@@ -489,7 +489,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Project name:</string>
+       <string>项目名称：</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="le_summary_project_name">
@@ -544,7 +544,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Next &gt;</string>
+    <string>下一步&gt;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pb_project_cancel">
@@ -557,7 +557,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Cancel</string>
+    <string>取消</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pb_project_back">
@@ -573,7 +573,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt; Back</string>
+    <string>&lt; 返回</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pb_project_finish">
@@ -586,7 +586,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Finish</string>
+    <string>完成</string>
    </property>
   </widget>
  </widget>

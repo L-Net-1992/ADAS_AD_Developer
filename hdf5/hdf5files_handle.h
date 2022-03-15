@@ -40,6 +40,11 @@ public:
         close_h5file(file_id_);
     }
 
+    hid_t get_file_id()
+    {
+        return file_id_;
+    }
+
     template <typename T>
     void write(std::string signal, std::vector<T> data, const char *group)
     {

@@ -37,7 +37,7 @@ QJsonObject getConfig(){
     return ret;
 }
 
-///order json
+///对 json数据进行排序
 QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
     QList<QPair<QString,QJsonObject>> list;
     QStringList keys = jo.keys();
@@ -52,32 +52,52 @@ QList<QPair<QString,QJsonObject>> orderedQJsonObject(QJsonObject jo){
 }
 
 
-///recursion child node
-void recursionQJsonObject(QJsonObject jo,QTreeWidgetItem *twi){
+///主界面左侧功能树递归 child node
+void recursionQJsonObjectLeft(QString parentName,QJsonObject jo,QTreeWidgetItem *twi){
     QStringList keys = jo.keys();
-//    for(auto key:keys){
     for(int i=0;i<keys.size();i++){
         if(keys[i]=="order") continue;
         QJsonValue jv = jo.value(keys[i]);
         QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
         ctwi->setText(0,keys[i]);
+        QString path = parentName+"|"+keys[i];
         if(jv.isObject())
-            recursionQJsonObject(jv.toObject(),ctwi);
+            recursionQJsonObjectLeft(path,jv.toObject(),ctwi);
         else if(jv.isArray())
-            makeLeafNode(jv.toArray(),ctwi);
+            makeLeafNode(path,jv.toArray(),ctwi);
     }
 }
 
-void makeLeafNode(QJsonArray ja,QTreeWidgetItem *twi){
+//递归2及子节点并带入父分类信息
+void recursionQJsonObjectModuleBrowser(QString parentName,QJsonObject jo,QTreeWidgetItem *twi){
+    QStringList keys = jo.keys();
+    for(int i=0;i<keys.size();i++){
+        if(keys[i]=="order") continue;
+        QJsonValue jv = jo.value(keys[i]);
+        QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
+        ctwi->setText(0,keys[i]);
+        QString path = parentName+"|"+keys[i];
+        ctwi->setData(0,Qt::UserRole+1,QVariant::fromValue(path));
+        //设置完数据后继续递归
+        if(jv.isObject())
+            recursionQJsonObjectModuleBrowser(path,jv.toObject(),ctwi);
+        else if(jv.isArray())
+            continue;
+    }
+}
+
+
+///创建功能的叶子节点
+void makeLeafNode(const QString path,QJsonArray ja,QTreeWidgetItem *twi){
     AICCSqlite sqlite;
     for(int i=0;i<ja.size();i++){
         QTreeWidgetItem *ctwi = new QTreeWidgetItem(twi);
         QString name = "";
-        QString caption = ja[i].toString();
+        const QString caption = ja[i].toString();
         ctwi->setText(0,caption);
         //检索数据库中对应名称的node模块
-        QString query = QString("select id,name,caption from node where caption = '%0' and class_id = 0 ").arg(caption);
-        QSqlQuery squery = sqlite.query(query);
+        QString sql = QString("select n.id,n.name,n.caption from node n inner join nodeClass nc on n.class_id = nc.id where n.caption = '%0' and nc.class_name = '%1'").arg(caption,path);
+        QSqlQuery squery = sqlite.query(sql);
         if(squery.next()){
             name = squery.value(1).toString();
         }else{

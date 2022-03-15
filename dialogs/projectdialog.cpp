@@ -24,7 +24,7 @@ void ProjectDialog::initButton()
     ui->pb_project_finish->hide();
     int nCount = ui->sw_project->count();
 
-    //back button event
+    //返回按钮事件
     connect(ui->pb_project_back,&QPushButton::clicked,this,[&]()
     {
         int nIndex = ui->sw_project->currentIndex();
@@ -36,7 +36,7 @@ void ProjectDialog::initButton()
         ui->sw_project->setCurrentIndex(nIndex);
     });
 
-    //next button event
+    //下一步按钮事件
     connect(ui->pb_project_next,&QPushButton::clicked,this,[&,nCount]()
     {
         int nIndex = ui->sw_project->currentIndex();
@@ -50,14 +50,15 @@ void ProjectDialog::initButton()
         ui->sw_project->setCurrentIndex(nIndex);
     });
 
-    //cancel button event
+    //取消按钮事件
     connect(ui->pb_project_cancel,&QPushButton::clicked,this,[&]()
     {
+        emit projectDialogCanceled();
         this->close();
     });
 
 
-    //finish button event
+    //完成按钮事件
     connect(ui->pb_project_finish,&QPushButton::clicked,this,[&,this]()
     {
         //create folder
@@ -71,7 +72,7 @@ void ProjectDialog::initButton()
         bool existProjectFolder = folder.exists(projectFolder);
         if(existProjectFolder)
         {
-            QMessageBox::information(this,tr("create folder"),tr("the folder is existed,please select other path"));
+            QMessageBox::information(this,tr("建立文件夹"),tr("文件夹已经存在，请选择其他路径"));
             return;
         }
         else
@@ -79,7 +80,7 @@ void ProjectDialog::initButton()
             bool pfok = folder.mkdir(projectFolder);
             if(!pfok)
             {
-                QMessageBox::information(this,tr("create folder"),tr("create folder failed:").append(projectFolder));
+                QMessageBox::information(this,tr("建立文件夹"),tr("建立文件夹失败：").append(projectFolder));
                 return;
             }
             //创建配置信息文件夹
@@ -87,13 +88,13 @@ void ProjectDialog::initButton()
             bool pcfok = folder.mkdir(projectConfigFolder);
             if(!pcfok)
             {
-                QMessageBox::information(this,tr("create .ap folder"),tr("create .ap folder failed:").append(projectConfigFolder));
+                QMessageBox::information(this,tr("建立 .ap 文件夹"),tr("建立 .ap 文件夹失败：").append(projectConfigFolder));
                 return;
             }
         }
 
 
-        //create project file
+        //创建项目文件
         QFile file(projectConfigFolder+"/project.xml");
         bool file_exist = file.exists();
         if(!file_exist)
@@ -145,7 +146,7 @@ void ProjectDialog::initOpenPath()
 {
     connect(ui->pb_project_path,&QPushButton::clicked,this,[&]()
     {
-        QString path = QFileDialog::getExistingDirectory(this,"Choose Directory","./");
+        QString path = QFileDialog::getExistingDirectory(this,"选择目录","./");
         if(path.isEmpty()) return;
         else ui->le_project_path->setText(path);
     });

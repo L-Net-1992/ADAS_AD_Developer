@@ -33,14 +33,12 @@ void PackageLibrary::add_prefix_path(const std::filesystem::path &path) {
 }
 
 void PackageLibrary::load_package(const std::filesystem::path &config) {
-//    qDebug() << "load package: " << config << std::endl;
     std::cout << "load package: " << config << std::endl;
     std::ifstream json_file{config.c_str()};
     std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
     boost::json::value json = boost::json::parse(json_text);
     Package package;
     package.name = config.parent_path().filename().string();
-//    qInfo() << "package.name: " << package.name << std::endl;
     std::cout << "package.name: " << package.name << std::endl;
     package.prefix_path = config.parent_path().parent_path().parent_path();
     std::cout << "package.prefix: " << package.prefix_path << std::endl;

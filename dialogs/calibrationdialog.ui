@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Calibration</string>
+   <string>标定</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -201,17 +201,17 @@
      </row>
      <column>
       <property name="text">
-       <string>Parameter</string>
+       <string>参数</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Current Value</string>
+       <string>当前值</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>New Value</string>
+       <string>新值</string>
       </property>
      </column>
      <item row="0" column="0">
@@ -471,7 +471,7 @@
   </layout>
   <action name="action_sync_to_module">
    <property name="text">
-    <string>Sync to Module</string>
+    <string>同步到模型</string>
    </property>
    <property name="toolTip">
     <string>Sync to Module</string>
@@ -482,7 +482,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>保存</string>
    </property>
    <property name="toolTip">
     <string>Save </string>
@@ -493,7 +493,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Load</string>
+    <string>载入</string>
    </property>
    <property name="toolTip">
     <string>Load</string>
@@ -504,7 +504,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Update</string>
+    <string>更新</string>
    </property>
    <property name="toolTip">
     <string>Update</string>

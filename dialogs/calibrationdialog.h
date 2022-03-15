@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QFile>
+#include <project/modelsproject.hpp>
 
 
 namespace Ui {
@@ -19,12 +20,15 @@ class CalibrationDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CalibrationDialog(QWidget *parent = nullptr,QString pp = nullptr);
+    explicit CalibrationDialog(QWidget *parent = nullptr);
     ~CalibrationDialog();
+
+    void setProjectDataModel(ProjectDataModel *newProjectDataModel);
 
 private:
     Ui::CalibrationDialog *ui;
-    QString project_path;
+    ProjectDataModel *_projectDataModel;
+//    QString project_path;
 
 private:
     void init();

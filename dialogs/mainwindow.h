@@ -32,12 +32,14 @@
 #include <controllers/aiccstackedwidget.hpp>
 #include <dialogs/projectdialog.h>
 #include <dialogs/nodeparametersdialog.h>
+#include <dialogs/nodeparametersmildialog.h>
 #include <dialogs/nodetreedialog.h>
 #include <dialogs/testdialog.h>
 #include <dialogs/datainspectordialog.h>
 #include <dialogs/monitordialog.h>
-#include <dialogs/editordialog.h>
+#include <dialogs/editorwindow.h>
 #include <dialogs/calibrationdialog.h>
+#include <dialogs/recentprojectdialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "controllers/aicctreewidget.hpp"
@@ -45,6 +47,7 @@
 #include "nodeparser/source_generator.hpp"
 #include "nodeparser/models.hpp"
 #include "sqlite/aiccsqlite.hpp"
+#include "project/modelsproject.hpp"
 
 
 QT_BEGIN_NAMESPACE
@@ -72,26 +75,9 @@ protected:
     void registrySceneGenerateNodeMenu(std::list<Invocable> parserResult);
 Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
-//    void
 
 private:
-    Ui::MainWindow *ui;
-    AICCSqlite sqlite;
-    ProjectDialog *projectDialog;
-    NodeParametersDialog *npDialog;
-    NodeTreeDialog *nodeTreeDialog;
-    ImportScriptDialog *isDialog;
-    DataInspectorDialog *diDialog;
-    Dialog *monitorDialog;
-    EditorDialog *eDialog;
-    CalibrationDialog *cDialog;
-    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QProcess * process;
 
-    //nodeeditor部分
-    QMap<QString,QSet<QString>> nodeMap;
-
-    AICCStackedWidget asw;
 
     void initMenu();
     void initTreeView();
@@ -106,10 +92,13 @@ private:
     void initStackedWidget();
     void initImportScriptDialog();
     void initProjectDialog();
+    void initRecentProjectDialog();
     void initDataInspectorDialog();
 
-    //动作函数部分
-    void pbOpenAction();
+    //打开项目动作函数部分
+    void pbOpenAction(QString projectPath = Q_NULLPTR);
+    //创建子系统动作函数
+    void createSubsysetmAction();
 
     /* xlguo debug*/
     std::string modules_path_ = "/home/guopeng/code/liudian/adas_node/output/"; // /home/guopeng/code/xlguo/install
@@ -119,7 +108,10 @@ private:
     void initNodeEditor();
     std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
+    QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+    void processStart(const QVector<QString> scriptNames,const int platformIndex);
+
 
 
 private:
@@ -133,6 +125,29 @@ Q_SIGNALS:
 public:
     static inline QPlainTextEdit *pte_out = Q_NULLPTR;
 
+private:
+    Ui::MainWindow *ui;
+    AICCSqlite sqlite;
+    ProjectDialog *projectDialog;
+    RecentProjectDialog *rProjectDialog;
+    NodeParametersDialog *npDialog;
+    NodeParametersMILDialog *npmilDialog;
+    NodeTreeDialog *nodeTreeDialog;
+    ImportScriptDialog *isDialog;
+    DataInspectorDialog *diDialog;
+    MonitorDialog *monitorDialog;
+    EditorWindow *eDialog;
+    CalibrationDialog *cDialog;
+    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+    QProcess * process;
+
+    //nodeeditor部分
+    QMap<QString,QSet<QString>> nodeMap;
+    AICCStackedWidget asw;
+
+    //project部分
+    ProjectDataModel *pDataModel;
 };
 
 

@@ -140,7 +140,7 @@
           </sizepolicy>
          </property>
          <attribute name="title">
-          <string>Output</string>
+          <string>输出</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
@@ -163,13 +163,19 @@
             <property name="styleSheet">
              <string notr="true">background-color:#FFFFFF</string>
             </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="maximumBlockCount">
+             <number>100</number>
+            </property>
            </widget>
           </item>
          </layout>
         </widget>
         <widget class="QWidget" name="tab_other">
          <attribute name="title">
-          <string>Other</string>
+          <string>其他</string>
          </attribute>
         </widget>
        </widget>
@@ -180,23 +186,23 @@
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>文件</string>
     </property>
     <widget class="QMenu" name="menuNew">
      <property name="title">
-      <string>New</string>
+      <string>新建</string>
      </property>
      <addaction name="actionNewProject"/>
     </widget>
@@ -209,19 +215,18 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>编辑</string>
     </property>
-    <addaction name="actionEdit_Item"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>帮助</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>显示</string>
     </property>
     <addaction name="actionNodeWindow"/>
     <addaction name="actionPropertyWindow"/>
@@ -625,7 +630,7 @@ gridline-color:#FFFFFF;
           <font/>
          </property>
          <property name="text">
-          <string>Open</string>
+          <string>打开</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -645,7 +650,7 @@ gridline-color:#FFFFFF;
           <font/>
          </property>
          <property name="text">
-          <string>Save</string>
+          <string>保存</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -665,7 +670,7 @@ gridline-color:#FFFFFF;
           <font/>
          </property>
          <property name="text">
-          <string>Print</string>
+          <string>打印</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -734,15 +739,14 @@ gridline-color:#FFFFFF;
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Data
-Inspector</string>
+          <string>数据</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -769,15 +773,14 @@ Inspector</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Module
-Settings</string>
+          <string>模型设定</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -804,15 +807,14 @@ Settings</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Code
-Generator</string>
+          <string>代码生成</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -839,15 +841,14 @@ Generator</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Module
-Browser</string>
+          <string>模块</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -874,14 +875,14 @@ Browser</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>New</string>
+          <string>新建</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -903,7 +904,7 @@ Browser</string>
          <font/>
         </property>
         <attribute name="title">
-         <string>Compiler</string>
+         <string>部署</string>
         </attribute>
         <widget class="QToolButton" name="tb_code_compiler">
          <property name="enabled">
@@ -919,14 +920,14 @@ Browser</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>     Code Build</string>
+          <string>     代码构建</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -959,15 +960,14 @@ Browser</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Code
-Deploy</string>
+          <string>代码部署</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -994,12 +994,12 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
           <property name="text">
-           <string>SelectPlatform</string>
+           <string>选择平台</string>
           </property>
          </item>
          <item>
@@ -1029,14 +1029,14 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Run</string>
+          <string>运行</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1063,14 +1063,14 @@ Deploy</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Stop</string>
+          <string>停止</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1092,7 +1092,7 @@ Deploy</string>
          <font/>
         </property>
         <attribute name="title">
-         <string>Emulator</string>
+         <string>仿真</string>
         </attribute>
         <widget class="QToolButton" name="tb_inject">
          <property name="geometry">
@@ -1107,7 +1107,7 @@ Deploy</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Inject</string>
+          <string>注入</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1123,13 +1123,100 @@ Deploy</string>
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
+        <widget class="QToolButton" name="tb_run_2">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>10</y>
+           <width>71</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>MIL运行</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="tb_stop_2">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>10</y>
+           <width>71</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>MIL停止</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+        <widget class="Line" name="line_6">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>20</y>
+           <width>3</width>
+           <height>70</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font/>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_3">
         <property name="font">
          <font/>
         </property>
         <attribute name="title">
-         <string>Calibration</string>
+         <string>标定</string>
         </attribute>
         <widget class="QToolButton" name="tb_calibration">
          <property name="geometry">
@@ -1144,7 +1231,7 @@ Deploy</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Calibration</string>
+          <string>标定</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1166,12 +1253,12 @@ Deploy</string>
          <font/>
         </property>
         <attribute name="title">
-         <string>CustomModules</string>
+         <string>自定义模块</string>
         </attribute>
-        <widget class="QToolButton" name="pb_import">
+        <widget class="QToolButton" name="tb_import">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>110</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1197,10 +1284,10 @@ Deploy</string>
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_import_module">
+        <widget class="QToolButton" name="tb_import_module">
          <property name="geometry">
           <rect>
-           <x>220</x>
+           <x>320</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1226,10 +1313,10 @@ Deploy</string>
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_export_module">
+        <widget class="QToolButton" name="tb_export_module">
          <property name="geometry">
           <rect>
-           <x>120</x>
+           <x>220</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1261,7 +1348,7 @@ Deploy</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>110</x>
+           <x>210</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1280,7 +1367,7 @@ Deploy</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>320</x>
+           <x>420</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1293,10 +1380,13 @@ Deploy</string>
           <enum>Qt::Vertical</enum>
          </property>
         </widget>
-        <widget class="QToolButton" name="pb_merge_module">
+        <widget class="QToolButton" name="tb_merge_module">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="geometry">
           <rect>
-           <x>330</x>
+           <x>530</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1322,6 +1412,64 @@ Deploy</string>
           <enum>Qt::ToolButtonTextUnderIcon</enum>
          </property>
         </widget>
+        <widget class="QToolButton" name="tb_edit_script">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>91</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>编写脚本</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/edit_script.png</normaloff>:/res/edit_script.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="tb_create_subsystem">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>10</y>
+           <width>91</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>组合模块</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../image.qrc">
+           <normaloff>:/res/subsystem.png</normaloff>:/res/subsystem.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -1330,7 +1478,7 @@ Deploy</string>
   </widget>
   <action name="actionNewProject">
    <property name="text">
-    <string>Project</string>
+    <string>项目</string>
    </property>
    <property name="font">
     <font/>
@@ -1338,7 +1486,7 @@ Deploy</string>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>退出</string>
    </property>
    <property name="font">
     <font/>
@@ -1346,7 +1494,7 @@ Deploy</string>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>关于</string>
    </property>
    <property name="font">
     <font/>
@@ -1354,7 +1502,7 @@ Deploy</string>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string>保存</string>
    </property>
    <property name="font">
     <font/>
@@ -1376,7 +1524,7 @@ Deploy</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>NodeWindow</string>
+    <string>节点窗口</string>
    </property>
    <property name="font">
     <font/>
@@ -1390,7 +1538,7 @@ Deploy</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>PropertyWindow</string>
+    <string>属性窗口</string>
    </property>
    <property name="font">
     <font/>
@@ -1398,10 +1546,15 @@ Deploy</string>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>打开</string>
    </property>
    <property name="font">
     <font/>
+   </property>
+  </action>
+  <action name="actionCreateSubSystem">
+   <property name="text">
+    <string>创建子系统</string>
    </property>
   </action>
  </widget>

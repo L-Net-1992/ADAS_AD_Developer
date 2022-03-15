@@ -12,7 +12,6 @@
 #include <utility>
 #include <string>
 #include <boost/json.hpp>
-
 class PackageNode {
 public:
     PackageNode(const std::filesystem::path &includeDirectory, const std::filesystem::path &headerFile);

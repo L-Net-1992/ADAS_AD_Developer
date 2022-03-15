@@ -3,6 +3,9 @@
 
 #include <QDialog>
 #include <QDebug>
+#include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexercpp.h>
+#include <Qsci/qsciapis.h>
 
 namespace Ui {
 class EditorDialog;
@@ -20,7 +23,11 @@ public:
     void openTextFile(const QString pathName);
 
 private:
+    void initEditor(QWidget *parent = nullptr);
+
+private:
     Ui::EditorDialog *ui;
+    QsciScintilla *_editor;
 };
 
 #endif // EDITORDIALOG_H

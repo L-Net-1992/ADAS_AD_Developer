@@ -37,6 +37,7 @@ public Q_SLOTS:
 
     void openSubsystem(QWidget *parent, const std::string &package, const std::string &name);
 
+
 Q_SIGNALS:
 
     void errorOccured(const QString &error_message);
@@ -52,7 +53,7 @@ private:
     void setInvocables(const std::list<Invocable> &list);
 
     PackageLibrary _packageLibrary;
-    SubsystemLibrary _subsystemLibrary;
+    SubsystemLibrary _subsystemLibrary{this};
 
 
 public:
@@ -63,7 +64,18 @@ public:
     const PackageLibrary &packageLibrary() {
         return _packageLibrary;
     }
+    void addPackage(const std::filesystem::path & path);
 
+    std::shared_ptr<QtNodes::DataModelRegistry> test2NoSubsystem() {
+        auto ret = std::make_shared<QtNodes::DataModelRegistry>();
+        for (const auto &inv: _invocableList) {
+            auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
+            ret->registerModel<InvocableDataModel>(f, "test");
+
+        }
+        return ret;
+
+    }
 
     std::shared_ptr<QtNodes::DataModelRegistry> test2() {
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
@@ -72,6 +84,8 @@ public:
             ret->registerModel<InvocableDataModel>(f, "test");
 
         }
+        if(ret->categories().empty())
+            return ret;
         for (const auto &inv: _subsystemLibrary.getInvocableList()) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
             ret->registerModel<InvocableDataModel>(f, "test");
@@ -82,6 +96,12 @@ public:
     }
 
     std::list<Invocable> getParseResult() { return _parseResult; }
+public:
+    static void updateVarName(QtNodes::FlowScene & scene, QtNodes::Node & node, QWidget * parent);
+    static void generateVarNameIfEmpty(QtNodes::FlowScene & scene, QtNodes::Node & node);
+private:
+    static QString generateVarName(QtNodes::FlowScene & scene);
+    static bool varNameExists(QtNodes::FlowScene & scene, const QString & var_name);
 
 };
 

@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent):
     npDialog(new NodeParametersDialog(parent)),
     npmilDialog ( new NodeParametersMILDialog(parent)),
     nodeTreeDialog ( new NodeTreeDialog(parent)),
-    isDialog (new ImportScriptDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     monitorDialog ( new MonitorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
@@ -24,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->setAttribute(Qt::WA_QuitOnClose);
     pDataModel=new ProjectDataModel;
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
-
+    isDialog =new ImportScriptDialog(pDataModel,parent);
 
     MainWindow::pte_out = ui->pte_output;
     qInstallMessageHandler(logOutput);
@@ -471,8 +470,10 @@ void MainWindow::initProjectDialog(){
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
 //TODO:
 void MainWindow::initNodeEditor(){
-    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
-    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
+//    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
+//    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary(_moduleLibrary.get()));
+        _moduleLibrary = new ModuleLibrary;
+        _subsystemLibrary = new SubsystemLibrary(_moduleLibrary);
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/install/";
     QStringList files = getADASPackagesFileList(path);
@@ -497,41 +498,7 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
 
 
-    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
-    //加载过程中显示当前进度
-    //        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
-    //        ui->statusbar->showMessage("")
-    //    });
 
-
-    /*old code
-
-    //1:先解析package文件，准备好解析文件中的node数据
-    const QString path = QApplication::applicationDirPath()+"/nodeconfig/";
-    QStringList files = getFileList(path);
-
-    //0:执行加载前准备动作
-    ui->statusbar->showMessage("Start load node moduls data...");
-    ui->tw_toolbar->setEnabled(false);
-
-    //耗时操作放到单独线程中操作，操作完毕后通知外部继续执行
-    QtConcurrent::run([&,files](){
-        _moduleLibrary->importFiles(files);
-        std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
-        emit scriptParserCompleted(parserResult);
-    });
-
-    //接收scriptParserCompleted信号，执行后续操作
-    //为connect注册std::list<Invocable>类型，否则connect在SLOT中会不识别该类型
-    qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
-    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
-    //显示状态栏进度数据
-    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
-        //加载过程中显示当前进度
-        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
-    });
-
-    */
 }
 
 ///生成右键菜单
@@ -559,15 +526,32 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
 ///初始化导入脚本对话框的内容
 void MainWindow::initImportScriptDialog(){
     //选择文本后响应函数
-    connect(isDialog,&ImportScriptDialog::filesSelected,this,[&](const QStringList files){
-        QtConcurrent::run([&,files](){
+    connect(isDialog,&ImportScriptDialog::packageSelected,this,[&](const QString packFile){
+
+//        QtConcurrent::run([&](){
+            _moduleLibrary->addPackage(QString(packFile).toStdString());
+//        });
+
+//          _moduleLibrary->addPackage(QString(packFile).toStdString());
+
+//        QtConcurrent::run([&pf,&ml](){
+            ///旧的单个文件导入
             //1:解析选择文件中的node
-            _moduleLibrary->importFiles(files);
-            std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
+//            _moduleLibrary->importFiles(files);
+//            std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
             //此处只通知initNodeEditor函数中链接的registrySceneGenerateNodeMenu函数执行后续操作即可
-            emit scriptParserCompleted(parserResult);
-        });
+//            emit scriptParserCompleted(parserResult);
+//            qDebug() << "--------------module library instance" << ml;
+//                    qDebug() << "-------------module library instance" << pf;
+            ///新方式，以包的方式导入
+//            ml->addPackage(QString(pf).toStdString());
+//        });
     });
+
+    connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+        qDebug() << "index:" <<index << "   count:" << count;
+    });
+
 
     //文件解析百分比
     //TODO:此处可能要处理
@@ -576,6 +560,7 @@ void MainWindow::initImportScriptDialog(){
     //        isDialog->setListModels(_moduleLibrary.get());
     //    });
 }
+
 
 ///初始化数据检查窗口
 void MainWindow::initDataInspectorDialog(){

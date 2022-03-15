@@ -46,6 +46,7 @@
 #include "controllers/aicctoolbutton.hpp"
 #include "nodeparser/source_generator.hpp"
 #include "nodeparser/models.hpp"
+#include "nodeparser/subsystem_library.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "project/modelsproject.hpp"
 
@@ -130,8 +131,10 @@ private:
     MonitorDialog *monitorDialog;
     EditorWindow *eDialog;
     CalibrationDialog *cDialog;
-    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+//    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+//    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+    ModuleLibrary *_moduleLibrary;
+    SubsystemLibrary *_subsystemLibrary;
     QProcess * process;
 
     //nodeeditor部分

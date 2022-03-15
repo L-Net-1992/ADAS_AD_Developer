@@ -27,17 +27,16 @@ private:
         }
     }
 
-    static void
-    makeNodeVarNames(const QtNodes::FlowScene &scene, std::map<const InvocableDataModel *, std::string> &nodeVarNames) {
-        int i = 0;
-        for (const auto *node: scene.allNodes()) {
-            const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
-            nodeVarNames.insert({model, "_node" + std::to_string(i++)});
-        }
-    }
+//    static void
+//    makeNodeVarNames(const QtNodes::FlowScene &scene, std::map<const InvocableDataModel *, std::string> &nodeVarNames) {
+//        int i = 0;
+//        for (const auto *node: scene.allNodes()) {
+//            const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
+//            nodeVarNames.insert({model, "_node" + std::to_string(i++)});
+//        }
+//    }
 
     static void makeConnections(const QtNodes::FlowScene &scene,
-                                const std::map<const InvocableDataModel *, std::string> &nodeVarNames,
                                 std::map<std::string, std::vector<std::string>> &connections) {
         for(const auto & p: scene.connections()) {
             const auto & c = *p.second;
@@ -47,8 +46,8 @@ private:
             const auto *in_model = static_cast<InvocableDataModel *>(in_node->nodeDataModel());
             const auto & out_port = c.dataType(QtNodes::PortType::Out);
             const auto & in_port = c.dataType(QtNodes::PortType::In);
-            std::string out = nodeVarNames.find(out_model)->second + "." + out_port.name.toStdString();
-            std::string in = nodeVarNames.find(in_model)->second + "." + in_port.name.toStdString();
+            std::string out = out_model->invocable().getVarName() + "." + out_port.name.toStdString();
+            std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString();
             if(connections.find(out) == connections.end())
                 connections.insert({out, {}});
             connections.find(out)->second.push_back(in);
@@ -84,14 +83,14 @@ private:
         return ss.str();
 
     }
-    static void generateTask(const std::map<const InvocableDataModel *, std::string> &varNames,
-                             const std::map<std::string, std::vector<std::string>> &connections, std::ofstream &file) {
+    static void generateTask(const QtNodes::FlowScene &scene, const std::map<std::string, std::vector<std::string>> &connections, std::ofstream &file) {
         file << "class task0 {" << std::endl;
         file << "private:" << std::endl;
-        for(const auto & p: varNames) {
-            const std::string & type = p.first->invocable().getName();
-            const std::string & name = p.second;
-            file << indent(1) << type << " " << name << nodeParamValueList(p.first->invocable().getParamList()) << ";" << std::endl;
+        for(const auto  node: scene.allNodes()) {
+            const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
+            const std::string & type = model->invocable().getName();
+            const std::string & name = model->invocable().getVarName();
+            file << indent(1) << type << " " << name << nodeParamValueList(model->invocable().getParamList()) << ";" << std::endl;
         }
         file << "public:" << std::endl;
         file << indent(1) << "task0() {" << std::endl;
@@ -156,13 +155,11 @@ private:
 public:
     static void generateSource(const QtNodes::FlowScene &scene, std::ofstream &file) {
         std::set<std::string> includes;
-        std::map<const InvocableDataModel *, std::string> varNames;
         std::map<std::string, std::vector<std::string>> connections;
         extractIncludes(scene, includes);
-        makeNodeVarNames(scene, varNames);
-        makeConnections(scene, varNames, connections);
+        makeConnections(scene, connections);
         generateIncludes(includes, file);
-        generateTask(varNames, connections, file);
+        generateTask(scene, connections, file);
         generateMain(file);
 
     }

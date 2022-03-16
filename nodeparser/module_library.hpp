@@ -53,7 +53,7 @@ private:
     void setInvocables(const std::list<Invocable> &list);
 
     PackageLibrary _packageLibrary;
-    SubsystemLibrary _subsystemLibrary{this};
+    SubsystemLibrary _subsystemLibrary;
 
 
 public:

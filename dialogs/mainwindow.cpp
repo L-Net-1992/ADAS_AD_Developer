@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent):
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
     isDialog =new ImportScriptDialog(pDataModel,parent);
 
-    MainWindow::pte_out = ui->pte_output;
+//    MainWindow::pte_out = ui->pte_output;
     qInstallMessageHandler(logOutput);
 
     //获得Process的标准输出
@@ -150,15 +150,16 @@ void MainWindow::initToolbar()
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //generate cpp code
-        AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
+//        AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
+        AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
         std::string generatePath = QApplication::applicationDirPath().append("/generate").toStdString();
         std::filesystem::path dir(generatePath);
-        SourceGenerator::generateCMakeProject(dir,*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateCMakeProject(dir,scene,_moduleLibrary->packageLibrary());
 
         //generate shell script
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -199,7 +200,7 @@ void MainWindow::initToolbar()
 
         for(const QString &ssf :pDataModel->currentFlowSceneSaveFiles()){
             QString saveFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ssf;
-            qDebug() << "save file name:" << saveFileName;
+            qInfo() << "save file name:" << saveFileName;
             QFile file(saveFileName);
             if(file.open(QIODevice::WriteOnly)){
                 file.write(fv->scene()->saveToMemory());
@@ -400,15 +401,9 @@ void MainWindow::pbOpenAction(QString projectPath){
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
 
-    //3:加载当前项目的子系统模块
-    for (const auto &inv: _subsystemLibrary->getInvocableList()) {
-        auto f = [inv]() {
-            std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-            p->setCaption(p->name());
-            return p;
-        };
-        scene->registry().registerModel<InvocableDataModel>(f, "自定义模块");
-    }
+    //3:注册所有的功能模块到右键上
+    std::shared_ptr<DataModelRegistry> dmr = registerDataModels();
+    ui->sw_flowscene->getCurrentView()->scene()->setRegistry(dmr);
 
     //4：将名称为mainFlowScene的文件内容加载到主FlowScene上
     QString loadFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ pDataModel->currentFlowSceneSaveFiles()[0];
@@ -473,7 +468,8 @@ void MainWindow::initNodeEditor(){
 //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
 //    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary(_moduleLibrary.get()));
         _moduleLibrary = new ModuleLibrary;
-        _subsystemLibrary = new SubsystemLibrary(_moduleLibrary);
+        _subsystemLibrary = new SubsystemLibrary;
+
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/install/";
     QStringList files = getADASPackagesFileList(path);
@@ -495,26 +491,30 @@ void MainWindow::initNodeEditor(){
 
     });
     qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
-    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
+//    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
+    //4:包数据解析完成后续工作
+    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
-
-
+    //5:响应importCompleted
+    connect(_moduleLibrary,&ModuleLibrary::importCompleted,[&](){
+       ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
+    });
 }
 
-///生成右键菜单
-void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult){
-    //1:生成scene的右键node数据,并注册到所有scene中
-    std::shared_ptr<DataModelRegistry> registerDataModels = this->registerDataModels(parserResult);
-    QList<AICCFlowView *> views =  ui->sw_flowscene->allViews();
-    for(AICCFlowView *view:views){
-        view->scene()->setRegistry(registerDataModels);
-    }
+///包数据解析完毕工作
+void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 
-
-    //2:生成NodeTreeDialog的node菜单结构
+    //1:生成NodeTreeDialog的菜单结构
     QMap<QString,QSet<QString>> nodeCategoryDataModels = this->newNodeCategoryDataModels(parserResult);
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
-
+    //2:初始化模块变量相关操作
+    FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+    connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
+        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
+    });
+    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
+        ModuleLibrary::updateVarName(*scene, node, this);
+    });
     //3:启用工具栏、展示选择项目窗口
     ui->statusbar->showMessage("节点模型数据加载已完成");
     ui->tw_toolbar->setEnabled(true);
@@ -522,6 +522,65 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     ui->menubar->setEnabled(true);
     rProjectDialog->show();
 }
+
+/// 只负责注册右键菜单，并返回右键菜单的数据模型,注册的数据包括普通模块、子系统模块
+/// 该函数在项目打开完毕后执行，每次打开项目都要重新注册一次,或每次增加了新的子系统都要重新注册一次
+//std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::list<Invocable> parserResult){
+    std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
+
+    std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
+    auto ret = std::make_shared<DataModelRegistry>();
+    AICCSqlite sqlite;
+    //注册所有已有的模块
+    for(auto it = parserResult.begin();it!=parserResult.end();++it){
+        const auto &inv = *it;
+        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
+        QSqlQuery squery = sqlite.query(sql);
+        if(squery.next()){
+            QString caption = squery.value(1).toString();
+            QString className = squery.value(2).toString();
+            auto f = [inv,caption](){
+                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+
+                p->setCaption(caption);
+                return p;
+            };
+
+            ret->registerModel<InvocableDataModel>(f,className);
+        }else{
+            auto f = [inv](){
+                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+                p->setCaption(p->name());
+                return p;
+            };
+            ret->registerModel<InvocableDataModel>(f,"Other");
+        }
+
+    }
+
+    //注册所有的子系统
+    for (const auto &inv: _subsystemLibrary->getInvocableList()) {
+        auto f = [inv]() {
+            std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+            p->setCaption(p->name());
+            return p;
+        };
+        ret->registerModel<InvocableDataModel>(f, "自定义模块");
+    }
+
+    return ret;
+}
+
+
+///生成右键菜单,包括普通模块、子系统，在项目加载完毕后执行
+//void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult){
+//    //1:生成scene的右键node数据,并注册到所有scene中
+//    std::shared_ptr<DataModelRegistry> registerDataModels = this->registerDataModels(parserResult);
+//    QList<AICCFlowView *> views =  ui->sw_flowscene->allViews();
+//    for(AICCFlowView *view:views){
+//        view->scene()->setRegistry(registerDataModels);
+//    }
+//}
 
 ///初始化导入脚本对话框的内容
 void MainWindow::initImportScriptDialog(){
@@ -567,39 +626,7 @@ void MainWindow::initDataInspectorDialog(){
 
 }
 
-//只负责注册右键菜单，并返回右键菜单的数据模型
-std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::list<Invocable> parserResult){
-    auto ret = std::make_shared<DataModelRegistry>();
-    AICCSqlite sqlite;
-    //注册所有已有的节点
-    for(auto it = parserResult.begin();it!=parserResult.end();++it){
-        const auto &inv = *it;
-        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
-        QSqlQuery squery = sqlite.query(sql);
-        if(squery.next()){
-            QString caption = squery.value(1).toString();
-            QString className = squery.value(2).toString();
-            auto f = [inv,caption](){
-                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
 
-                p->setCaption(caption);
-                return p;
-            };
-
-            ret->registerModel<InvocableDataModel>(f,className);
-        }else{
-            auto f = [inv](){
-                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-                p->setCaption(p->name());
-                return p;
-            };
-            ret->registerModel<InvocableDataModel>(f,"Other");
-        }
-
-    }
-
-    return ret;
-}
 
 ///旧版只有一级分类信息，只负责NodeTreeDialog的node模块分类
 //QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<Invocable> parserResult){
@@ -671,7 +698,7 @@ void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,cons
         omsg.append("Fatal:");
     }
     omsg.append(msg);
-    pte_out->appendPlainText(omsg);
+//    pte_out->appendPlainText(omsg);
 }
 
 void MainWindow::write(QString str){

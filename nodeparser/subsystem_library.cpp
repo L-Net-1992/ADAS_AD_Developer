@@ -4,11 +4,10 @@
 
 #include "subsystem_library.h"
 #include <fstream>
-#include "module_library.hpp"
 #include <vector>
-#include "models.hpp"
-#include <nodes/Node>
 #include <algorithm>
+#include <nodes/FlowScene>
+
 void SubsystemLibrary::setPath(const std::filesystem::path &path) {
     path_ = path;
 
@@ -40,12 +39,8 @@ std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package
 
 std::vector<Invocable> SubsystemLibrary::getInvocableList() {
     std::vector<Invocable> ret;
-    if(!dataModelRegistry_ || dataModelRegistry_->categories().empty())
-        return ret;
     if(path_.empty())
         return ret;
-    QtNodes::FlowScene scene;
-    scene.setRegistry(dataModelRegistry_);
     for(const auto & dir_entry: std::filesystem::recursive_directory_iterator(path_)) {
         const auto & p = dir_entry.path();
         if(std::filesystem::is_regular_file(p) && p.has_extension() && p.extension() == ".flow") {
@@ -54,46 +49,42 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() {
             invocable.setPackage(p.parent_path().filename().string());
             invocable.setSubsystemName(p.stem().string());
             invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
-            scene.clearScene();
-            readScene(scene, p);
+            boost::json::object scene = readScene(p);
             parsePorts(scene, invocable);
             ret.push_back(invocable);
         }
-
     }
     return ret;
 }
 
-SubsystemLibrary::SubsystemLibrary(ModuleLibrary *moduleLibrary):moduleLibrary_(moduleLibrary) {
-    QObject::connect(moduleLibrary_, &ModuleLibrary::importCompleted, [this](){
-        onImportCompleted();
-    });
 
+boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) {
+    std::ifstream json_file{path};
+    std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
+    return boost::json::parse(json_text).as_object();
 }
 
-void SubsystemLibrary::readScene(QtNodes::FlowScene &scene, const std::filesystem::path & path) {
-    int file_size = static_cast<int>(std::filesystem::file_size(path));
-    QByteArray buffer(file_size, 0);
-    std::ifstream file(path, std::ios::binary);
-    file.read(buffer.data(), buffer.size());
-    scene.loadFromMemory(buffer);
-}
-
-void SubsystemLibrary::parsePorts(const QtNodes::FlowScene &scene, Invocable &invocable) {
+void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) {
     std::vector<Port> ports;
-    for(const auto *node: scene.allNodes()) {
-        const auto* model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
-        const Invocable i = model->invocable();
+    boost::json::value & nodes_value = scene["nodes"];
+    if(!nodes_value.is_array())
+        return;
+    for(auto &node_value: nodes_value.as_array()) {
+        boost::json::object & model = node_value.as_object()["model"].as_object();
+
         Port port;
-        if(i.getType() == Invocable::SubsystemIn) {
+        if(model["subsystem_in"].is_object()) {
+            boost::json::object & subsystem_in  = model["subsystem_in"].as_object();
             port.setDirection(Port::In);
-        } else if(i.getType() == Invocable::SubsystemOut) {
+            port.setType(subsystem_in["type"].as_string().c_str());
+        } else if(model["subsystem_out"].is_object()) {
+            boost::json::object & subsystem_out  = model["subsystem_out"].as_object();
             port.setDirection(Port::Out);
+            port.setType(subsystem_out["type"].as_string().c_str());
         } else {
             continue;
         }
-        port.setType(i.getPortList().front().getType());
-        port.setName(i.getVarName());
+        port.setName(model["var_name"].as_string().c_str());
         ports.push_back(port);
     }
     std::sort(ports.begin(), ports.end(), [](const Port & a, const Port & b){
@@ -102,21 +93,3 @@ void SubsystemLibrary::parsePorts(const QtNodes::FlowScene &scene, Invocable &in
     invocable.setPortList(ports);
 }
 
-void SubsystemLibrary::onImportCompleted() {
-    dataModelRegistry_ = moduleLibrary_->test2NoSubsystem();
-    if(path_.empty())
-        return;
-    for(const auto & dir_entry: std::filesystem::recursive_directory_iterator(path_)) {
-        const auto & p = dir_entry.path();
-        if(std::filesystem::is_regular_file(p) && p.has_extension() && p.extension() == ".flow") {
-            Invocable invocable;
-            invocable.setType(Invocable::Subsystem);
-            invocable.setPackage(p.parent_path().filename().string());
-            invocable.setSubsystemName(p.stem().string());
-            invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
-            auto f = [invocable]() { return std::make_unique<InvocableDataModel>(invocable); };
-            dataModelRegistry_->registerModel<InvocableDataModel>(f, "test");
-        }
-
-    }
-}

@@ -269,7 +269,7 @@ private:
         //                                       clang::tooling::ArgumentInsertPosition::END));
 
         tool.appendArgumentsAdjuster(
-                    getInsertArgumentAdjuster({"-I", "/home/environment/llvm/lib/clang/12.0.0/include"},
+                    getInsertArgumentAdjuster({"-I", "/home/environment/llvm12_ubuntu16/lib/clang/12.0.1/include"},
                                               clang::tooling::ArgumentInsertPosition::END));
 
 #ifdef Q_OS_WIN64

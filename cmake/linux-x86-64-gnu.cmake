@@ -10,7 +10,7 @@ set(CMAKE_C_COMPILER   ${TOOLCHAIN_ROOT_PATH}/bin/gcc)
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_ROOT_PATH}/bin/g++)
 
 # where is the target environment 
-set(CMAKE_FIND_ROOT_PATH )
+# set(CMAKE_FIND_ROOT_PATH /usr)
 
 # search for programs in the build host directories (not necessary)
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)

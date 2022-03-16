@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/linux-x86-64-gnu.cmake)
-set(CMAKE_PREFIX_PATH /home/environment/x86_64/boost /home/environment/llvm)
+set(CMAKE_PREFIX_PATH /home/environment/x86_64/boost /home/environment/llvm12_ubuntu16)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)

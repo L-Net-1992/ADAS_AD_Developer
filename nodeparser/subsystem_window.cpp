@@ -58,7 +58,7 @@ void SubsystemWindow::save() {
     auto buffer = scene_.saveToMemory();
     std::ofstream file(subsystem_path_, std::ios::binary);
     file.write(buffer.data(), buffer.size());
-
+    file.close();
     emit module_library_->importCompleted();
 
 }

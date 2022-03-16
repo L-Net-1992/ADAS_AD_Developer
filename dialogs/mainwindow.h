@@ -102,7 +102,8 @@ private:
     void createSubsysetmAction();
 
     void initNodeEditor();
-    std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
+    void scriptParserCompletedAction(std::list<Invocable> parserResult);
+    std::shared_ptr<DataModelRegistry> registerDataModels();
     QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);

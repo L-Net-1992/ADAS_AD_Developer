@@ -134,6 +134,17 @@ public:
 
         modelJson["name"] = name();
         modelJson["var_name"] = varName();
+        if(_invocable.getType() == Invocable::SubsystemIn) {
+            QJsonObject subsystemIn;
+            subsystemIn["type"] = QString::fromStdString(_invocable.getOutputPort(0).getType());
+            modelJson["subsystem_in"] = subsystemIn;
+
+        } else if(_invocable.getType() == Invocable::SubsystemOut) {
+            QJsonObject subsystemOut;
+            subsystemOut["type"] = QString::fromStdString(_invocable.getInputPort(0).getType());
+            modelJson["subsystem_out"] = subsystemOut;
+
+        }
 
         if (!_invocable.getParamList().empty()) {
             QJsonObject paramsJson;

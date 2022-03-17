@@ -52,20 +52,20 @@ protected:
 
             if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR &&QString::compare(sidata,"")!=0)
             {
-                    QDrag* drag = new QDrag(this);
-                    qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
+                QDrag* drag = new QDrag(this);
+                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
 
-                    QMimeData* mimeData = new QMimeData;
-                    mimeData->setData("Data/caption",dataItem);
-                    //将要生成的flowview节点的名字代入Data/name字段
-                    mimeData->setData("Data/name",dataItemName);
+                QMimeData* mimeData = new QMimeData;
+                mimeData->setData("Data/caption",dataItem);
+                //将要生成的flowview节点的名字代入Data/name字段
+                mimeData->setData("Data/name",dataItemName);
 
-                    //            QtGuiDrag* dragPiamap = new QtGuiDrag(nullptr);
-                    //            dragPiamap->setShowText(_selectItem->text(0));
-                    //            QPixmap pixmap = dragPiamap->grab();
+                //            QtGuiDrag* dragPiamap = new QtGuiDrag(nullptr);
+                //            dragPiamap->setShowText(_selectItem->text(0));
+                //            QPixmap pixmap = dragPiamap->grab();
 
-                    drag->setMimeData(mimeData);
-                    drag->exec(Qt::MoveAction);
+                drag->setMimeData(mimeData);
+                drag->exec(Qt::MoveAction);
             }
         }
         //        else if(event->button() && Qt::RightButton){
@@ -81,6 +81,15 @@ protected:
     void onTreeWidgetCustomContextMenuRequested(const QPoint &pos)
     {
 
+        QTreeWidgetItem *item = this->itemAt(pos);
+        if(item->parent()!=Q_NULLPTR){
+            QString pname = item->parent()->text(0);
+
+            qDebug() << "pname:" << pname;
+        }
+
+
+        /*
         QModelIndex curIndex = this->indexAt(pos);
         qDebug() << curIndex.column()<< " " << curIndex.row();
 
@@ -97,6 +106,7 @@ protected:
             });
             menu.exec(QCursor::pos());
         }
+                */
     }
 
 private:

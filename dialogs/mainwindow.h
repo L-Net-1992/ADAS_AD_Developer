@@ -87,6 +87,7 @@ private:
 
     void initSplitter();
     void initTableWidget();
+    void refreshTreeViewDynamicNode();                                       //刷新动态节点
     void initToolbar();
     void setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon);
     void initBreadcrumbNavigation();

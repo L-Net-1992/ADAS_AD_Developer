@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent):
     isDialog =new ImportScriptDialog(pDataModel,parent);
 
     //    MainWindow::pte_out = ui->pte_output;
-//    qInstallMessageHandler(logOutput);
+    //    qInstallMessageHandler(logOutput);
 
     //获得Process的标准输出
     connect(process,&QProcess::readyRead,this,[&](){
@@ -77,26 +77,13 @@ void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon
     tw->addTopLevelItem(pItem);
 }
 
+
+///初始化左侧功能树
 void MainWindow::initTreeView()
 {
-    AICCTreeWidget *tw = ui->tw_node;
-    tw->setDragDropMode(QAbstractItemView::DragOnly);
-    tw->setDragEnabled(true);
-    tw->clear();
-
-    Config config(QApplication::applicationDirPath()+"/conf/model_menu.json");
-    QJsonObject jo_root = config.getJsonRoot();
-    QList<QPair<QString,QJsonObject>> list_root = orderedQJsonObject(jo_root);
-
-    for(int i=0;i<list_root.size();i++){
-        QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
-        twi->setText(0,list_root[i].first);
-        //        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
-        recursionQJsonObjectLeft(list_root[i].first,list_root[i].second,twi);
-    }
-
-    ui->tw_node->expandAll();
+    ui->tw_node->fillInitLeftTreeData();
 }
+
 
 ///填充节点属性表格数据
 void MainWindow::fillTableData(QTableWidget *tw,const NodeDataModel *ndm)
@@ -151,9 +138,9 @@ void MainWindow::initToolbar()
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //generate cpp code
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
-        std::string generatePath = QApplication::applicationDirPath().append("/generate").toStdString();
+        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
         std::filesystem::path dir(generatePath);
-        SourceGenerator::generateCMakeProject(dir,scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateCMakeProject(dir,scene,*_moduleLibrary);
 
         //generate shell script
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",scene,_moduleLibrary->packageLibrary());

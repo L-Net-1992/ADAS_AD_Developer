@@ -115,7 +115,7 @@ public:
 
 class Invocable {
 public:
-    enum Type {Class, Subsystem, SubsystemIn, SubsystemOut};
+    enum Type {Class, Subsystem, SubsystemIn, SubsystemOut, CalibrationParam};
 private:
     Type _type;
     std::string _name;

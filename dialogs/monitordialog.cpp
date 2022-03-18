@@ -69,7 +69,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
                axisX_->setRange(x_index_-AXIS_X_SIZE_DEFAULT, x_index_);
             }
             // TODO: select the series 0 as y-axis range
-            axisY_->setRange(y_range_.at(0).at(0)-2, y_range_.at(0).at(1)+2);
+            axisY_->setRange(y_range_.at(2).at(0)-2, y_range_.at(2).at(1)+2);
         }
     });
 

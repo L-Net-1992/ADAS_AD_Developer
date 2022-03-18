@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent):
     npDialog(new NodeParametersDialog(parent)),
     npmilDialog ( new NodeParametersMILDialog(parent)),
     nodeTreeDialog ( new NodeTreeDialog(parent)),
-    isDialog (new ImportScriptDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     monitorDialog ( new MonitorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
@@ -33,10 +32,10 @@ MainWindow::MainWindow(QWidget *parent):
     this->setAttribute(Qt::WA_QuitOnClose);
     pDataModel=new ProjectDataModel;
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
+    isDialog =new ImportScriptDialog(pDataModel,parent);
 
-
-    MainWindow::pte_out = ui->pte_output;
-    qInstallMessageHandler(logOutput);
+    //    MainWindow::pte_out = ui->pte_output;
+    //    qInstallMessageHandler(logOutput);
 
     //获得Process的标准输出
     connect(process,&QProcess::readyRead,this,[&](){
@@ -86,26 +85,13 @@ void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon
     tw->addTopLevelItem(pItem);
 }
 
+
+///初始化左侧功能树
 void MainWindow::initTreeView()
 {
-    AICCTreeWidget *tw = ui->tw_node;
-    tw->setDragDropMode(QAbstractItemView::DragOnly);
-    tw->setDragEnabled(true);
-    tw->clear();
-
-    Config config(QApplication::applicationDirPath()+"/conf/model_menu.json");
-    QJsonObject jo_root = config.getJsonRoot();
-    QList<QPair<QString,QJsonObject>> list_root = orderedQJsonObject(jo_root);
-
-    for(int i=0;i<list_root.size();i++){
-        QTreeWidgetItem *twi = new QTreeWidgetItem(tw);
-        twi->setText(0,list_root[i].first);
-        //        twi->setBackground(0,QBrush(QColor("#FFFFFF")));
-        recursionQJsonObjectLeft(list_root[i].first,list_root[i].second,twi);
-    }
-
-    ui->tw_node->expandAll();
+    ui->tw_node->fillInitLeftTreeData();
 }
+
 
 ///填充节点属性表格数据
 void MainWindow::fillTableData(QTableWidget *tw,const NodeDataModel *ndm)
@@ -159,16 +145,16 @@ void MainWindow::initToolbar()
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //generate cpp code
-        AICCFlowView * fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
-        std::string generatePath = QApplication::applicationDirPath().append("/generate").toStdString();
+        AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
         std::filesystem::path dir(generatePath);
-        SourceGenerator::generateCMakeProject(dir,*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateCMakeProject(dir,scene,*_moduleLibrary);
 
         //generate shell script
-        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-jetson.json"),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-bst.json"),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-mdc.json"),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-host.json"),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-jetson.json"),"jetson",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-bst.json"),"bst",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-mdc.json"),"mdc",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-host.json"),"jetson",scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -209,7 +195,7 @@ void MainWindow::initToolbar()
 
         for(const QString &ssf :pDataModel->currentFlowSceneSaveFiles()){
             QString saveFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ssf;
-            qDebug() << "save file name:" << saveFileName;
+            qInfo() << "save file name:" << saveFileName;
             QFile file(saveFileName);
             if(file.open(QIODevice::WriteOnly)){
                 file.write(fv->scene()->saveToMemory());
@@ -379,7 +365,7 @@ void MainWindow::initStackedWidget(){
     ///向StackedWidget控件中增加第一个页面，并增加第一个FlowScene
     ui->sw_flowscene->addNewPageFlowScene("");
 
-//    qDebug() << "stackwidget count:" << ui->sw_flowscene;
+    //    qDebug() << "stackwidget count:" << ui->sw_flowscene;
 
 }
 
@@ -410,15 +396,9 @@ void MainWindow::pbOpenAction(QString projectPath){
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
 
-    //3:加载当前项目的子系统模块
-    for (const auto &inv: _subsystemLibrary->getInvocableList()) {
-        auto f = [inv]() {
-            std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-            p->setCaption(p->name());
-            return p;
-        };
-        scene->registry().registerModel<InvocableDataModel>(f, "自定义模块");
-    }
+    //3:注册所有的功能模块到右键上
+    std::shared_ptr<DataModelRegistry> dmr = registerDataModels();
+    ui->sw_flowscene->getCurrentView()->scene()->setRegistry(dmr);
 
     //4：将名称为mainFlowScene的文件内容加载到主FlowScene上
     QString loadFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ pDataModel->currentFlowSceneSaveFiles()[0];
@@ -432,7 +412,7 @@ void MainWindow::pbOpenAction(QString projectPath){
     scene->loadFromMemory(wholeFile);
     this->setWindowTitle(pDataModel->currentProjectName()+" ("+pDataModel->currentProjectPath()+") "+" - 图形化ADAS/AD应用开发系");
 
-//    qDebug() << "stackwidget count:" << ui->sw_flowscene;
+    //    qDebug() << "stackwidget count:" << ui->sw_flowscene;
 }
 
 ///创建子系统
@@ -480,8 +460,11 @@ void MainWindow::initProjectDialog(){
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
 //TODO:
 void MainWindow::initNodeEditor(){
-    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
-    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
+    //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
+    //    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary(_moduleLibrary.get()));
+    _moduleLibrary = new ModuleLibrary;
+    _subsystemLibrary = new SubsystemLibrary;
+
     //1:解析pakage文件
     const QString path = QString::fromStdString(modules_path_); //QApplication::applicationDirPath()+"/install/";
 
@@ -503,60 +486,30 @@ void MainWindow::initNodeEditor(){
 
     });
     qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
-    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
 
+    //4:包数据解析完成后续工作
+    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
-    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
-    //加载过程中显示当前进度
-    //        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
-    //        ui->statusbar->showMessage("")
-    //    });
-
-
-    /*old code
-
-    //1:先解析package文件，准备好解析文件中的node数据
-    const QString path = QApplication::applicationDirPath()+"/nodeconfig/";
-    QStringList files = getFileList(path);
-
-    //0:执行加载前准备动作
-    ui->statusbar->showMessage("Start load node moduls data...");
-    ui->tw_toolbar->setEnabled(false);
-
-    //耗时操作放到单独线程中操作，操作完毕后通知外部继续执行
-    QtConcurrent::run([&,files](){
-        _moduleLibrary->importFiles(files);
-        std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
-        emit scriptParserCompleted(parserResult);
+    //5:响应importCompleted
+    connect(_moduleLibrary,&ModuleLibrary::importCompleted,[&](){
+        ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
     });
-
-    //接收scriptParserCompleted信号，执行后续操作
-    //为connect注册std::list<Invocable>类型，否则connect在SLOT中会不识别该类型
-    qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
-    connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::registrySceneGenerateNodeMenu);
-    //显示状态栏进度数据
-    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count ,const int index,const QString filename){
-        //加载过程中显示当前进度
-        ui->statusbar->showMessage("Loaded node modules:"+filename+"("+QString::number(index+1)+"/"+QString::number(count)+")",(index+1)>=count ? 3000 : 0);
-    });
-
-    */
 }
 
-///生成右键菜单
-void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult){
-    //1:生成scene的右键node数据,并注册到所有scene中
-    std::shared_ptr<DataModelRegistry> registerDataModels = this->registerDataModels(parserResult);
-    QList<AICCFlowView *> views =  ui->sw_flowscene->allViews();
-    for(AICCFlowView *view:views){
-        view->scene()->setRegistry(registerDataModels);
-    }
+///包数据解析完毕工作
+void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 
-
-    //2:生成NodeTreeDialog的node菜单结构
+    //1:生成NodeTreeDialog的菜单结构
     QMap<QString,QSet<QString>> nodeCategoryDataModels = this->newNodeCategoryDataModels(parserResult);
     nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
-
+    //2:初始化模块变量相关操作
+    FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+    connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
+        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
+    });
+    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
+        ModuleLibrary::updateVarName(*scene, node, this);
+    });
     //3:启用工具栏、展示选择项目窗口
     ui->statusbar->showMessage("节点模型数据加载已完成");
     ui->tw_toolbar->setEnabled(true);
@@ -565,37 +518,14 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     // rProjectDialog->show();
 }
 
-///初始化导入脚本对话框的内容
-void MainWindow::initImportScriptDialog(){
-    //选择文本后响应函数
-    connect(isDialog,&ImportScriptDialog::filesSelected,this,[&](const QStringList files){
-        QtConcurrent::run([&,files](){
-            //1:解析选择文件中的node
-            _moduleLibrary->importFiles(files);
-            std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
-            //此处只通知initNodeEditor函数中链接的registrySceneGenerateNodeMenu函数执行后续操作即可
-            emit scriptParserCompleted(parserResult);
-        });
-    });
+/// 只负责注册右键菜单，并返回右键菜单的数据模型,注册的数据包括普通模块、子系统模块
+/// 该函数在项目打开完毕后执行，每次打开项目都要重新注册一次,或每次增加了新的子系统都要重新注册一次
+std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
 
-    //文件解析百分比
-    //TODO:此处可能要处理
-    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count,const int index,const QString filename){
-    //        isDialog->setImportProcess(index,count);
-    //        isDialog->setListModels(_moduleLibrary.get());
-    //    });
-}
-
-///初始化数据检查窗口
-void MainWindow::initDataInspectorDialog(){
-
-}
-
-//只负责注册右键菜单，并返回右键菜单的数据模型
-std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::list<Invocable> parserResult){
+    std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
     AICCSqlite sqlite;
-    //注册所有已有的节点
+    //注册所有已有的模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
         QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
@@ -622,8 +552,64 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(const std::lis
 
     }
 
+    //注册所有的子系统
+    for (const auto &inv: _subsystemLibrary->getInvocableList()) {
+        auto f = [inv]() {
+            std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+            p->setCaption(p->name());
+            return p;
+        };
+        ret->registerModel<InvocableDataModel>(f, "自定义模块");
+    }
+
     return ret;
 }
+
+///初始化导入脚本对话框的内容
+void MainWindow::initImportScriptDialog(){
+    //选择文本后响应函数
+    connect(isDialog,&ImportScriptDialog::packageSelected,this,[&](const QString packFile){
+
+        //        QtConcurrent::run([&](){
+        _moduleLibrary->addPackage(QString(packFile).toStdString());
+        //        });
+
+        //          _moduleLibrary->addPackage(QString(packFile).toStdString());
+
+        //        QtConcurrent::run([&pf,&ml](){
+        ///旧的单个文件导入
+        //1:解析选择文件中的node
+        //            _moduleLibrary->importFiles(files);
+        //            std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
+        //此处只通知initNodeEditor函数中链接的registrySceneGenerateNodeMenu函数执行后续操作即可
+        //            emit scriptParserCompleted(parserResult);
+        //            qDebug() << "--------------module library instance" << ml;
+        //                    qDebug() << "-------------module library instance" << pf;
+        ///新方式，以包的方式导入
+        //            ml->addPackage(QString(pf).toStdString());
+        //        });
+    });
+
+    connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+        qDebug() << "index:" <<index << "   count:" << count;
+    });
+
+
+    //文件解析百分比
+    //TODO:此处可能要处理
+    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](const int count,const int index,const QString filename){
+    //        isDialog->setImportProcess(index,count);
+    //        isDialog->setListModels(_moduleLibrary.get());
+    //    });
+}
+
+
+///初始化数据检查窗口
+void MainWindow::initDataInspectorDialog(){
+
+}
+
+
 
 ///旧版只有一级分类信息，只负责NodeTreeDialog的node模块分类
 //QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<Invocable> parserResult){
@@ -695,7 +681,7 @@ void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,cons
         omsg.append("Fatal:");
     }
     omsg.append(msg);
-    pte_out->appendPlainText(omsg);
+    //    pte_out->appendPlainText(omsg);
 }
 
 void MainWindow::write(QString str){

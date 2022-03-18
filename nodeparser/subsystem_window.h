@@ -32,9 +32,13 @@ private:
     ModuleLibrary *module_library_;
     QWidget *parent_;
     std::filesystem::path subsystem_path_;
+    void save();
+
+private Q_SLOTS:
     void nodeDoubleClicked(QtNodes::Node & node);
     void updateRegistry();
-    void save();
+    void generateVarName(QtNodes::Node & node);
+    void updateVarName(QtNodes::Node & node, const QPointF & pos);
 };
 
 

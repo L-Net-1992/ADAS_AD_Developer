@@ -3,14 +3,18 @@
 //
 
 #include "subsystem_library.h"
-#include <nodes/FlowScene>
 #include <fstream>
+#include <vector>
+#include <algorithm>
+#include <nodes/FlowScene>
+#include <iostream>
+
 void SubsystemLibrary::setPath(const std::filesystem::path &path) {
     path_ = path;
 
 }
 
-bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) {
+bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) const{
     return std::filesystem::exists(subsystemPath(package, name));
 
 }
@@ -26,16 +30,18 @@ std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package,
     return ret;
 }
 
-std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) {
+std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) const {
     return subsystemPath(package, name);
 }
 
-std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package, const std::string &name) {
+std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package, const std::string &name) const {
     return  path_ / package / (name + ".flow");
 }
 
-std::vector<Invocable> SubsystemLibrary::getInvocableList() {
+std::vector<Invocable> SubsystemLibrary::getInvocableList() const {
     std::vector<Invocable> ret;
+    if(path_.empty())
+        return ret;
     for(const auto & dir_entry: std::filesystem::recursive_directory_iterator(path_)) {
         const auto & p = dir_entry.path();
         if(std::filesystem::is_regular_file(p) && p.has_extension() && p.extension() == ".flow") {
@@ -44,9 +50,49 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() {
             invocable.setPackage(p.parent_path().filename().string());
             invocable.setSubsystemName(p.stem().string());
             invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
+            invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
+            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
+            boost::json::object scene = readScene(p);
+            parsePorts(scene, invocable);
             ret.push_back(invocable);
         }
-
     }
     return ret;
 }
+
+
+boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) const {
+    std::ifstream json_file{path};
+    std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
+    return boost::json::parse(json_text).as_object();
+}
+
+void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) const {
+    std::vector<Port> ports;
+    boost::json::value & nodes_value = scene["nodes"];
+    if(!nodes_value.is_array())
+        return;
+    for(auto &node_value: nodes_value.as_array()) {
+        boost::json::object & model = node_value.as_object()["model"].as_object();
+
+        Port port;
+        if(model["subsystem_in"].is_object()) {
+            boost::json::object & subsystem_in  = model["subsystem_in"].as_object();
+            port.setDirection(Port::In);
+            port.setType(subsystem_in["type"].as_string().c_str());
+        } else if(model["subsystem_out"].is_object()) {
+            boost::json::object & subsystem_out  = model["subsystem_out"].as_object();
+            port.setDirection(Port::Out);
+            port.setType(subsystem_out["type"].as_string().c_str());
+        } else {
+            continue;
+        }
+        port.setName(model["var_name"].as_string().c_str());
+        ports.push_back(port);
+    }
+    std::sort(ports.begin(), ports.end(), [](const Port & a, const Port & b){
+        return a.getName() < b.getName();
+    });
+    invocable.setPortList(ports);
+}
+

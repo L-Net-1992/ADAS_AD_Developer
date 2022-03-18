@@ -46,6 +46,7 @@
 #include "controllers/aicctoolbutton.hpp"
 #include "nodeparser/source_generator.hpp"
 #include "nodeparser/models.hpp"
+#include "nodeparser/subsystem_library.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "project/modelsproject.hpp"
 
@@ -86,6 +87,7 @@ private:
 
     void initSplitter();
     void initTableWidget();
+    void refreshTreeViewDynamicNode();                                       //刷新动态节点
     void initToolbar();
     void setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon);
     void initBreadcrumbNavigation();
@@ -106,8 +108,9 @@ private:
 
 private:
     void initNodeEditor();
-    std::shared_ptr<DataModelRegistry> registerDataModels(const std::list<Invocable> parserResult);
-    QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
+    void scriptParserCompletedAction(std::list<Invocable> parserResult);
+    std::shared_ptr<DataModelRegistry> registerDataModels();
+//    QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
     void processStart(const QVector<QString> scriptNames,const int platformIndex);
@@ -138,8 +141,10 @@ private:
     MonitorDialog *monitorDialog;
     EditorWindow *eDialog;
     CalibrationDialog *cDialog;
-    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+//    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+//    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+    ModuleLibrary *_moduleLibrary;
+    SubsystemLibrary *_subsystemLibrary;
     QProcess * process;
 
     //nodeeditor部分

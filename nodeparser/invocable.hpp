@@ -115,13 +115,14 @@ public:
 
 class Invocable {
 public:
-    enum Type {Class, Subsystem};
+    enum Type {Class, Subsystem, SubsystemIn, SubsystemOut, CalibrationParam};
 private:
     Type _type;
     std::string _name;
     std::string _header_file;
     std::string _package;
     std::string _subsystem_name;
+    std::string _var_name;
 public:
     const std::string &getPackage() const {
         return _package;
@@ -157,6 +158,13 @@ public:
 
     void setSubsystemName(const std::string &name) {
         _subsystem_name = name;
+    }
+    const std::string &getVarName() const {
+        return _var_name;
+    }
+
+    void setVarName(const std::string &name) {
+        _var_name = name;
     }
     const std::string &getHeaderFile() const {
         return _header_file;

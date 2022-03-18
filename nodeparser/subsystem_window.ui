@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="AICCFlowView" name="flowView"/>
+     <widget class="QtNodes::FlowView" name="flowView"/>
     </item>
    </layout>
   </widget>
@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSubsystem">
@@ -61,9 +61,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AICCFlowView</class>
+   <class>QtNodes::FlowView</class>
    <extends>QGraphicsView</extends>
-   <header>controllers/aiccflowview.hpp</header>
+   <header>nodes/FlowView</header>
   </customwidget>
  </customwidgets>
  <resources/>

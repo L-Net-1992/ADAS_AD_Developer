@@ -16,6 +16,7 @@
 #include <list>
 #include <optional>
 #include "package_library.h"
+#include <QJsonObject>
 #include "utils.h"
 
 class FindInvocableContext {
@@ -88,6 +89,58 @@ public:
 
         return true;
     }
+    bool VisitTypedefNameDecl(clang::TypedefNameDecl *decl) {
+        if (!inFile(decl))
+            return true;
+
+        const auto *tst = decl->getTypeSourceInfo()->getType()->getAs<clang::TemplateSpecializationType>();
+        std::string name = decl->getQualifiedNameAsString();
+        if(!tst)
+            return true;
+        if(!tst->isRecordType())
+            return true;
+        const std::string & temp_name = tst->getAs<clang::RecordType>()->getDecl()->getQualifiedNameAsString();
+        if (tst->getNumArgs() != 1)
+            return {};
+        if (tst->getArg(0).getKind() != clang::TemplateArgument::Type)
+            return {};
+        const std::string & arg_type = tst->getArg(0).getAsType().getAsString();
+
+        Invocable invocable;
+        Port port;
+        port.setName("");
+        port.setType(arg_type);
+        if(temp_name == "adas::subsystem::in") {
+            invocable.setType(Invocable::SubsystemIn);
+            port.setDirection(Port::Out);
+            invocable.setPortList({port});
+
+        } else if(temp_name == "adas::subsystem::out") {
+            invocable.setType(Invocable::SubsystemOut);
+            port.setDirection(Port::In);
+            invocable.setPortList({port});
+
+        } else if(temp_name == "calibration::param") {
+            invocable.setType(Invocable::CalibrationParam);
+            port.setDirection(Port::Out);
+            invocable.setPortList({port});
+            Param param;
+            param.setName("default");
+            param.setType(arg_type);
+            invocable.setParamList({param});
+
+
+        } else
+            return true;
+        invocable.setName(name);
+        invocable.setHeaderFile(_findContext.getHeaderFile().string());
+        invocable.setPackage(_findContext.getPackage());
+        _findContext.getResult().push_back(invocable);
+        return true;
+    }
+
+
+
 
 
 private:
@@ -258,9 +311,10 @@ private:
         }
 //        tool.appendArgumentsAdjuster(
 //                getInsertArgumentAdjuster(
+//                        {"-I", "/opt/clang+llvm-12.0.1-x86_64-linux-gnu-ubuntu/lib/clang/12.0.1/include"},
+                      //TODO:modify path
 //                        {"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
 //                        clang::tooling::ArgumentInsertPosition::END));
-
         ///获得配置信息
         QJsonObject jo = getConfig();
 
@@ -280,7 +334,6 @@ private:
                     getInsertArgumentAdjuster({"-I",jo.value("clangCXXAarch64").toString().toStdString()},
                                               clang::tooling::ArgumentInsertPosition::END));
 #endif
-
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("-v", // Verbose
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++

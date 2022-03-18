@@ -17,6 +17,8 @@
 #include <sstream>
 #include <boost/json.hpp>
 #include "package_library.h"
+#include "subsystem_library.h"
+#include "module_library.hpp"
 
 class SourceGenerator {
 private:
@@ -27,28 +29,29 @@ private:
         }
     }
 
-    static void
-    makeNodeVarNames(const QtNodes::FlowScene &scene, std::map<const InvocableDataModel *, std::string> &nodeVarNames) {
-        int i = 0;
-        for (const auto *node: scene.allNodes()) {
-            const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
-            nodeVarNames.insert({model, "_node" + std::to_string(i++)});
-        }
-    }
+//    static void
+//    makeNodeVarNames(const QtNodes::FlowScene &scene, std::map<const InvocableDataModel *, std::string> &nodeVarNames) {
+//        int i = 0;
+//        for (const auto *node: scene.allNodes()) {
+//            const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
+//            nodeVarNames.insert({model, "_node" + std::to_string(i++)});
+//        }
+//    }
 
     static void makeConnections(const QtNodes::FlowScene &scene,
-                                const std::map<const InvocableDataModel *, std::string> &nodeVarNames,
                                 std::map<std::string, std::vector<std::string>> &connections) {
         for(const auto & p: scene.connections()) {
             const auto & c = *p.second;
             const QtNodes::Node * out_node = c.getNode(QtNodes::PortType::Out);
             const auto *out_model = static_cast<InvocableDataModel *>(out_node->nodeDataModel());
+            if(out_model->invocable().getType() != Invocable::Class && out_model->invocable().getType() != Invocable::Subsystem)
+                continue;
             const QtNodes::Node * in_node = c.getNode(QtNodes::PortType::In);
             const auto *in_model = static_cast<InvocableDataModel *>(in_node->nodeDataModel());
             const auto & out_port = c.dataType(QtNodes::PortType::Out);
             const auto & in_port = c.dataType(QtNodes::PortType::In);
-            std::string out = nodeVarNames.find(out_model)->second + "." + out_port.name.toStdString();
-            std::string in = nodeVarNames.find(in_model)->second + "." + in_port.name.toStdString();
+            std::string out = out_model->invocable().getVarName() + "." + out_port.name.toStdString();
+            std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString();
             if(connections.find(out) == connections.end())
                 connections.insert({out, {}});
             connections.find(out)->second.push_back(in);
@@ -62,7 +65,9 @@ private:
         return std::string(4 * n, ' ');
     }
 
-    static void generateIncludes(const std::set<std::string> &includes, std::ofstream &file) {
+    static void generateIncludes(const QtNodes::FlowScene &scene, std::ofstream &file) {
+        std::set<std::string> includes;
+        extractIncludes(scene, includes);
         file << "#include <adas/runtime.hpp>" << std::endl;
         file << "#include <unistd.h>" << std::endl;
         for (const auto &inc: includes)
@@ -84,17 +89,25 @@ private:
         return ss.str();
 
     }
-    static void generateTask(const std::map<const InvocableDataModel *, std::string> &varNames,
-                             const std::map<std::string, std::vector<std::string>> &connections, std::ofstream &file) {
-        file << "class task0 {" << std::endl;
+    static void generateClass(const QtNodes::FlowScene &scene, const std::string & className, std::ofstream &file) {
+        std::map<std::string, std::vector<std::string>> connections;
+        makeConnections(scene, connections);
+        file << "class " << className << " {" << std::endl;
         file << "private:" << std::endl;
-        for(const auto & p: varNames) {
-            const std::string & type = p.first->invocable().getName();
-            const std::string & name = p.second;
-            file << indent(1) << type << " " << name << nodeParamValueList(p.first->invocable().getParamList()) << ";" << std::endl;
+        file << indent(1) << "std::string _name;" << std::endl;
+        for(const auto  node: scene.allNodes()) {
+            const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
+            const std::string & type = model->invocable().getName();
+            const std::string & name = model->invocable().getVarName();
+            if(model->invocable().getType() == Invocable::Class) {
+                file << indent(1) << type << " " << name << nodeParamValueList(model->invocable().getParamList()) << ";" << std::endl;
+            }
+            else if(model->invocable().getType() == Invocable::Subsystem) {
+                file << indent(1) << type << " " << name << "{_name + \"." << name <<  "\"};" << std::endl;
+            }
         }
         file << "public:" << std::endl;
-        file << indent(1) << "task0() {" << std::endl;
+        file << indent(1) << className << "(const std::string & name):_name{name} {" << std::endl;
         for(const auto & p: connections) {
             file << indent(2) << p.first << ".handler([this](auto value) {" << std::endl;
             for(const auto & in: p.second) {
@@ -107,10 +120,17 @@ private:
         file << "};" << std::endl;
 
     }
+
+    static void generateNamespaceClass(const QtNodes::FlowScene &scene, const std::string & ns, const std::string & className, std::ofstream &file) {
+        file << "namespace " << ns << "{" << std::endl;
+        generateClass(scene, className, file);
+        file << "}" << std::endl;
+
+    }
     static void generateMain(std::ofstream & file) {
         file << "int main(int argc, char **argv) {" << std::endl;
         file << indent(1) << "adas::runtime::init(argc, argv);" << std::endl;
-        file << indent(1) << "adas::runtime::task<task0> _task0;" << std::endl;
+        file << indent(1) << "adas::runtime::task<task0> _task0{\"task0\"};" << std::endl;
         file << indent(1) << "pause();" << std::endl;
         file << "}" << std::endl;
 
@@ -120,6 +140,8 @@ private:
         std::set<std::string> ret;
         for (const auto *node: scene.allNodes()) {
             const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
+            if(model->invocable().getType() != Invocable::Class)
+                continue;
             ret.emplace(model->invocable().getPackage());
         }
         return ret;
@@ -155,14 +177,8 @@ private:
     }
 public:
     static void generateSource(const QtNodes::FlowScene &scene, std::ofstream &file) {
-        std::set<std::string> includes;
-        std::map<const InvocableDataModel *, std::string> varNames;
-        std::map<std::string, std::vector<std::string>> connections;
-        extractIncludes(scene, includes);
-        makeNodeVarNames(scene, varNames);
-        makeConnections(scene, varNames, connections);
-        generateIncludes(includes, file);
-        generateTask(varNames, connections, file);
+        generateIncludes(scene, file);
+        generateClass(scene, "task0", file);
         generateMain(file);
 
     }
@@ -186,11 +202,52 @@ public:
         }
         file << ")" << std::endl;
     }
-    static void generateCMakeProject(const std::filesystem::path & directory, const QtNodes::FlowScene &scene, const PackageLibrary & packageLibrary) {
+    static void loadScene(QtNodes::FlowScene & scene, const std::filesystem::path & path) {
+        int file_size = static_cast<int>(std::filesystem::file_size(path));
+        QByteArray buffer(file_size, 0);
+        std::ifstream file(path, std::ios::binary);
+        file.read(buffer.data(), buffer.size());
+        scene.loadFromMemory(buffer);
+    }
+    static void generateSubsystem(const std::filesystem::path & root, const Invocable &invocable, const ModuleLibrary & moduleLibrary) {
+        std::filesystem::path dir = root / invocable.getPackage();
+        if(!std::filesystem::exists(dir))
+            std::filesystem::create_directories(dir);
+        std::filesystem::path header_file = dir / (invocable.getSubsystemName() + ".hpp");
+        if(std::filesystem::exists(header_file))
+            return;
+        std::ofstream header(header_file);
+        QtNodes::FlowScene scene;
+        scene.setRegistry(moduleLibrary.test2());
+        loadScene(scene, moduleLibrary.subsystemLibrary().getSubsystem(invocable.getPackage(), invocable.getSubsystemName()));
+        header << "#pragma once" << std::endl;
+        generateNamespaceClass(scene, invocable.getPackage(), invocable.getSubsystemName(), header);
+        header.close();
+        generateSubsystemInScene(root, scene, moduleLibrary);
+
+
+    }
+    static void generateSubsystemInScene(const std::filesystem::path & directory, const QtNodes::FlowScene &scene, const ModuleLibrary & moduleLibrary) {
+        for(const auto *node: scene.allNodes()) {
+            const auto *model = static_cast<InvocableDataModel *>(node->nodeDataModel());
+            if(model->invocable().getType() == Invocable::Subsystem)
+                generateSubsystem(directory, model->invocable(), moduleLibrary);
+        }
+
+
+    }
+    static void generateCMakeProject(const std::filesystem::path & directory, const QtNodes::FlowScene &scene, const ModuleLibrary & moduleLibrary) {
+        std::filesystem::path subsystem_dir = directory / "subsystem";
+
+        if(std::filesystem::exists(subsystem_dir)) {
+            std::filesystem::remove_all(subsystem_dir);
+        }
+        std::filesystem::create_directories(subsystem_dir);
+        generateSubsystemInScene(subsystem_dir, scene, moduleLibrary);
         std::ofstream source(directory / "generate.cpp");
-        std::ofstream cmakeList(directory / "CMakeLists.txt");
         generateSource(scene, source);
-        generateCMakeList(scene, packageLibrary, "generate.cpp", cmakeList);
+        std::ofstream cmakeList(directory / "CMakeLists.txt");
+        generateCMakeList(scene, moduleLibrary.packageLibrary(), "generate.cpp", cmakeList);
 
     }
     static void generateBuildScript(const QtNodes::FlowScene &scene, const PackageLibrary & packageLibrary, const std::filesystem::path & config_file ,std::ofstream &file) {

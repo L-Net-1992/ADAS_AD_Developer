@@ -5,6 +5,7 @@
 #include <nodes/FlowScene>
 #include <nodes/Node>
 #include <QDebug>
+#include <nodeparser/module_library.hpp>
 
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
@@ -33,8 +34,10 @@ public:
 
         //测试nodeCreated事件
         connect(this, &FlowScene::nodeCreated, [&](QtNodes::Node & node){
-            qDebug() << "node created";
+
         });
+
+
 
     }
     ~AICCFlowScene(){}

@@ -14,6 +14,10 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
         QMainWindow(parent), ui(new Ui::SubsystemWindow), module_library_(module_library), parent_(parent), subsystem_path_(subsystem_path) {
     this->setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
+    connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
+    connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
+    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
+    connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
     scene_.setRegistry(module_library->test2());
     int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
     QByteArray buffer(file_size, 0);
@@ -25,8 +29,6 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     setWindowTitle(QString("子系统 - %1::%2").arg(package, name));
     connect(module_library, &ModuleLibrary::importCompleted, this, &SubsystemWindow::updateRegistry);
     ui->flowView->setScene(&scene_);
-    connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
-    connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
     std::cout << "new SubsystemWindow" << std::endl;
 }
 
@@ -56,8 +58,18 @@ void SubsystemWindow::save() {
     auto buffer = scene_.saveToMemory();
     std::ofstream file(subsystem_path_, std::ios::binary);
     file.write(buffer.data(), buffer.size());
-
+    file.close();
     emit module_library_->importCompleted();
+
+}
+
+void SubsystemWindow::generateVarName(QtNodes::Node &node) {
+    ModuleLibrary::generateVarNameIfEmpty(scene_, node);
+
+}
+
+void SubsystemWindow::updateVarName(QtNodes::Node &node, const QPointF & pos) {
+    ModuleLibrary::updateVarName(scene_, node, this);
 
 }
 

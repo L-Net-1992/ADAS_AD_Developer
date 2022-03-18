@@ -102,7 +102,7 @@ protected:
             if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR &&QString::compare(sidata,"")!=0)
             {
                 QDrag* drag = new QDrag(this);
-                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
+//                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
 
                 QMimeData* mimeData = new QMimeData;
                 mimeData->setData("Data/caption",dataItem);
@@ -145,11 +145,11 @@ protected:
                         QMenu menu;
                         menu.addAction(tr("设置到应用软件"),this,[&]{
                             updateDynamicNode(37,item->text(0),query.value(1).toInt());
-                            qDebug() << "37   pname:" << pname << "  item name:" << item->text(0) ;
+//                            qDebug() << "37   pname:" << pname << "  item name:" << item->text(0) ;
                         });
                         menu.addAction(tr("设置到自定义模块"),this,[&]{
                             updateDynamicNode(38,item->text(0),query.value(1).toInt());
-                            qDebug() << "38   pname:" << pname << "  item name:" << item->text(0);
+//                            qDebug() << "38   pname:" << pname << "  item name:" << item->text(0);
                         });
                         menu.exec(QCursor::pos());
                     }
@@ -180,7 +180,7 @@ protected:
 //                QTreeWidgetItem *pwi = (*it)->parent();
                 vector.append(*it);
 //                pwi->removeChild((*it));
-                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
+//                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
             }
             ++it;
         }

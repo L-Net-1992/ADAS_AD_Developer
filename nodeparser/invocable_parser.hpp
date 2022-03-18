@@ -16,8 +16,8 @@
 #include <list>
 #include <optional>
 #include "package_library.h"
-#include "utils.h"
 #include <QJsonObject>
+#include "utils.h"
 
 class FindInvocableContext {
 private:
@@ -119,6 +119,16 @@ public:
             invocable.setType(Invocable::SubsystemOut);
             port.setDirection(Port::In);
             invocable.setPortList({port});
+
+        } else if(temp_name == "calibration::param") {
+            invocable.setType(Invocable::CalibrationParam);
+            port.setDirection(Port::Out);
+            invocable.setPortList({port});
+            Param param;
+            param.setName("default");
+            param.setType(arg_type);
+            invocable.setParamList({param});
+
 
         } else
             return true;
@@ -301,11 +311,10 @@ private:
         }
 //        tool.appendArgumentsAdjuster(
 //                getInsertArgumentAdjuster(
-////                        {"-I", "/opt/clang+llvm-12.0.1-x86_64-linux-gnu-ubuntu/lib/clang/12.0.1/include"},
-//                      //TODO:modify path
+//                        {"-I", "/opt/clang+llvm-12.0.1-x86_64-linux-gnu-ubuntu/lib/clang/12.0.1/include"},
+                      //TODO:modify path
 //                        {"-I", "/home/fc/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/12.0.0/include"},
 //                        clang::tooling::ArgumentInsertPosition::END));
-
         ///获得配置信息
         QJsonObject jo = getConfig();
 
@@ -321,8 +330,6 @@ private:
                     getInsertArgumentAdjuster({"-I",jo.value("clangCXXAarch64").toString().toStdString()},
                                               clang::tooling::ArgumentInsertPosition::END));
 #endif
-
-
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("-v", // Verbose
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++

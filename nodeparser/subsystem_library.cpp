@@ -7,13 +7,14 @@
 #include <vector>
 #include <algorithm>
 #include <nodes/FlowScene>
+#include <iostream>
 
 void SubsystemLibrary::setPath(const std::filesystem::path &path) {
     path_ = path;
 
 }
 
-bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) {
+bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) const{
     return std::filesystem::exists(subsystemPath(package, name));
 
 }
@@ -29,15 +30,15 @@ std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package,
     return ret;
 }
 
-std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) {
+std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) const {
     return subsystemPath(package, name);
 }
 
-std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package, const std::string &name) {
+std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package, const std::string &name) const {
     return  path_ / package / (name + ".flow");
 }
 
-std::vector<Invocable> SubsystemLibrary::getInvocableList() {
+std::vector<Invocable> SubsystemLibrary::getInvocableList() const {
     std::vector<Invocable> ret;
     if(path_.empty())
         return ret;
@@ -49,6 +50,8 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() {
             invocable.setPackage(p.parent_path().filename().string());
             invocable.setSubsystemName(p.stem().string());
             invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
+            invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
+            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
             boost::json::object scene = readScene(p);
             parsePorts(scene, invocable);
             ret.push_back(invocable);
@@ -58,13 +61,13 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() {
 }
 
 
-boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) {
+boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) const {
     std::ifstream json_file{path};
     std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
     return boost::json::parse(json_text).as_object();
 }
 
-void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) {
+void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) const {
     std::vector<Port> ports;
     boost::json::value & nodes_value = scene["nodes"];
     if(!nodes_value.is_array())

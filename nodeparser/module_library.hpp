@@ -61,12 +61,15 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const override;
 
-    const PackageLibrary &packageLibrary() {
+    const PackageLibrary &packageLibrary() const {
         return _packageLibrary;
+    }
+    const SubsystemLibrary &subsystemLibrary() const {
+        return _subsystemLibrary;
     }
     void addPackage(const std::filesystem::path & path);
 
-    std::shared_ptr<QtNodes::DataModelRegistry> test2NoSubsystem() {
+    std::shared_ptr<QtNodes::DataModelRegistry> test2NoSubsystem() const {
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
         for (const auto &inv: _invocableList) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
@@ -77,7 +80,7 @@ public:
 
     }
 
-    std::shared_ptr<QtNodes::DataModelRegistry> test2() {
+    std::shared_ptr<QtNodes::DataModelRegistry> test2() const{
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
         for (const auto &inv: _invocableList) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };

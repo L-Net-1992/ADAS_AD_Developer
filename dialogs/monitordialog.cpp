@@ -19,6 +19,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
 {
+    return;
     ui->setupUi(this);
 
     // clear buffer

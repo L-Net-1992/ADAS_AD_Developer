@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent):
     this->initImportScriptDialog();
     this->initProjectDialog();
     this->initRecentProjectDialog();
-
 }
 
 MainWindow::~MainWindow()
@@ -169,6 +168,7 @@ void MainWindow::initToolbar()
         SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-jetson.json"),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-bst.json"),"bst",*(fv->scene()),_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-mdc.json"),"mdc",*(fv->scene()),_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,(modules_path_+"/adas-target-host.json"),"jetson",*(fv->scene()),_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -562,7 +562,7 @@ void MainWindow::registrySceneGenerateNodeMenu(std::list<Invocable> parserResult
     ui->tw_toolbar->setEnabled(true);
     ui->tw_node->setEnabled(true);
     ui->menubar->setEnabled(true);
-    rProjectDialog->show();
+    // rProjectDialog->show();
 }
 
 ///初始化导入脚本对话框的内容

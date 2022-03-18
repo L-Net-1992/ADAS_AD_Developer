@@ -117,22 +117,22 @@ public:
         _allViews.push_front(view);
 
         //接受view的node创建完成消息增加新的page
-        connect(view,&AICCFlowView::checkSubSystemName,this,[&](const QString &name,const QString &caption,const QPoint pos,const AICCFlowView *cview){
-            //如果为其他普通节点,直接通知FlowView创建节点
-            if(name!="subsystem::SubSystem"){
-                cview->createNode(name,caption,pos);
-                return;
-            }else{
-                if(_routeDataMap.contains(_currPagePathName+"/"+name)){
-                    QMessageBox::warning(NULL,"警告","当前要创建的子系统已存在,请重新命名子系统!",QMessageBox::Ok,QMessageBox::Ok);
-                    return;
-                }
+//        connect(view,&AICCFlowView::checkSubSystemName,this,[&](const QString &name,const QString &caption,const QPoint pos,const AICCFlowView *cview){
+//            //如果为其他普通节点,直接通知FlowView创建节点
+//            if(name!="subsystem::SubSystem"){
+//                cview->createNode(name,caption,pos);
+//                return;
+//            }else{
+//                if(_routeDataMap.contains(_currPagePathName+"/"+name)){
+//                    QMessageBox::warning(NULL,"警告","当前要创建的子系统已存在,请重新命名子系统!",QMessageBox::Ok,QMessageBox::Ok);
+//                    return;
+//                }
 
-                cview->createNode(name,caption,pos);
-                this->addNewPageFlowScene(name);
-            }
+//                cview->createNode(name,caption,pos);
+//                this->addNewPageFlowScene(name);
+//            }
 
-        });
+//        });
 
         //双击节点显示节点的属性窗口
         connect(scene,&FlowScene::nodeDoubleClicked,this,[&](Node &n){
@@ -158,7 +158,7 @@ public:
             while(it!=this->_routeDataMap.end()){
                 QString key = it.key();
                 QStringList qsl = key.split(deletePathName);
-                qDebug() << "delete path name:" << deletePathName << "key:" << key << "qsl:" << qsl;
+//                qDebug() << "delete path name:" << deletePathName << "key:" << key << "qsl:" << qsl;
                 it++;
             }
         });
@@ -180,6 +180,17 @@ public:
     }
     ///返回当前的FlowView
     AICCFlowView *getCurrentView(){
+//        qDebug() << "all views:" << _allViews.count() << "current page path name:" << _currPagePathName
+//                 << " route data map:" << _routeDataMap.count()
+//                 << "   " << _allViews[_routeDataMap.value(_currPagePathName)]->scene()->allNodes().size();
+
+//        FlowScene *scene = _allViews[_routeDataMap.value(_currPagePathName)]->scene();
+//        for(int i=0;i<scene->allNodes().size();i++){
+//            qDebug() << "----------------node data model name:" << scene->allNodes().at(i)->nodeDataModel()->name() << "   size:" << scene->allNodes().size();
+//        }
+//        std::vector<Node *> vector = scene->allNodes();
+//        vector.begin()
+
         return _allViews[_routeDataMap.value(_currPagePathName)];
     }
 private:

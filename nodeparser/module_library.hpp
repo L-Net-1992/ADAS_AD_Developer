@@ -21,6 +21,7 @@
 #include "models.hpp"
 #include <iostream>
 #include <QWidget>
+#include <QDebug>
 #include <filesystem>
 #include "package_library.h"
 #include "subsystem_library.h"
@@ -92,7 +93,7 @@ public:
         for (const auto &inv: _subsystemLibrary.getInvocableList()) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
             ret->registerModel<InvocableDataModel>(f, "test");
-
+            qDebug() << "subsystem library getInvocableList():" <<_subsystemLibrary.getInvocableList().size();
         }
         return ret;
 

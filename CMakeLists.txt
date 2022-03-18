@@ -48,6 +48,7 @@ set ( PROJECT_SOURCES
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
 #    dialogs/mychartview.h dialogs/mychartview.cpp
     dialogs/recentprojectdialog.h dialogs/recentprojectdialog.cpp dialogs/recentprojectdialog.ui
+    dialogs/exportmoduledialog.h dialogs/exportmoduledialog.cpp dialogs/exportmoduledialog.ui
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
 
     image.qrc

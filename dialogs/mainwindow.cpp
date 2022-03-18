@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent):
     pDataModel=new ProjectDataModel;
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
     isDialog =new ImportScriptDialog(pDataModel,parent);
+    emDialog = new ExportModuleDialog(pDataModel,parent);
 
     //    MainWindow::pte_out = ui->pte_output;
     //    qInstallMessageHandler(logOutput);
@@ -46,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent):
     this->initImportScriptDialog();
     this->initProjectDialog();
     this->initRecentProjectDialog();
+
+//    std::shared_ptr<DataModelRegistry> dmr = this->_moduleLibrary->test2();
+//    _moduleLibrary->
+
 
 }
 
@@ -138,14 +143,17 @@ void MainWindow::initToolbar()
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
         //generate cpp code
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
-        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
+
+        //不放到项目路径中，放到平台执行目录中，否则编译时找不到
+//        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
+        std::string generatePath = (QApplication::applicationDirPath()+"/generate").toStdString();
         std::filesystem::path dir(generatePath);
-        SourceGenerator::generateCMakeProject(dir,scene,*_moduleLibrary);
+        SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
 
         //generate shell script
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -157,6 +165,17 @@ void MainWindow::initToolbar()
     connect(ui->tb_import,&QPushButton::clicked,this,[&]{
         isDialog->show();
     });
+
+    //导出子系统模块按钮
+    connect(ui->tb_export_module,&QToolButton::clicked,this,[&]{
+        emDialog->show();
+    });
+    //导入子系统模块按钮
+    connect(ui->tb_import_module,&QToolButton::clicked,this,[&]{
+
+    });
+
+
 
     //打开按钮响应动作
     connect(ui->pb_open,&QPushButton::clicked,this,[&]{pbOpenAction();});

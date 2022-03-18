@@ -40,6 +40,7 @@
 #include <dialogs/editorwindow.h>
 #include <dialogs/calibrationdialog.h>
 #include <dialogs/recentprojectdialog.h>
+#include <dialogs/exportmoduledialog.h>
 #include "stdio.h"
 #include "utils.h"
 #include "controllers/aicctreewidget.hpp"
@@ -133,6 +134,7 @@ private:
     MonitorDialog *monitorDialog;
     EditorWindow *eDialog;
     CalibrationDialog *cDialog;
+    ExportModuleDialog *emDialog;
 //    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
 //    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
     ModuleLibrary *_moduleLibrary;

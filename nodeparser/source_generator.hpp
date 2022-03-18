@@ -108,10 +108,48 @@ private:
             }
         }
     }
+    static void makeCalibrationParamConnections(const QtNodes::FlowScene &scene,
+                                                std::map<std::string, std::vector<std::string>> &connections) {
+        for(const auto & p: scene.connections()) {
+            const auto & c = *p.second;
+            const QtNodes::Node * out_node = c.getNode(QtNodes::PortType::Out);
+            const auto *out_model = static_cast<InvocableDataModel *>(out_node->nodeDataModel());
+            if(out_model->invocable().getType() != Invocable::CalibrationParam)
+                continue;
+            const QtNodes::Node * in_node = c.getNode(QtNodes::PortType::In);
+            const auto *in_model = static_cast<InvocableDataModel *>(in_node->nodeDataModel());
+            const auto & out_port = c.dataType(QtNodes::PortType::Out);
+            const auto & in_port = c.dataType(QtNodes::PortType::In);
+            std::string out = out_model->invocable().getVarName() + "." + out_port.name.toStdString();
+            if(connections.find(out) == connections.end())
+                connections.insert({out, {}});
+            if(in_model->invocable().getType() == Invocable::Class || in_model->invocable().getType() == Invocable::Subsystem) {
+                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set";
+                connections.find(out)->second.push_back(in);
+            } else if(in_model->invocable().getType() == Invocable::SubsystemOut) {
+                std::string in = in_model->invocable().getVarName();
+                connections.find(out)->second.push_back(in);
+            }
 
-    static void
-    generateConstructor(const QtNodes::FlowScene &scene, const std::string &className, std::ofstream &file) {
-        file << indent(1) << "explicit  " << className << "(const std::string & name):_name{name} {" << std::endl;
+
+        }
+
+    }
+
+    static void generateCalibrationParamConnections(const QtNodes::FlowScene &scene, std::ofstream &file) {
+        //adas::runtime::this_task::context().calibration().on_update("", 0.0, [this](float value){});
+        std::map<std::string, std::vector<std::string>> connections;
+        makeConnections(scene, connections);
+        for(const auto & p: connections) {
+            file << indent(2) << "adas::runtime::this_task::context().calibration().on_update(\"\", 0.0, [this](float value){}); {" << std::endl;
+            for(const auto & in: p.second) {
+                file << indent(3) << in << "(value);" << std::endl;
+            }
+            file << indent(2) <<"});" << std::endl;
+
+        }
+    }
+    static void generateConnections(const QtNodes::FlowScene &scene, std::ofstream &file) {
         std::map<std::string, std::vector<std::string>> connections;
         makeConnections(scene, connections);
         for(const auto & p: connections) {
@@ -122,20 +160,64 @@ private:
             file << indent(2) <<"});" << std::endl;
 
         }
+    }
+
+    static void
+    generateConstructor(const QtNodes::FlowScene &scene, const std::string &className, std::ofstream &file) {
+        file << indent(1) << "explicit  " << className << "(const std::string & name):_name{name} {" << std::endl;
+        generateConnections(scene, file);
         file << indent(1) << "}" << std::endl;
     }
 
-    static void generateSystemPort(const QtNodes::FlowScene &scene, std::ofstream &file) {
+    static void makeSubsystemInConnections(const QtNodes::FlowScene &scene,
+                                std::map<std::string, std::vector<std::string>> &connections) {
+        for(const auto & p: scene.connections()) {
+            const auto & c = *p.second;
+            const QtNodes::Node * out_node = c.getNode(QtNodes::PortType::Out);
+            const auto *out_model = static_cast<InvocableDataModel *>(out_node->nodeDataModel());
+            if(out_model->invocable().getType() != Invocable::SubsystemIn)
+                continue;
+            const QtNodes::Node * in_node = c.getNode(QtNodes::PortType::In);
+            const auto *in_model = static_cast<InvocableDataModel *>(in_node->nodeDataModel());
+            const auto & out_port = c.dataType(QtNodes::PortType::Out);
+            const auto & in_port = c.dataType(QtNodes::PortType::In);
+            std::string out = out_model->invocable().getVarName();
+            if(connections.find(out) == connections.end())
+                connections.insert({out, {}});
+            if(in_model->invocable().getType() == Invocable::Class || in_model->invocable().getType() == Invocable::Subsystem) {
+                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set(value)";
+                connections.find(out)->second.push_back(in);
+            } else if(in_model->invocable().getType() == Invocable::SubsystemOut) {
+                std::string in = in_model->invocable().getVarName() + "(value)";
+                connections.find(out)->second.push_back(in);
+            }
+
+
+        }
+
+    }
+    static void generateSubsystemPort(const QtNodes::FlowScene &scene, std::ofstream &file) {
+        std::map<std::string, std::vector<std::string>> connections;
+        makeSubsystemInConnections(scene, connections);
         for(const auto  node: scene.allNodes()) {
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
             const std::string & name = model->invocable().getVarName();
             if(model->invocable().getType() == Invocable::SubsystemIn) {
-                const std::string & type = model->invocable().getOutputPort(0).getType();
-                file << indent(1) << "adas::node::in<" << type << "> " << name << "{" << type << "{}, [](){}};" << std::endl;
+                std::string type = model->invocable().getOutputPort(0).getType();
+                if(type == "_Bool")
+                    type = "bool";
+                file << indent(1) << "adas::subsystem::in<" << type << "> " << name << "{[this](const auto & value){"<< std::endl;
+                for(const auto & in: connections.at(name)) {
+                        file << indent(2) << in << ";" << std::endl;
+                }
+
+                file << indent(1) << "}};" << std::endl;
             }
             else if(model->invocable().getType() == Invocable::SubsystemOut) {
                 std::cout << "num of input: " << model->invocable().getNumInput() << ", " << model->invocable().getInputPort(0).getType() << std::endl;
-                const std::string & type = model->invocable().getInputPort(0).getType();
+                std::string type = model->invocable().getInputPort(0).getType();
+                if(type == "_Bool")
+                    type = "bool";
                 file << indent(1) << "adas::node::out<" << type << "> " << name << ";" << std::endl;
             }
         }
@@ -148,7 +230,7 @@ private:
         file << indent(1) << "std::string _name;" << std::endl;
         generateNodeVar(scene, file);
         file << "public:" << std::endl;
-        generateSystemPort(scene, file);
+        generateSubsystemPort(scene, file);
         file << "public:" << std::endl;
         generateConstructor(scene, className, file);
         file << "};" << std::endl;
@@ -285,9 +367,6 @@ public:
             std::filesystem::remove_all(subsystem_dir);
         }
         std::filesystem::create_directories(subsystem_dir);
-        for(int i=0;i<scene.allNodes().size();i++){
-            qDebug() << "----------------node data model name:" << scene.allNodes().at(i)->nodeDataModel()->name() << "   size:" << scene.allNodes().size();
-        }
         generateSubsystemInScene(subsystem_dir, scene, moduleLibrary);
         std::ofstream source(directory / "generate.cpp");
         generateSource(scene, source);

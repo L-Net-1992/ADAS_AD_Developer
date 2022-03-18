@@ -211,7 +211,7 @@ public:
         return std::count_if(_portList.begin(), _portList.end(), [](const Port & p){return p.getDirection() == Port::In;});
 
     }
-    const Port getInputPort(unsigned int i) const {
+    const Port & getInputPort(unsigned int i) const {
         int j = 0;
         for(const auto & p:_portList) {
             if(p.getDirection() == Port::In ) {

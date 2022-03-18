@@ -303,10 +303,17 @@ void MainWindow::processStart(const QVector<QString> scriptNames,const int platf
     bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
     QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
     process->terminate();
-    if(process->waitForFinished())
-        process->start(bash);
-    else
-        process->start(killprocess);
+    process->start(bash);
+
+    bool ret = process->waitForFinished();
+    if(ret){
+        qDebug() << "process close";
+        process->close();
+    }
+//    if(process->waitForFinished())
+//        process->start(bash);
+//    else
+//        process->start(killprocess);
 }
 
 ///初始化面包屑导航

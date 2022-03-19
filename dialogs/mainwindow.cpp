@@ -122,6 +122,7 @@ void MainWindow::initTableWidget()
 void MainWindow::initToolbar()
 {
     ui->tb_merge_module->setVisible(false);
+    ui->tb_import->setVisible(false);
 
     //隐藏掉上方dock的标题栏
     QWidget *titleBarWidget = ui->dw_toolbar->titleBarWidget();
@@ -140,7 +141,7 @@ void MainWindow::initToolbar()
     });
 
     //生成代码按钮
-    connect(ui->pb_script_generator,&QPushButton::clicked,this,[&]{
+    connect(ui->pb_script_generator,&QPushButton::clicked,this,[&](){
         //generate cpp code
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
 
@@ -527,9 +528,21 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-    connect(_moduleLibrary,&ModuleLibrary::importCompleted,[&](){
+//    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
+    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,[&](){
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
     });
+
+    //6:响应文件解析进度
+    connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+//        qDebug() << " ==================================================processing:" << index << "/" << count;
+    });
+
+}
+
+///导入完成响应动作，此处不要用lambda表达式，会导致跨线程调用问题
+void MainWindow::importCompletedAction(){
+    ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
 }
 
 ///包数据解析完毕工作
@@ -560,7 +573,15 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
 
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
+
+    //此处在单独的线程中，不能使用默认主线程的数据库连接
+//    QSqlDatabase sqlite;
+//    sqlite.addDatabase("QSQLITE");
+//    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
+//    sqlite.open();
     AICCSqlite sqlite;
+
+
     //注册所有已有的模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;

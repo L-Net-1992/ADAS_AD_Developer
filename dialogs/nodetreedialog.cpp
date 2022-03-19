@@ -77,7 +77,7 @@ void NodeTreeDialog::makeRootGroupItem(AICCTreeWidget *atw,const QString name,co
 
 ///获得DataModelRegistry对象
 void NodeTreeDialog::setNodeMap(QMap<QString,QSet<QString>> pnm){
-    qDebug() << "setNodeMap: " << pnm.size() << "  QSet size: " << pnm["MathOperations"].size();
+//    qDebug() << "setNodeMap: " << pnm.size() << "  QSet size: " << pnm["MathOperations"].size();
     _nodeMap = pnm;
 }
 

@@ -110,6 +110,7 @@ private:
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
     static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
     void processStart(const QVector<QString> scriptNames,const int platformIndex);
+    void importCompletedAction();
 
 
     static void write(QString str);

@@ -17,12 +17,12 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>选择导入项目</string>
+      <string>选择导出项目</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox"/>
+    <widget class="QComboBox" name="cb_module_name"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -40,7 +40,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pb_export">
        <property name="text">
         <string>导出</string>
        </property>

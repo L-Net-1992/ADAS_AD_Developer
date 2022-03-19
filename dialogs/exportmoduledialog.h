@@ -5,6 +5,8 @@
 #include "project/modelsproject.hpp"
 #include <QDir>
 #include <QDebug>
+#include <QFileDialog>
+#include "utils.h"
 
 namespace Ui {
 class ExportModuleDialog;
@@ -18,7 +20,11 @@ public:
     explicit ExportModuleDialog(ProjectDataModel *pdm,QWidget *parent = nullptr);
     ~ExportModuleDialog();
 private:
-    void initSubsystemData();
+    void getSubsystemData();
+    void initConnect();
+
+protected:
+    void showEvent(QShowEvent *event);
 
 private:
     Ui::ExportModuleDialog *ui;

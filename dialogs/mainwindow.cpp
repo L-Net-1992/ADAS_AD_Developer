@@ -154,6 +154,7 @@ void MainWindow::initToolbar()
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -171,7 +172,24 @@ void MainWindow::initToolbar()
         emDialog->show();
     });
     //导入子系统模块按钮
+    //导入一个flow文件成为自定义模块
     connect(ui->tb_import_module,&QToolButton::clicked,this,[&]{
+        QString importModuleName = QFileDialog::getOpenFileName(this,tr("请选择要导入的自定义模块文件"),QApplication::applicationDirPath(),tr("自定义模块flow文件 (*.flow)"),Q_NULLPTR,QFileDialog::ReadOnly);
+        QFileInfo imFileInfo(importModuleName);
+        QString imPath =  imFileInfo.absolutePath();
+        imPath.replace("\\", "/");
+        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
+        QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
+
+        //在项目的subsystem path目录下创建模块包
+        QDir packageDir(pDataModel->currentProjectSubSystemPath()+"/"+imPackage);
+        if (!packageDir.exists()) {
+            if (!packageDir.mkdir(packageDir.absolutePath()))
+                return false;
+        }
+        copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
+
+//        qDebug() << "imPath:" <<imPath << "imPackage" << imPackage;
 
     });
 
@@ -236,7 +254,7 @@ void MainWindow::initToolbar()
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
         QVector<QString> v;
-        v << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh";
+        v << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh" << "build_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
@@ -244,21 +262,21 @@ void MainWindow::initToolbar()
     ///deploy
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh";
+        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh";
+        v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh" << "run_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh";
+        v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh" << "stop_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
@@ -303,10 +321,18 @@ void MainWindow::processStart(const QVector<QString> scriptNames,const int platf
     bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
     QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
     process->terminate();
-    if(process->waitForFinished())
-        process->start(bash);
-    else
-        process->start(killprocess);
+    process->start(bash);
+
+//    bool ret = process->waitForFinished();
+//    if(ret){
+//        qDebug() << "process close";
+//        process->close();
+//        delete process;
+//    }
+//    if(process->waitForFinished())
+//        process->start(bash);
+//    else
+//        process->start(killprocess);
 }
 
 ///初始化面包屑导航
@@ -501,9 +527,12 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-    connect(_moduleLibrary,&ModuleLibrary::importCompleted,[&](){
+    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
+}
+
+///导入完成响应动作，此处不要用lambda表达式，会导致跨线程调用问题
+void MainWindow::importCompletedAction(){
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
-    });
 }
 
 ///包数据解析完毕工作
@@ -534,7 +563,15 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
 
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
+
+    //此处在单独的线程中，不能使用默认主线程的数据库连接
+//    QSqlDatabase sqlite;
+//    sqlite.addDatabase("QSQLITE");
+//    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
+//    sqlite.open();
     AICCSqlite sqlite;
+
+
     //注册所有已有的模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;

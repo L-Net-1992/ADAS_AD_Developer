@@ -190,14 +190,6 @@ void MainWindow::initToolbar()
 
 //        qDebug() << "imPath:" <<imPath << "imPackage" << imPackage;
 
-
-//        QFileDialog selectModelDialog;
-//        selectModelDialog.setFileMode(QFileDialog::Directory);
-//        QString exportPath = selectModelDialog.getExistingDirectory(this,tr("请选择要导入自定义模块的目录"),QApplication::applicationDirPath());
-//        QDir exportDir(exportPath);
-
-        //验证目录下是否有一个或多个flow文件
-
     });
 
 

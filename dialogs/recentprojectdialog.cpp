@@ -125,12 +125,15 @@ void RecentProjectDialog::openProject(QListWidgetItem *item){
     QWidget *widget = ui->lw_project->itemWidget(item);
     if(widget!=Q_NULLPTR){
         QList<QLabel *> labelList = widget->findChildren<QLabel*>();
+        QString pname,ppath;
         foreach(QLabel *label,labelList){
             if(label->objectName()=="l_name")
-                _project_data_model->setCurrentProjectName(label->text());
+                pname = label->text();
             else if(label->objectName()=="l_path")
-                _project_data_model->setCurrentProjectPath(label->text());
+                ppath = label->text();
         }
+        _project_data_model->setCurrentProjectName(pname);
+        _project_data_model->setCurrentProjectPath(ppath);
         if(!existProject(_project_data_model->currentProjectPath())){
             QMessageBox::warning(Q_NULLPTR,"警告","项目不存在",QMessageBox::Ok,QMessageBox::Ok);
             return;

@@ -323,12 +323,12 @@ void MainWindow::processStart(const QVector<QString> scriptNames,const int platf
     process->terminate();
     process->start(bash);
 
-    bool ret = process->waitForFinished();
-    if(ret){
+//    bool ret = process->waitForFinished();
+//    if(ret){
 //        qDebug() << "process close";
 //        process->close();
 //        delete process;
-    }
+//    }
 //    if(process->waitForFinished())
 //        process->start(bash);
 //    else

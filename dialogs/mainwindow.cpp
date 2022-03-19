@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent):
     diDialog ( new DataInspectorDialog(parent)),
     monitorDialog ( new MonitorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
-    cDialog ( new CalibrationDialog(parent)),
     process ( new QProcess(parent))
 
 {
@@ -25,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent):
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
     isDialog =new ImportScriptDialog(pDataModel,parent);
     emDialog = new ExportModuleDialog(pDataModel,parent);
+    cDialog = new CalibrationDialog(pDataModel,parent);
 
     //    MainWindow::pte_out = ui->pte_output;
     //    qInstallMessageHandler(logOutput);

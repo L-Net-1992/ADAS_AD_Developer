@@ -11,8 +11,6 @@
 #include <QTableWidgetItem>
 #include "hdf5/hdf5files_handle.h"
 
-#include "nodeparser/inspector.hpp"
-
 using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
@@ -26,16 +24,59 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     data_model_ = new MonitorDataModel;
     InitTable();
     CreatNewChart(data_model_);
+    connect(data_model_, &MonitorDataModel::SignalListEvent, this, &MonitorDialog::tableSignalUpdate);
 
-    Inspector inspector{"192.168.1.11"};
+//    Inspector inspector{"127.0.0.1"};
 
     //获得所有可监测变量，map中key为名字，value是否监测
     auto var_state = inspector.getVarWatchState();
-    qDebug() << "vars: "<< var_state;
+
+    for(auto it=var_state.begin();it!=var_state.end();++it) {
+        QString name = it.key();
+        qDebug() << it.key();
+        QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
+        data_model_->addSignalList(name,qc);
+    }
+
 
     //变量更新的signal，参数为变量名字和值
-    QObject::connect(&inspector, &Inspector::varUpdated, [](const QString & name, float value){
+    QObject::connect(&inspector, &Inspector::varUpdated, [=](const QString & name, float value){
         std::cout << "var " << name.toStdString() << ": " << value << std::endl;
+        QPointF data(x_index_,value);
+        QString str = name;
+        data_model_->addSignalData(str, data);
+        if(data.y() > y_val_range_.at(0)) y_val_range_[0] = data.y(); // max
+        if(data.y() < y_val_range_.at(1)) y_val_range_[1] = data.y(); // min
+
+//        if(++current_number == signal_active_number_) { x_index_++; current_number=0;}
+//        qDebug() << "x_index: " << x_index_ <<" signal_active_number_: " << signal_active_number_;
+
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
+        }
+
+    });
+    // timer3
+    timer3 = new QTimer(this);
+    timer3->setInterval(50);
+    connect(timer3, &QTimer::timeout, this, [=](){
+        x_index_++;
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            if(x_index_ > 50) {
+                chart_list_.value(it.key())->axisX()->setRange(x_index_-50, x_index_);
+            }
+            chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
+
+            auto tmp = data_model_->get_signal_list();
+            for(int i=0;i<tmp.size();++i) {
+                if(data_model_->getSignalCheckboxState(tmp.at(i))) {
+                    series_group_.value(tmp.at(i))->setVisible(1);
+                } else {
+                    series_group_.value(tmp.at(i))->setVisible(0);
+                }
+            }
+        }
+
     });
 //    QObject::connect(mainWindow.ui->actionInspector, &QAction::triggered, [&inspector](){
 
@@ -60,7 +101,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
 
 //    });
 
-    connect(data_model_, &MonitorDataModel::SignalListEvent, this, &MonitorDialog::tableSignalUpdate);
+
 
     // timer0
     timer0 = new QTimer(this);
@@ -136,7 +177,7 @@ void MonitorDialog::CreatNewChart(MonitorDataModel *model)
     chartview->setRenderHint(QPainter::Antialiasing);
     chartview->setChart(chart);
 
-    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
+//    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
     chart->layout()->setContentsMargins(2,2,2,2);   // 外边距
     chart->setMargins(QMargins(0,0,0,0));           // 內变距
     chart->setBackgroundRoundness(0);               // 边角直角
@@ -217,6 +258,19 @@ void MonitorDialog::tableSignalUpdate(QString signal, QColor color)
     connect(ckb, &QCheckBox::clicked, this, [=](){
         qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
         data_model_->setSignalCheckboxState(signal,ckb->checkState());
+
+        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
+        QMap<QString, bool> set_state;
+        if(ckb->checkState() == Qt::Checked) {
+            set_state[signal] = true;
+            inspector.setVarWatchState(set_state);
+            signal_active_number_++;
+        } else {
+            set_state[signal] = false;
+            inspector.setVarWatchState(set_state);
+            if(signal_active_number_ == 0) return;
+            signal_active_number_--;
+        }
     });
 }
 
@@ -351,6 +405,7 @@ void MonitorDialog::on_btn_monitor_record_clicked()
 void MonitorDialog::on_btn_monitor_start_clicked()
 {
     // 读取要监测的信号列表，创建信号
+    timer3->start();
 
     if(0){
         QString name = "signal" + QString::number(line_number_++);
@@ -361,16 +416,30 @@ void MonitorDialog::on_btn_monitor_start_clicked()
 
 void MonitorDialog::on_btn_monitor_stop_clicked()
 {
-    if(ui->btn_monitor_stop->text() == "on"){
-        ui->btn_monitor_stop->setText("stop");
-        timer0->start();
-        qDebug() << ui->btn_monitor_stop->text();
-    }
-    else {
-        ui->btn_monitor_stop->setText("on");
-        timer0->stop();
-        qDebug() << ui->btn_monitor_stop->text();
-    }
+    timer3->stop();
+
+//    QMap<QString, bool> set_state;
+//    for(auto it=series_group_.begin();it!=series_group_.end();++it) {
+//        set_state[it.key()] = false;
+//        inspector.setVarWatchState(set_state);
+//    }
+//    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+//        it.value()->removeAllSeries();
+//    }
+//    current_number = 0;
+//    signal_active_number_ = 0;
+//    x_index_ = 0;
+
+//    if(ui->btn_monitor_stop->text() == "on"){
+//        ui->btn_monitor_stop->setText("stop");
+//        timer0->start();
+//        qDebug() << ui->btn_monitor_stop->text();
+//    }
+//    else {
+//        ui->btn_monitor_stop->setText("on");
+//        timer0->stop();
+//        qDebug() << ui->btn_monitor_stop->text();
+//    }
 
 }
 
@@ -461,5 +530,10 @@ void MonitorDialog::closeEvent(QCloseEvent *e)
        monitor_running = 0;
        replay_loadfile = 0;
        e->accept(); // 接受退出信号，程序退出
-    }
+   }
+}
+
+void MonitorDialog::showEvent(QShowEvent *)
+{
+
 }

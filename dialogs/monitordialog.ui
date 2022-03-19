@@ -23,11 +23,11 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>数据监测</string>
+       <string>信号监测</string>
       </attribute>
       <widget class="QToolButton" name="btn_monitor_stop">
        <property name="geometry">
@@ -142,7 +142,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>数据回放</string>
+       <string>信号回放</string>
       </attribute>
       <widget class="QToolButton" name="btn_replay_start">
        <property name="enabled">
@@ -249,7 +249,7 @@
         <string>信号列表</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+        <set>Qt::AlignCenter</set>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
@@ -282,10 +282,10 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>信号图形</string>
+        <string>信号图表</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+        <set>Qt::AlignCenter</set>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">

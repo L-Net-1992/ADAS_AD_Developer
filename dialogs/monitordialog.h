@@ -24,7 +24,7 @@
 #include <QLineSeries>
 #include <QTimer>
 #include "monitordatamodel.hpp"
-#include <QObject>
+#include "nodeparser/inspector.hpp"
 
 using namespace QtCharts;
 QT_CHARTS_USE_NAMESPACE
@@ -65,12 +65,14 @@ private slots:
 
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
+    void showEvent(QShowEvent *) override;
 
 private:
     Ui::Dialog *ui;
     QTimer *timer0;
     QTimer *timer1;
     QTimer *timer2;
+    QTimer *timer3;
 
 private:
     MonitorDataModel *data_model_;
@@ -87,5 +89,8 @@ private:
     bool monitor_running = 0;
     bool replay_loadfile = 0;
 
+    Inspector inspector{"127.0.0.1"};
+    size_t signal_active_number_ = 0;
+    size_t current_number = 0;
 };
 #endif // DIALOG_H

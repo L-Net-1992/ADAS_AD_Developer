@@ -64,7 +64,12 @@ set ( PROJECT_SOURCES
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccchartview.h
+    controllers/monitordatamodel.hpp
 
+    nodeparser/inspector.hpp
+    nodeparser/inspector.cpp
+    nodeparser/inspector_thread.cpp
+    nodeparser/inspector_thread.hpp
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp
     nodeparser/models.hpp

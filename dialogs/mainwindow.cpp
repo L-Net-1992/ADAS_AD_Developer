@@ -295,21 +295,24 @@ void MainWindow::initToolbar()
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh" << "run_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh" << "stop_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///在线标定按钮OnlineCalibration->Calibration

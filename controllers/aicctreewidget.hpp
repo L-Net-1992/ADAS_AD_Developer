@@ -44,7 +44,7 @@ public:
             recursionQJsonObjectLeft(list_root[i].first,list_root[i].second,twi_root);
         }
 
-        refreshTreeViewDynamicNode();
+//        refreshTreeViewDynamicNode();
         this->expandAll();
         //        clearDynamicNode();
     }

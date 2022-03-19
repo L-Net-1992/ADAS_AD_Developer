@@ -15,7 +15,7 @@ class AICCSqlite
 //    Q_OBJECT
 public:
     AICCSqlite(){
-
+//        initDatabaseConnection();
     }
     ///初始化数据库链接
     void initDatabaseConnection(){

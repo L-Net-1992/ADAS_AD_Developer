@@ -527,9 +527,12 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-    connect(_moduleLibrary,&ModuleLibrary::importCompleted,[&](){
+    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
+}
+
+///导入完成响应动作，此处不要用lambda表达式，会导致跨线程调用问题
+void MainWindow::importCompletedAction(){
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
-    });
 }
 
 ///包数据解析完毕工作
@@ -560,7 +563,15 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
 
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
+
+    //此处在单独的线程中，不能使用默认主线程的数据库连接
+//    QSqlDatabase sqlite;
+//    sqlite.addDatabase("QSQLITE");
+//    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
+//    sqlite.open();
     AICCSqlite sqlite;
+
+
     //注册所有已有的模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;

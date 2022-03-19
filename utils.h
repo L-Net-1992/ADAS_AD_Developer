@@ -19,4 +19,7 @@
 
  void recursionQJsonObjectLeft(QString parentName,QJsonObject jo,QTreeWidgetItem *twi);
  void recursionQJsonObjectModuleBrowser(QString parentName,QJsonObject jo,QTreeWidgetItem *twi);
+
+ bool copyDirectory(const QString& srcPath, const QString& dstPath, bool coverFileIfExist);
+ bool copyFile(QString srcPath, QString dstPath, bool coverFileIfExist);
 #endif // UTILS_H

@@ -171,7 +171,32 @@ void MainWindow::initToolbar()
         emDialog->show();
     });
     //导入子系统模块按钮
+    //导入一个flow文件成为自定义模块
     connect(ui->tb_import_module,&QToolButton::clicked,this,[&]{
+        QString importModuleName = QFileDialog::getOpenFileName(this,tr("请选择要导入的自定义模块文件"),QApplication::applicationDirPath(),tr("自定义模块flow文件 (*.flow)"),Q_NULLPTR,QFileDialog::ReadOnly);
+        QFileInfo imFileInfo(importModuleName);
+        QString imPath =  imFileInfo.absolutePath();
+        imPath.replace("\\", "/");
+        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
+        QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
+
+        //在项目的subsystem path目录下创建模块包
+        QDir packageDir(pDataModel->currentProjectSubSystemPath()+"/"+imPackage);
+        if (!packageDir.exists()) {
+            if (!packageDir.mkdir(packageDir.absolutePath()))
+                return false;
+        }
+        copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
+
+//        qDebug() << "imPath:" <<imPath << "imPackage" << imPackage;
+
+
+//        QFileDialog selectModelDialog;
+//        selectModelDialog.setFileMode(QFileDialog::Directory);
+//        QString exportPath = selectModelDialog.getExistingDirectory(this,tr("请选择要导入自定义模块的目录"),QApplication::applicationDirPath());
+//        QDir exportDir(exportPath);
+
+        //验证目录下是否有一个或多个flow文件
 
     });
 

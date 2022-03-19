@@ -64,7 +64,12 @@ set ( PROJECT_SOURCES
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccchartview.h
+    controllers/monitordatamodel.hpp
 
+    nodeparser/inspector.hpp
+    nodeparser/inspector.cpp
+    nodeparser/inspector_thread.cpp
+    nodeparser/inspector_thread.hpp
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp
     nodeparser/models.hpp
@@ -99,6 +104,7 @@ target_include_directories(ADAS_AD_Developer
     ${CLANG_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     )
+find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -115,7 +121,7 @@ target_link_libraries(ADAS_AD_Developer
     clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
-    libqscintilla2_qt5.so
+    ${QSCINTILLA}
     )
 
 

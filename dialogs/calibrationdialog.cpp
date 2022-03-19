@@ -33,6 +33,27 @@ void CalibrationDialog::init(){
     ui->toolBar->addAction(ui->action_load);
     ui->toolBar->addAction(ui->action_update);
 
+    // clear table content
+    while(ui->tw_params->rowCount()) {
+        ui->tw_params->removeRow(0);
+    }
+
+    //获得所有可标定参数的列表，map中key为名字，value为当前值
+    auto param_value = inspector.getParamValue();
+    qDebug() << "params: " << param_value;
+    for(auto it=param_value.begin();it!=param_value.end();++it) {
+        auto rowcount = ui->tw_params->rowCount();
+        ui->tw_params->setRowCount(rowcount + 1);
+
+        QTableWidgetItem *item = new QTableWidgetItem("");
+        item->setText(it.key());
+        ui->tw_params->setItem(rowcount,0,item);
+
+        QTableWidgetItem *item2 = new QTableWidgetItem("");
+        item2->setText(QString("%1").arg(it.value()));
+        ui->tw_params->setItem(rowcount,1,item2);
+    }
+
     //设置第三列为只读,但此方法会覆盖掉原来的数据
 //    for(int i=0;i<ui->tw_params->rowCount();i++){
 //        QTableWidgetItem *item = new QTableWidgetItem();
@@ -107,9 +128,25 @@ void CalibrationDialog::initButton(){
     });
 
     //Update按钮
+    connect(ui->action_update,&QAction::triggered,this,[=](){
+        //标定参数，通过map可以一次设置多个变量
 
+        for(int i=0;i<ui->tw_params->rowCount();i++) {
+            QString name = ui->tw_params->item(i,0)->text();
+            auto setval =ui->tw_params->item(i,2);
+            if(setval != 0) {
+                QMap<QString, float> set_param;
+                set_param[name] = setval->text().toFloat();
+                inspector.setParamValue(set_param);
 
+                auto param_value = inspector.getParamValue();
+                QTableWidgetItem *item2 = new QTableWidgetItem("");
+                item2->setText(QString("%1").arg(param_value.value(name)));
+                ui->tw_params->setItem(i,1,item2);
+            }
+        }
 
+    });
 }
 
 void CalibrationDialog::setProjectDataModel(ProjectDataModel *newProjectDataModel)

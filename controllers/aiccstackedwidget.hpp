@@ -58,7 +58,7 @@ public:
         {
           "FlowViewStyle": {
       "BackgroundColor": [255, 255, 255],
-      "FineGridColor": [255, 255, 255],
+      "FineGridColor": [245, 245, 230],
       "CoarseGridColor": [255, 255, 255]
           }
         }

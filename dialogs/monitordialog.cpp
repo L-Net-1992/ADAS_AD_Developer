@@ -22,6 +22,8 @@ MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     data_model_ = new MonitorDataModel;
     InitTable();
     CreatNewChart(data_model_);

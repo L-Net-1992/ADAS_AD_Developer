@@ -28,9 +28,6 @@ MainWindow::MainWindow(QWidget *parent):
     emDialog = new ExportModuleDialog(pDataModel,parent);
 
 
-    QJsonObject jo = getConfig();
-    monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),parent);
-    cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),pDataModel,parent);
 
     //获得Process的标准输出
     connect(process,&QProcess::readyRead,this,[&](){
@@ -267,7 +264,8 @@ void MainWindow::initToolbar()
 
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
-        //        diDialog->show();
+        QJsonObject jo = getConfig();
+        monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),this);
         monitorDialog->show();
     });
 
@@ -316,6 +314,9 @@ void MainWindow::initToolbar()
 
     ///在线标定按钮OnlineCalibration->Calibration
     connect(ui->tb_calibration,&QToolButton::clicked,this,[&](){
+        QJsonObject jo = getConfig();
+        cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),pDataModel,this);
+
         cDialog->show();
     });
 

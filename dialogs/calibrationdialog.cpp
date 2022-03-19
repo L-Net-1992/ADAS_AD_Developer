@@ -24,6 +24,7 @@ void CalibrationDialog::init(){
     //表格列宽自适应
     ui->tw_params->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
 
     //工具条按钮靠右
     QWidget *spacer = new QWidget(this);

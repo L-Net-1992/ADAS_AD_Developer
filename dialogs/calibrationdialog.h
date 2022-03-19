@@ -20,6 +20,7 @@ class CalibrationDialog : public QDialog
     Q_OBJECT
 
 public:
+    CalibrationDialog(ProjectDataModel *pdm,QWidget *parent);
     explicit CalibrationDialog(QWidget *parent = nullptr);
     ~CalibrationDialog();
 

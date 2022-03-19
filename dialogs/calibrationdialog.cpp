@@ -1,9 +1,10 @@
 #include "calibrationdialog.h"
 #include "ui_calibrationdialog.h"
 
-CalibrationDialog::CalibrationDialog(QWidget *parent) :
+CalibrationDialog::CalibrationDialog(ProjectDataModel *pdm,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::CalibrationDialog)
+    ui(new Ui::CalibrationDialog),
+    _projectDataModel(pdm)
 {
     ui->setupUi(this);
     init();

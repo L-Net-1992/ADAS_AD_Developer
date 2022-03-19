@@ -23,13 +23,14 @@ MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
     ui->setupUi(this);
 
     this->setAttribute(Qt::WA_DeleteOnClose);
+    ui->tabWidget->setCurrentIndex(0);
 
     data_model_ = new MonitorDataModel;
     InitTable();
     CreatNewChart(data_model_);
     connect(data_model_, &MonitorDataModel::SignalListEvent, this, &MonitorDialog::tableSignalUpdate);
 
-//    Inspector inspector{"127.0.0.1"};
+    //    Inspector inspector{"127.0.0.1"};
 
     //获得所有可监测变量，map中key为名字，value是否监测
     auto var_state = inspector.getVarWatchState();
@@ -51,8 +52,8 @@ MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
         if(data.y() > y_val_range_.at(0)) y_val_range_[0] = data.y(); // max
         if(data.y() < y_val_range_.at(1)) y_val_range_[1] = data.y(); // min
 
-//        if(++current_number == signal_active_number_) { x_index_++; current_number=0;}
-//        qDebug() << "x_index: " << x_index_ <<" signal_active_number_: " << signal_active_number_;
+        //        if(++current_number == signal_active_number_) { x_index_++; current_number=0;}
+        //        qDebug() << "x_index: " << x_index_ <<" signal_active_number_: " << signal_active_number_;
 
         for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
             chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
@@ -81,28 +82,28 @@ MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
         }
 
     });
-//    QObject::connect(mainWindow.ui->actionInspector, &QAction::triggered, [&inspector](){
+    //    QObject::connect(mainWindow.ui->actionInspector, &QAction::triggered, [&inspector](){
 
-//        //监控使用
-//        //获得所有可监测变量，map中key为名字，value是否监测
-//        auto var_state = inspector.getVarWatchState();
-//        qDebug() << "vars: "<< var_state;
-//        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
-//        QMap<QString, bool> set_state;
-//        set_state["task0.seq.out"] = true;
-//        inspector.setVarWatchState(set_state);
+    //        //监控使用
+    //        //获得所有可监测变量，map中key为名字，value是否监测
+    //        auto var_state = inspector.getVarWatchState();
+    //        qDebug() << "vars: "<< var_state;
+    //        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
+    //        QMap<QString, bool> set_state;
+    //        set_state["task0.seq.out"] = true;
+    //        inspector.setVarWatchState(set_state);
 
 
-//        //标定使用
-//        //获得所有可标定参数的列表，map中key为名字，value为当前值
-//        auto param_value = inspector.getParamValue();
-//        qDebug() << "params: " << param_value;
-//        //标定参数，通过map可以一次设置多个变量
-//        QMap<QString, float> set_param;
-//        set_param["task0.n4"] = 3.14f;
-//        inspector.setParamValue(set_param);
+    //        //标定使用
+    //        //获得所有可标定参数的列表，map中key为名字，value为当前值
+    //        auto param_value = inspector.getParamValue();
+    //        qDebug() << "params: " << param_value;
+    //        //标定参数，通过map可以一次设置多个变量
+    //        QMap<QString, float> set_param;
+    //        set_param["task0.n4"] = 3.14f;
+    //        inspector.setParamValue(set_param);
 
-//    });
+    //    });
 
 
 
@@ -139,7 +140,7 @@ MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
     timer1 = new QTimer(this);
     timer1->setInterval(20);
     connect(timer1, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer1);
-//    timer1->start();
+    //    timer1->start();
 
     // timer2 for replay
     timer2 = new QTimer(this);
@@ -180,7 +181,7 @@ void MonitorDialog::CreatNewChart(MonitorDataModel *model)
     chartview->setRenderHint(QPainter::Antialiasing);
     chartview->setChart(chart);
 
-//    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
+    //    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
     chart->layout()->setContentsMargins(2,2,2,2);   // 外边距
     chart->setMargins(QMargins(0,0,0,0));           // 內变距
     chart->setBackgroundRoundness(0);               // 边角直角
@@ -217,14 +218,14 @@ void MonitorDialog::CreatNewChart(MonitorDataModel *model)
     connect(model, &MonitorDataModel::SignalListEvent, this, [=](QString name, QColor color){
         QLineSeries *series = new QLineSeries(this);
         series->setName(name);
-//        series->setPen(QPen(Qt::red,1,Qt::SolidLine));
+        //        series->setPen(QPen(Qt::red,1,Qt::SolidLine));
         series->setColor(color);
         chart->addSeries(series);
         series->attachAxis(chart->axisX());
         series->attachAxis(chart->axisY());
 
         series_group_[name] = series;
-//        qDebug() << "series_group size: " << series_group_.size();
+        //        qDebug() << "series_group size: " << series_group_.size();
     });
     connect(model, &MonitorDataModel::SignalDataEvent, this, [=](QString name, QPointF data){
         series_group_.value(name)->append(data.x(),data.y());
@@ -370,16 +371,16 @@ void MonitorDialog::on_btn_replay_open_clicked()
 
         // save data
         for(size_t i=0; i<signalname.size();i++) {
-           std::vector<float> arr_float = file.get_data<float>(signalname.at(i), "/Signal");
-           QVector<QPointF> tmp;
-           for(size_t j=0;j<arr_float.size();j++) {
-               tmp.push_back(QPointF(j,arr_float.at(j)));
-           }
-           data_model_->setSignalDataSet(QString::fromStdString(signalname.at(i)), tmp);
+            std::vector<float> arr_float = file.get_data<float>(signalname.at(i), "/Signal");
+            QVector<QPointF> tmp;
+            for(size_t j=0;j<arr_float.size();j++) {
+                tmp.push_back(QPointF(j,arr_float.at(j)));
+            }
+            data_model_->setSignalDataSet(QString::fromStdString(signalname.at(i)), tmp);
         }
-         file.close();
-         replay_loadfile =1;
-         signal_num_ = data_model_->signalDataSize();
+        file.close();
+        replay_loadfile =1;
+        signal_num_ = data_model_->signalDataSize();
     }
     else {
         QMessageBox::information(this,"提示", "打开文件错误", QMessageBox::Close, QMessageBox::Close);
@@ -421,28 +422,28 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
 {
     timer3->stop();
 
-//    QMap<QString, bool> set_state;
-//    for(auto it=series_group_.begin();it!=series_group_.end();++it) {
-//        set_state[it.key()] = false;
-//        inspector.setVarWatchState(set_state);
-//    }
-//    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
-//        it.value()->removeAllSeries();
-//    }
-//    current_number = 0;
-//    signal_active_number_ = 0;
-//    x_index_ = 0;
+    //    QMap<QString, bool> set_state;
+    //    for(auto it=series_group_.begin();it!=series_group_.end();++it) {
+    //        set_state[it.key()] = false;
+    //        inspector.setVarWatchState(set_state);
+    //    }
+    //    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+    //        it.value()->removeAllSeries();
+    //    }
+    //    current_number = 0;
+    //    signal_active_number_ = 0;
+    //    x_index_ = 0;
 
-//    if(ui->btn_monitor_stop->text() == "on"){
-//        ui->btn_monitor_stop->setText("stop");
-//        timer0->start();
-//        qDebug() << ui->btn_monitor_stop->text();
-//    }
-//    else {
-//        ui->btn_monitor_stop->setText("on");
-//        timer0->stop();
-//        qDebug() << ui->btn_monitor_stop->text();
-//    }
+    //    if(ui->btn_monitor_stop->text() == "on"){
+    //        ui->btn_monitor_stop->setText("stop");
+    //        timer0->start();
+    //        qDebug() << ui->btn_monitor_stop->text();
+    //    }
+    //    else {
+    //        ui->btn_monitor_stop->setText("on");
+    //        timer0->stop();
+    //        qDebug() << ui->btn_monitor_stop->text();
+    //    }
 
 }
 
@@ -511,29 +512,33 @@ void MonitorDialog::closeEvent(QCloseEvent *e)
         e->ignore();
         return;
     }
-   auto button =  QMessageBox::information(this, "关闭窗口", "确定退出监测窗口", QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-   if(button==QMessageBox::No)
+    auto button =  QMessageBox::information(this, "关闭窗口", "确定退出监测窗口", QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+    if(button==QMessageBox::No)
     {
-       e->ignore(); // 忽略退出信号，程序继续进行
+        e->ignore(); // 忽略退出信号，程序继续进行
     }
     else if(button==QMessageBox::Yes)
     {
-       // clear model
-       data_model_->clearModel();
-       while(ui->tableWidget->rowCount()) {
-           ui->tableWidget->removeRow(0);
-       }
-       for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
-           it.value()->removeAllSeries();
-       }
-       series_group_.clear();
-       x_index_=0;
-       signal_num_=0;
-       replay_running_=0;
-       monitor_running = 0;
-       replay_loadfile = 0;
-       e->accept(); // 接受退出信号，程序退出
-   }
+        // clear model
+        if(data_model_!=Q_NULLPTR)
+            data_model_->clearModel();
+
+        while(ui->tableWidget->rowCount()) {
+            ui->tableWidget->removeRow(0);
+        }
+
+            for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+                it.value()->removeAllSeries();
+            }
+
+        series_group_.clear();
+        x_index_=0;
+        signal_num_=0;
+        replay_running_=0;
+        monitor_running = 0;
+        replay_loadfile = 0;
+        e->accept(); // 接受退出信号，程序退出
+    }
 }
 
 void MonitorDialog::showEvent(QShowEvent *)

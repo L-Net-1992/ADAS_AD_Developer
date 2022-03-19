@@ -354,7 +354,7 @@ void MainWindow::initToolbar()
 void MainWindow::processStart(const QVector<QString> scriptNames,const int platformIndex){
     QString bash="bash ";
     bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
-    QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
+    QString killprocess = "kill -9 $(ps -ef|gre        if(series_group_!=Q_NULLPTR)p adas_generate|grep -v grep|awk '{print $2}')";
     process->terminate();
     process->start(bash);
 

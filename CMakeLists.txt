@@ -99,6 +99,7 @@ target_include_directories(ADAS_AD_Developer
     ${CLANG_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     )
+find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -115,7 +116,7 @@ target_link_libraries(ADAS_AD_Developer
     clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
-    libqscintilla2_qt5.so
+    ${QSCINTILLA}
     )
 
 

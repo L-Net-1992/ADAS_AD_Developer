@@ -520,23 +520,24 @@ void MonitorDialog::closeEvent(QCloseEvent *e)
     else if(button==QMessageBox::Yes)
     {
         // clear model
-        if(data_model_!=Q_NULLPTR)
-            data_model_->clearModel();
 
-        while(ui->tableWidget->rowCount()) {
-            ui->tableWidget->removeRow(0);
-        }
+//        if(data_model_!=Q_NULLPTR)
+//            data_model_->clearModel();
 
-            for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
-                it.value()->removeAllSeries();
-            }
+//        while(ui->tableWidget->rowCount()) {
+//            ui->tableWidget->removeRow(0);
+//        }
 
-        series_group_.clear();
-        x_index_=0;
-        signal_num_=0;
-        replay_running_=0;
-        monitor_running = 0;
-        replay_loadfile = 0;
+//        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+//            it.value()->removeAllSeries();
+//        }
+
+//        series_group_.clear();
+//        x_index_=0;
+//        signal_num_=0;
+//        replay_running_=0;
+//        monitor_running = 0;
+//        replay_loadfile = 0;
         e->accept(); // 接受退出信号，程序退出
     }
 }

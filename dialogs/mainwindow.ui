@@ -597,7 +597,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>

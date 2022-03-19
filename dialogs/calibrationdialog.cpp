@@ -1,10 +1,11 @@
 #include "calibrationdialog.h"
 #include "ui_calibrationdialog.h"
 
-CalibrationDialog::CalibrationDialog(ProjectDataModel *pdm,QWidget *parent) :
+CalibrationDialog::CalibrationDialog(const QString ip,ProjectDataModel *pdm,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CalibrationDialog),
-    _projectDataModel(pdm)
+    _projectDataModel(pdm),
+    inspector(ip)
 {
     ui->setupUi(this);
     init();
@@ -27,8 +28,8 @@ void CalibrationDialog::init(){
     //工具条按钮靠右
     QWidget *spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    ui->toolBar->addAction(ui->action_sync_to_module);
-    ui->toolBar->addWidget(spacer);
+//    ui->toolBar->addAction(ui->action_sync_to_module);
+//    ui->toolBar->addWidget(spacer);
     ui->toolBar->addAction(ui->action_save);
     ui->toolBar->addAction(ui->action_load);
     ui->toolBar->addAction(ui->action_update);

@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent):
     npmilDialog ( new NodeParametersMILDialog(parent)),
     nodeTreeDialog ( new NodeTreeDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
-    monitorDialog ( new MonitorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
     process ( new QProcess(parent))
 
@@ -27,7 +26,11 @@ MainWindow::MainWindow(QWidget *parent):
     rProjectDialog=new RecentProjectDialog(pDataModel,parent);
     isDialog =new ImportScriptDialog(pDataModel,parent);
     emDialog = new ExportModuleDialog(pDataModel,parent);
-    cDialog = new CalibrationDialog(pDataModel,parent);
+
+
+    QJsonObject jo = getConfig();
+    monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),parent);
+    cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),pDataModel,parent);
 
     //获得Process的标准输出
     connect(process,&QProcess::readyRead,this,[&](){

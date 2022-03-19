@@ -40,7 +40,7 @@ class MonitorDialog : public QDialog
     Q_OBJECT
 
 public:
-    MonitorDialog(QWidget *parent = nullptr);
+    MonitorDialog(const QString ip,QWidget *parent = nullptr);
     ~MonitorDialog();
     void InitTable();
     void InitModel();
@@ -89,7 +89,8 @@ private:
     bool monitor_running = 0;
     bool replay_loadfile = 0;
 
-    Inspector inspector{"127.0.0.1"};
+//    Inspector inspector{"127.0.0.1"};
+    Inspector inspector;
     size_t signal_active_number_ = 0;
     size_t current_number = 0;
 };

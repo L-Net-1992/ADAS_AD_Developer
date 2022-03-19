@@ -15,9 +15,10 @@ using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
 
-MonitorDialog::MonitorDialog(QWidget *parent)
+MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
+    , inspector(ip)
 {
     ui->setupUi(this);
 

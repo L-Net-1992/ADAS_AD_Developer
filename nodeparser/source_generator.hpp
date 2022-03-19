@@ -54,10 +54,15 @@ private:
             if(connections.find(out) == connections.end())
                 connections.insert({out, {}});
             if(in_model->invocable().getType() == Invocable::Class || in_model->invocable().getType() == Invocable::Subsystem) {
-                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set";
+                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set(value)";
                 connections.find(out)->second.push_back(in);
             } else if(in_model->invocable().getType() == Invocable::SubsystemOut) {
-                std::string in = in_model->invocable().getVarName();
+                const std::string & arg_type = in_model->invocable().getInputPort(0).getType();
+                std::string pl = "(value)";
+                if(arg_type == "void") {
+                    pl = "()";
+                }
+                std::string in = in_model->invocable().getVarName() + pl;
                 connections.find(out)->second.push_back(in);
             }
 
@@ -120,14 +125,14 @@ private:
             const auto *in_model = static_cast<InvocableDataModel *>(in_node->nodeDataModel());
             const auto & out_port = c.dataType(QtNodes::PortType::Out);
             const auto & in_port = c.dataType(QtNodes::PortType::In);
-            std::string out = out_model->invocable().getVarName() + "." + out_port.name.toStdString();
+            std::string out = out_model->invocable().getVarName();
             if(connections.find(out) == connections.end())
                 connections.insert({out, {}});
             if(in_model->invocable().getType() == Invocable::Class || in_model->invocable().getType() == Invocable::Subsystem) {
-                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set";
+                std::string in = in_model->invocable().getVarName() + "." + in_port.name.toStdString() + ".set(value)";
                 connections.find(out)->second.push_back(in);
             } else if(in_model->invocable().getType() == Invocable::SubsystemOut) {
-                std::string in = in_model->invocable().getVarName();
+                std::string in = in_model->invocable().getVarName() + "(value)";
                 connections.find(out)->second.push_back(in);
             }
 
@@ -139,23 +144,27 @@ private:
     static void generateCalibrationParamConnections(const QtNodes::FlowScene &scene, std::ofstream &file) {
         //adas::runtime::this_task::context().calibration().on_update("", 0.0, [this](float value){});
         std::map<std::string, std::vector<std::string>> connections;
-        makeConnections(scene, connections);
+        makeCalibrationParamConnections(scene, connections);
         for(const auto & p: connections) {
-            file << indent(2) << "adas::runtime::this_task::context().calibration().on_update(\"\", 0.0, [this](float value){}); {" << std::endl;
+            file << indent(2) << "adas::runtime::this_task::context().calibration().on_update(_name+\"."  << p.first << "\", 0.0, [this](float value) {" << std::endl;
             for(const auto & in: p.second) {
-                file << indent(3) << in << "(value);" << std::endl;
+                file << indent(3) << in << ";" << std::endl;
             }
             file << indent(2) <<"});" << std::endl;
 
         }
     }
     static void generateConnections(const QtNodes::FlowScene &scene, std::ofstream &file) {
+        //adas::runtime::this_task::context().inspect().register_var("");
+        //adas::runtime::this_task::context().inspect().update("", 0.0f);
         std::map<std::string, std::vector<std::string>> connections;
         makeConnections(scene, connections);
         for(const auto & p: connections) {
+            file << indent(2) << "adas::runtime::this_task::context().inspect().register_var(_name+\"."<< p.first <<"\");" << std::endl;
             file << indent(2) << p.first << ".handler([this](auto value) {" << std::endl;
+            file << indent(3) << "adas::runtime::this_task::context().inspect().update(_name+\"."<< p.first <<"\", value);" << std::endl;
             for(const auto & in: p.second) {
-                file << indent(3) << in << "(value);" << std::endl;
+                file << indent(3) << in << ";" << std::endl;
             }
             file << indent(2) <<"});" << std::endl;
 
@@ -165,6 +174,7 @@ private:
     static void
     generateConstructor(const QtNodes::FlowScene &scene, const std::string &className, std::ofstream &file) {
         file << indent(1) << "explicit  " << className << "(const std::string & name):_name{name} {" << std::endl;
+        generateCalibrationParamConnections(scene, file);
         generateConnections(scene, file);
         file << indent(1) << "}" << std::endl;
     }

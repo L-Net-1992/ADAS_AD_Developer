@@ -51,7 +51,7 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() const {
             invocable.setSubsystemName(p.stem().string());
             invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
             invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
-            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
+//            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
             boost::json::object scene = readScene(p);
             parsePorts(scene, invocable);
             ret.push_back(invocable);

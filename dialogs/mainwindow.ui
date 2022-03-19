@@ -951,6 +951,11 @@ gridline-color:#FFFFFF;
            <string>mdc610</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>x86_64</string>
+          </property>
+         </item>
         </widget>
         <widget class="QToolButton" name="tb_run">
          <property name="geometry">

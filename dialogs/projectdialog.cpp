@@ -102,6 +102,9 @@ void ProjectDialog::initButton()
             if(file.open(QFile::ReadWrite))
             {
                 writeProjectXml(file);
+//                pDataModel->setCurrentProject(projectName,projectPath);
+                pDataModel->setCurrentProjectName(projectName);
+                pDataModel->setCurrentProjectPath(projectPath);
                 this->accept();
                 emit projectCreateCompleted(true);
                 return;

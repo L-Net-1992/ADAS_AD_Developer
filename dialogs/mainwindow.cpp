@@ -154,6 +154,7 @@ void MainWindow::initToolbar()
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
         SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -189,14 +190,6 @@ void MainWindow::initToolbar()
         copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
 
 //        qDebug() << "imPath:" <<imPath << "imPackage" << imPackage;
-
-
-//        QFileDialog selectModelDialog;
-//        selectModelDialog.setFileMode(QFileDialog::Directory);
-//        QString exportPath = selectModelDialog.getExistingDirectory(this,tr("请选择要导入自定义模块的目录"),QApplication::applicationDirPath());
-//        QDir exportDir(exportPath);
-
-        //验证目录下是否有一个或多个flow文件
 
     });
 
@@ -261,7 +254,7 @@ void MainWindow::initToolbar()
     ///代码编译按钮code compiler
     connect(ui->tb_code_compiler,&QToolButton::clicked, this,[&](){
         QVector<QString> v;
-        v << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh";
+        v << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh" << "build_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
@@ -269,21 +262,21 @@ void MainWindow::initToolbar()
     ///deploy
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh";
+        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh";
+        v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh" << "run_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
-        v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh";
+        v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh" << "stop_x86_64.sh";
         processStart(v,ui->cb_select_platform->currentIndex());
     });
 
@@ -332,8 +325,9 @@ void MainWindow::processStart(const QVector<QString> scriptNames,const int platf
 
     bool ret = process->waitForFinished();
     if(ret){
-        qDebug() << "process close";
-        process->close();
+//        qDebug() << "process close";
+//        process->close();
+//        delete process;
     }
 //    if(process->waitForFinished())
 //        process->start(bash);

@@ -82,6 +82,7 @@ set ( PROJECT_SOURCES
     nodeparser/subsystem_window.ui nodeparser/subsystem_window.h nodeparser/subsystem_window.cpp
     nodeparser/new_subsystem_dialog.ui nodeparser/new_subsystem_dialog.h nodeparser/new_subsystem_dialog.cpp
     nodeparser/var_name_dialog.ui nodeparser/var_name_dialog.h nodeparser/var_name_dialog.cpp
+    nodeparser/inspector.hpp nodeparser/inspector.cpp nodeparser/inspector_thread.hpp nodeparser/inspector_thread.cpp
 
 
     sqlite/aiccsqlite.hpp

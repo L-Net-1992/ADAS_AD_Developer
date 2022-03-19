@@ -597,7 +597,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1197,7 +1197,7 @@ gridline-color:#FFFFFF;
         <widget class="QToolButton" name="tb_import">
          <property name="geometry">
           <rect>
-           <x>110</x>
+           <x>530</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1226,7 +1226,7 @@ gridline-color:#FFFFFF;
         <widget class="QToolButton" name="tb_import_module">
          <property name="geometry">
           <rect>
-           <x>320</x>
+           <x>220</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1236,7 +1236,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>导入模块</string>
+          <string>导入</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1255,7 +1255,7 @@ gridline-color:#FFFFFF;
         <widget class="QToolButton" name="tb_export_module">
          <property name="geometry">
           <rect>
-           <x>220</x>
+           <x>120</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1265,7 +1265,7 @@ gridline-color:#FFFFFF;
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>导出模块</string>
+          <string>导出</string>
          </property>
          <property name="icon">
           <iconset resource="../image.qrc">
@@ -1287,7 +1287,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="geometry">
           <rect>
-           <x>210</x>
+           <x>110</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1306,7 +1306,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="geometry">
           <rect>
-           <x>420</x>
+           <x>320</x>
            <y>20</y>
            <width>3</width>
            <height>70</height>
@@ -1325,7 +1325,7 @@ gridline-color:#FFFFFF;
          </property>
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>430</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>
@@ -1383,7 +1383,7 @@ gridline-color:#FFFFFF;
         <widget class="QToolButton" name="tb_create_subsystem">
          <property name="geometry">
           <rect>
-           <x>430</x>
+           <x>330</x>
            <y>10</y>
            <width>91</width>
            <height>91</height>

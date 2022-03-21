@@ -597,7 +597,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -678,6 +678,18 @@ gridline-color:#FFFFFF;
             </property>
             <item>
              <widget class="QPushButton" name="pb_open">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="font">
                <font/>
               </property>
@@ -891,6 +903,12 @@ gridline-color:#FFFFFF;
          </property>
          <item>
           <widget class="QWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -899,19 +917,19 @@ gridline-color:#FFFFFF;
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <property name="spacing">
-             <number>5</number>
+             <number>0</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>3</number>
+             <number>0</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
             </property>
             <property name="bottomMargin">
-             <number>3</number>
+             <number>0</number>
             </property>
             <item>
              <widget class="QComboBox" name="cb_select_platform">
@@ -924,7 +942,7 @@ gridline-color:#FFFFFF;
               <property name="minimumSize">
                <size>
                 <width>120</width>
-                <height>35</height>
+                <height>30</height>
                </size>
               </property>
               <property name="font">
@@ -965,10 +983,16 @@ gridline-color:#FFFFFF;
                <bool>false</bool>
               </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -1008,7 +1032,7 @@ gridline-color:#FFFFFF;
          <item>
           <widget class="QToolButton" name="tb_script_deploy">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1016,7 +1040,7 @@ gridline-color:#FFFFFF;
            <property name="minimumSize">
             <size>
              <width>90</width>
-             <height>0</height>
+             <height>90</height>
             </size>
            </property>
            <property name="font">
@@ -1048,7 +1072,7 @@ gridline-color:#FFFFFF;
          <item>
           <widget class="QToolButton" name="tb_run">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1056,7 +1080,7 @@ gridline-color:#FFFFFF;
            <property name="minimumSize">
             <size>
              <width>90</width>
-             <height>0</height>
+             <height>90</height>
             </size>
            </property>
            <property name="font">
@@ -1088,7 +1112,7 @@ gridline-color:#FFFFFF;
          <item>
           <widget class="QToolButton" name="tb_stop">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1096,7 +1120,7 @@ gridline-color:#FFFFFF;
            <property name="minimumSize">
             <size>
              <width>90</width>
-             <height>0</height>
+             <height>90</height>
             </size>
            </property>
            <property name="font">
@@ -1294,14 +1318,14 @@ gridline-color:#FFFFFF;
        <widget class="QWidget" name="tab_3">
         <property name="minimumSize">
          <size>
-          <width>1276</width>
-          <height>89</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>1276</width>
-          <height>89</height>
+          <width>16777215</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="font">
@@ -1380,7 +1404,7 @@ gridline-color:#FFFFFF;
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>70</height>
+             <height>0</height>
             </size>
            </property>
            <property name="focusPolicy">

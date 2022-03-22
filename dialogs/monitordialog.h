@@ -2,17 +2,9 @@
 #define MONITORDIALOG_H
 
 #include <QDialog>
-#include <QtCharts/QValueAxis>
-#include <QCheckBox>
 #include <QTimer>
 #include <QList>
-#include <QLineSeries>
-#include <QtCharts/QSplineSeries>
-#include "aiccchartview.h"
-
-#include <QDialog>
-#include <QStandardItemModel>
-#include <QItemSelectionModel>
+#include <QCheckBox>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -20,13 +12,11 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
-#include <QtCharts/QVXYModelMapper>
-#include <QLineSeries>
-#include <QTimer>
+#include <QtCharts/QValueAxis>
+#include "aiccchartview.h"
 #include "monitordatamodel.hpp"
 #include "nodeparser/inspector.hpp"
 
-using namespace QtCharts;
 QT_CHARTS_USE_NAMESPACE
 #define     FixedColumnCount    4      //文件固定6列
 

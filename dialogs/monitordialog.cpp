@@ -17,7 +17,7 @@ using namespace utility;
 
 MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
     : QDialog(parent)
-    , ui(new Ui::Dialog)
+    , ui(new Ui::MonitorDialog)
     , inspector(ip)
 {
     ui->setupUi(this);

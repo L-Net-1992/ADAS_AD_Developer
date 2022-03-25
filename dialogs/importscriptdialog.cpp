@@ -1,7 +1,7 @@
 ﻿#include "importscriptdialog.h"
 #include "ui_importscriptdialog.h"
 
-ImportScriptDialog::ImportScriptDialog(ProjectDataModel *pdm,QWidget *parent) :
+ImportScriptDialog::ImportScriptDialog(QSharedPointer<ProjectDataModel>pdm,QWidget *parent) :
     QDialog(parent),
     _projectDataModel(pdm),
     ui(new Ui::ImportScriptDialog)
@@ -26,7 +26,7 @@ void ImportScriptDialog::initButton(){
 
     connect(ui->pb_import,&QPushButton::clicked,this,[&]{
 //         QString file = QFileDialog::getOpenFileName(this,"清选择功能模块包文件adas-package.json",QString(),"adas-package.json(adas-package.json)",Q_NULLPTR,QFileDialog::ReadOnly);
-        QString path = QFileDialog::getExistingDirectory(this,"请选择功能模块包",_projectDataModel->currentProjectPath());
+        QString path = QFileDialog::getExistingDirectory(this,"请选择功能模块包",_projectDataModel->projectPath());
          if(!path.isEmpty()){
              emit packageSelected(path);
          }

@@ -1,7 +1,7 @@
 #include "calibrationdialog.h"
 #include "ui_calibrationdialog.h"
 
-CalibrationDialog::CalibrationDialog(const QString ip,ProjectDataModel *pdm,QWidget *parent) :
+CalibrationDialog::CalibrationDialog(const QString ip,QSharedPointer<ProjectDataModel> pdm,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CalibrationDialog),
     _projectDataModel(pdm),
@@ -92,7 +92,7 @@ void CalibrationDialog::initButton(){
         qjdoc.setObject(json_save);
         qDebug() << json_save;
 
-        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),_projectDataModel->currentProjectPath(),tr("标定数据json格式 (*.json)"));
+        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),_projectDataModel->projectPath(),tr("标定数据json格式 (*.json)"));
         if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
             spath+=".json";
         QSharedPointer<QFile> save_file(new QFile(spath));
@@ -151,7 +151,7 @@ void CalibrationDialog::initButton(){
     });
 }
 
-void CalibrationDialog::setProjectDataModel(ProjectDataModel *newProjectDataModel)
+void CalibrationDialog::setProjectDataModel(QSharedPointer<ProjectDataModel> newProjectDataModel)
 {
     _projectDataModel = newProjectDataModel;
 }

@@ -56,6 +56,7 @@ set ( PROJECT_SOURCES
     utils.h utils.cpp
 
     project/modelsproject.hpp
+    project/modelsrecentproject.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp

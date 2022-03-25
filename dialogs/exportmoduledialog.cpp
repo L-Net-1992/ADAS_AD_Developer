@@ -1,7 +1,7 @@
 #include "exportmoduledialog.h"
 #include "ui_exportmoduledialog.h"
 
-ExportModuleDialog::ExportModuleDialog(ProjectDataModel *pdm,QWidget *parent) :
+ExportModuleDialog::ExportModuleDialog(QSharedPointer<ProjectDataModel>pdm,QWidget *parent) :
     QDialog(parent),
     pDataModel(pdm),
     ui(new Ui::ExportModuleDialog)
@@ -26,7 +26,7 @@ void ExportModuleDialog::getSubsystemData(){
     QVector<QString> vectorSubsystemModuleName;
     ui->cb_module_name->clear();
 
-    QString subsystemPath = pDataModel->currentProjectSubSystemPath();
+    QString subsystemPath = pDataModel->projectSubSystemPath();
     //遍历目录下的所有子系统目录
     QDir dir(subsystemPath);
     if(!dir.exists()) return ;
@@ -62,7 +62,7 @@ void ExportModuleDialog::initConnect(){
     connect(ui->pb_export,&QPushButton::clicked,this,[&](){
         QFileDialog fileDialog;
         fileDialog.setFileMode(QFileDialog::Directory);
-        QString spath = fileDialog.getExistingDirectory(this,tr("请选择导出位置"),pDataModel->currentProjectPath());
+        QString spath = fileDialog.getExistingDirectory(this,tr("请选择导出位置"),pDataModel->projectPath());
 
         //获得要导出插件的包名
         QString moduleName = ui->cb_module_name->currentText();
@@ -71,7 +71,7 @@ void ExportModuleDialog::initConnect(){
         QDir packagePath(spath+"/"+packageName);
         if(!packagePath.exists()) packagePath.mkdir(packagePath.absolutePath());
         //拷贝文件到目标文件夹中
-        QString srcFile = pDataModel->currentProjectSubSystemPath()+QString("/").append(moduleName.split("::").at(0)).append("/").append(moduleName.split("::").at(1)).append(".flow");
+        QString srcFile = pDataModel->projectSubSystemPath()+QString("/").append(moduleName.split("::").at(0)).append("/").append(moduleName.split("::").at(1)).append(".flow");
         QString dstFile = spath.append("/").append(moduleName.split("::").at(0)).append("/").append(moduleName.split("::").at(1)).append(".flow");
 //        qDebug() << " source file:" << srcFile << "  dist file:" << dstFile;
         if(copyFile(srcFile,dstFile,true))

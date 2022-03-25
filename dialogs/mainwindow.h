@@ -97,7 +97,6 @@ private:
     void initTableWidget();
     void refreshTreeViewDynamicNode();                                       //刷新动态节点
     void initToolbar();
-    void setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon);
     void initBreadcrumbNavigation();
     void initStackedWidget();
     void initImportScriptDialog();
@@ -105,8 +104,10 @@ private:
     void initRecentProjectDialog();
     void initDataInspectorDialog();
 
+    void saveProjectAction();
+    void openProjectAction();
     //打开项目动作函数部分
-    void pbOpenAction(QString projectPath = Q_NULLPTR);
+    void openProjectCompleted(const QString projectPath);
     //创建子系统动作函数
     void createSubsysetmAction();
 
@@ -152,7 +153,9 @@ private:
     AICCStackedWidget asw;
 
     //project部分
-    ProjectDataModel *pDataModel;
+
+    QSharedPointer<ProjectDataModel> _currentProjectDataModel;
+    QSharedPointer<RecentProjectDataModel> _recentProjectDataModel;
 };
 
 

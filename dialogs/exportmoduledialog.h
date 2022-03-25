@@ -17,7 +17,7 @@ class ExportModuleDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ExportModuleDialog(ProjectDataModel *pdm,QWidget *parent = nullptr);
+    explicit ExportModuleDialog(QSharedPointer<ProjectDataModel>pdm,QWidget *parent = nullptr);
     ~ExportModuleDialog();
 private:
     void getSubsystemData();
@@ -28,7 +28,7 @@ protected:
 
 private:
     Ui::ExportModuleDialog *ui;
-    ProjectDataModel *pDataModel;
+    QSharedPointer<ProjectDataModel>pDataModel;
 };
 
 #endif // EXPORTMODULEDIALOG_H

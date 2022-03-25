@@ -5,28 +5,28 @@
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    projectDialog(new ProjectDialog(parent)),
     npDialog(new NodeParametersDialog(parent)),
     npmilDialog ( new NodeParametersMILDialog(parent)),
     nodeTreeDialog ( new NodeTreeDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
-    process ( new QProcess(parent))
+    process ( new QProcess(parent)),
+    _currentProjectDataModel(QSharedPointer<ProjectDataModel>(new ProjectDataModel)),
+    _recentProjectDataModel(QSharedPointer<RecentProjectDataModel>(new RecentProjectDataModel))
 
 {
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
 
-//    qInstallMessageHandler(logOutput);
+    //    qInstallMessageHandler(logOutput);
 
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
-    pDataModel=new ProjectDataModel;
-    rProjectDialog=new RecentProjectDialog(pDataModel,parent);
-    isDialog =new ImportScriptDialog(pDataModel,parent);
-    emDialog = new ExportModuleDialog(pDataModel,parent);
-
+    rProjectDialog=new RecentProjectDialog(_recentProjectDataModel,parent);
+    projectDialog=new ProjectDialog(_currentProjectDataModel,parent);
+    isDialog =new ImportScriptDialog(_currentProjectDataModel,parent);
+    emDialog = new ExportModuleDialog(_currentProjectDataModel,parent);
 
 
     //获得Process的标准输出
@@ -48,25 +48,21 @@ MainWindow::MainWindow(QWidget *parent):
     this->initProjectDialog();
     this->initRecentProjectDialog();
 
-    //    qDebug() << "11111";
-    //    qInfo() << "22222";
-
-//    ui->pte_output->appendPlainText("cccc");
+    //    ui->pte_output->appendPlainText("cccc");
 }
 
 MainWindow::~MainWindow()
 {
     sqlite.closeConnection();
     delete ui;
-    delete pDataModel;
 }
 
 QString text;
 
 void MainWindow::on_pte_output_textChanged(){
     //void MainWindow::on_pte_output_textChanged(){
-//    qDebug() << "arg1-----" ;
-//    ui->pte_output->appendPlainText(text);
+    //    qDebug() << "arg1-----" ;
+    //    ui->pte_output->appendPlainText(text);
 }
 
 void MainWindow::write(QString str){
@@ -90,7 +86,7 @@ void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,cons
         text.append("Fatal:");
     }
     text.append(msg);
-//    write(text);
+    //    write(text);
 }
 
 
@@ -102,19 +98,10 @@ void MainWindow::initMenu()
     connect(ui->actionPropertyWindow,&QAction::toggled,ui->dw_right,&QDockWidget::setVisible);
     connect(ui->actionAbout,&QAction::triggered,this,&QApplication::aboutQt);
     connect(ui->actionNewProject,&QAction::triggered,projectDialog,&ProjectDialog::show);
-    connect(ui->actionOpen,&QAction::triggered,this,[&]{this->pbOpenAction();});
+    connect(ui->actionOpen,&QAction::triggered,this,&MainWindow::openProjectAction);
+    connect(ui->actionSave,&QAction::triggered,this,&MainWindow::saveProjectAction);
     //    connect(ui->actionCreateSubSystem,&QAction::triggered,this,[&]{this->createSubsysetmAction();});
 }
-
-void MainWindow::setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon){
-    QTreeWidgetItem *pItem = new QTreeWidgetItem();
-    pItem->setText(0,ptext);
-    QIcon icon;
-    icon.addPixmap(QPixmap(picon));
-    pItem->setIcon(0,icon);
-    tw->addTopLevelItem(pItem);
-}
-
 
 ///初始化左侧功能树
 void MainWindow::initTreeView()
@@ -162,7 +149,6 @@ void MainWindow::initToolbar()
     QWidget *nullTitleBarWidget = new QWidget();
     ui->dw_toolbar->setTitleBarWidget(nullTitleBarWidget);
     delete titleBarWidget;
-
     ui->tw_toolbar->setCurrentIndex(0);
 
     //设置New按钮显示项目子窗口
@@ -179,7 +165,6 @@ void MainWindow::initToolbar()
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
 
         //不放到项目路径中，放到平台执行目录中，否则编译时找不到
-        //        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
         std::string generatePath = (QApplication::applicationDirPath()+"/generate").toStdString();
         std::filesystem::path dir(generatePath);
         SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
@@ -216,54 +201,23 @@ void MainWindow::initToolbar()
         QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
 
         //在项目的subsystem path目录下创建模块包
-        QDir packageDir(pDataModel->currentProjectSubSystemPath()+"/"+imPackage);
+        QDir packageDir(_currentProjectDataModel->projectSubSystemPath()+"/"+imPackage);
         if (!packageDir.exists()) {
             if (!packageDir.mkdir(packageDir.absolutePath()))
                 return false;
         }
         copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
+        return true;
     });
-
-
 
     //打开按钮响应动作
-    connect(ui->pb_open,&QPushButton::clicked,this,[&]{pbOpenAction();});
+    connect(ui->pb_open,&QPushButton::clicked,this,&MainWindow::openProjectAction);
 
     //保存按钮响应动作，当前只保存一个NodeEditor的内容，子系统实现后需要保存多个NodeEditor内容
-    connect(ui->pb_save,&QPushButton::clicked,this,[&]{
-        //0：判断当前是否为未关联项目，如未关联项目要求用户先创建项目
-        if(this->pDataModel->currentProjectName()==""){
-            int result  = projectDialog->exec();
-            if(result==QDialog::Rejected) return;
-        }
-
-        //1：加载项目文件，初始化所有项目数据
-        //        QString fileName = QFileDialog::getOpenFileName(this,tr("Open Project"),QDir::homePath(),tr("Project (*.xml)"));
-        QString fileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/.ap/project.xml";
-        if(!QFileInfo::exists(fileName)) return;
-        QFile file(fileName);
-        pDataModel->readProjectXml(file);
-
-        //2：保存当前内容到flow文件中
-        AICCFlowView *fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
-        qDebug() << pDataModel->currentProjectPath()<< "   "<< pDataModel->currentProjectName();
-        if(pDataModel->currentProjectPath()=="" || pDataModel->currentProjectName()==""){
-            QMessageBox::critical(Q_NULLPTR,"critical","请先选择项目再进行保存",QMessageBox::Ok,QMessageBox::Ok);
-            return;
-        }
-
-        for(const QString &ssf :pDataModel->currentFlowSceneSaveFiles()){
-            QString saveFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ssf;
-            qInfo() << "save file name:" << saveFileName;
-            QFile file(saveFileName);
-            if(file.open(QIODevice::WriteOnly)){
-                file.write(fv->scene()->saveToMemory());
-            }
-        }
-    });
+    connect(ui->pb_save,&QPushButton::clicked,this,&MainWindow::saveProjectAction);
 
     ///点击显示数据检查器窗口
-    connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
+    connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&]{
         QJsonObject jo = getConfig();
         monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),this);
         monitorDialog->show();
@@ -318,8 +272,7 @@ void MainWindow::initToolbar()
     ///在线标定按钮OnlineCalibration->Calibration
     connect(ui->tb_calibration,&QToolButton::clicked,this,[&](){
         QJsonObject jo = getConfig();
-        cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),pDataModel,this);
-
+        cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),_currentProjectDataModel,this);
         cDialog->show();
     });
 
@@ -347,6 +300,7 @@ void MainWindow::initToolbar()
     connect(ui->tb_create_subsystem,&QToolButton::clicked,this,[&]{
         _moduleLibrary->newSubsystem(this);
     });
+
     ///测试dialog显示
     //    connect(ui->pb_modelSettings,&QPushButton::clicked,this,[&](){
     //        TestDialog *tdialog = new TestDialog(this);
@@ -443,30 +397,53 @@ void MainWindow::initStackedWidget(){
 
 }
 
+///保存项目动作
+void MainWindow::saveProjectAction(){
+    //0：判断当前是否为未关联项目，如未关联项目要求用户先创建项目
+    if(_currentProjectDataModel->projectName()==""){
+        int result  = projectDialog->exec();
+        if(result==QDialog::Rejected) return;
+    }
 
-///打开项目动作函数部分
-void MainWindow::pbOpenAction(QString projectPath){
+    //2：保存当前内容到flow文件中
+    AICCFlowView *fv = static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget());
+    qDebug() << _currentProjectDataModel->projectPath()<< "   "<< _currentProjectDataModel->projectName();
+    if(_currentProjectDataModel->projectPath()=="" || _currentProjectDataModel->projectName()==""){
+        QMessageBox::critical(Q_NULLPTR,"critical","请先选择项目再进行保存",QMessageBox::Ok,QMessageBox::Ok);
+        return;
+    }
+
+    for(const QString &ssf :_currentProjectDataModel->flowSceneSaveFiles()){
+        QString saveFileName = _currentProjectDataModel->projectPath()+"/"+ssf;
+        qInfo() << "save file name:" << saveFileName;
+        QFile file(saveFileName);
+        if(file.open(QIODevice::WriteOnly)){
+            file.write(fv->scene()->saveToMemory());
+        }
+    }
+}
+
+///打开项目动作
+void MainWindow::openProjectAction(){
+        QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
+        QFileInfo fileInfo(fileName);
+        if(!fileInfo.exists(fileName)) return;
+        QString projectProject = fileInfo.absoluteFilePath().split("/.ap/project.xml")[0];
+
+        _currentProjectDataModel->setProject(QFileInfo(projectProject));
+        openProjectCompleted(_currentProjectDataModel->projectPath());
+}
+
+///打开项目完成后执行部分
+void MainWindow::openProjectCompleted(const QString projectPath){
     //0:数据准备
     FlowScene *scene =  static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget())->scene();
-    //1：加载配置文件初始化各项数据
-    QString fileName;
-    if(projectPath==Q_NULLPTR){
-        projectPath = QDir::homePath();
-        fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
-    } else
-        fileName = projectPath.append("/.ap").append("/project.xml");
-    if(!QFileInfo::exists(fileName)) return;
-    QFile file(fileName);
-    pDataModel->readProjectXml(file);
 
     //2:判断是否有subsystem文件夹如果有则直接设置目录，否则创新的目录再进行设置
-    //    QString psubsystem = pDataModel->currentProjectPath()+"/subsystem";
-    QString psubsystem = pDataModel->currentProjectSubSystemPath();
+    QString psubsystem = _currentProjectDataModel->projectSubSystemPath();
     QDir dirSubsystem;
-    if(!dirSubsystem.exists(psubsystem)){
-        dirSubsystem.mkpath(psubsystem);
-    }
-    std::string sp = pDataModel->currentProjectSubSystemPath().toStdString();
+    if(!dirSubsystem.exists(psubsystem)) dirSubsystem.mkpath(psubsystem);
+    std::string sp = _currentProjectDataModel->projectSubSystemPath().toStdString();
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
 
@@ -475,7 +452,7 @@ void MainWindow::pbOpenAction(QString projectPath){
     ui->sw_flowscene->getCurrentView()->scene()->setRegistry(dmr);
 
     //4：将名称为mainFlowScene的文件内容加载到主FlowScene上
-    QString loadFileName = pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/"+ pDataModel->currentFlowSceneSaveFiles()[0];
+    QString loadFileName = _currentProjectDataModel->projectPath()+"/"+ _currentProjectDataModel->flowSceneSaveFiles()[0];
     if (!QFileInfo::exists(loadFileName)) return;
 
     QFile loadFile(loadFileName);
@@ -484,9 +461,8 @@ void MainWindow::pbOpenAction(QString projectPath){
     scene->clearScene();
     QByteArray wholeFile = loadFile.readAll();
     scene->loadFromMemory(wholeFile);
-    this->setWindowTitle(pDataModel->currentProjectName()+" ("+pDataModel->currentProjectPath()+") "+" - 图形化ADAS/AD应用开发系");
+    this->setWindowTitle(_currentProjectDataModel->projectName()+" ("+_currentProjectDataModel->projectPath()+") "+" - 图形化ADAS/AD应用开发系");
 
-    //    qDebug() << "stackwidget count:" << ui->sw_flowscene;
 }
 
 ///创建子系统
@@ -496,8 +472,9 @@ void MainWindow::createSubsysetmAction(){
 
 ///初始化最近打开项目窗口
 void MainWindow::initRecentProjectDialog(){
-    connect(rProjectDialog,&RecentProjectDialog::setCurrentProjectDataModelCompleted,this,[&](ProjectDataModel *pdm){
-        this->pbOpenAction(pdm->currentProjectPath());
+    connect(rProjectDialog,&RecentProjectDialog::setCurrentProjectDataModelCompleted,this,[&](QSharedPointer<ProjectDataModel> pdm){
+        _currentProjectDataModel = pdm;
+        openProjectCompleted(pdm->projectPath());
     });
     connect(rProjectDialog,&RecentProjectDialog::recentProjectDialogClosed,this,[&]{
         qDebug() <<" close ";
@@ -557,7 +534,7 @@ void MainWindow::initNodeEditor(){
     ui->tw_toolbar->setEnabled(false);
     ui->tw_node->setEnabled(false);
 
-//    ui->pte_output->appendPlainText("--------------------");
+    //    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
         try{
@@ -623,10 +600,6 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     auto ret = std::make_shared<DataModelRegistry>();
 
     //此处在单独的线程中，不能使用默认主线程的数据库连接
-    //    QSqlDatabase sqlite;
-    //    sqlite.addDatabase("QSQLITE");
-    //    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
-    //    sqlite.open();
     AICCSqlite sqlite;
 
 
@@ -714,32 +687,6 @@ void MainWindow::initDataInspectorDialog(){
 
 }
 
-
-
-///旧版只有一级分类信息，只负责NodeTreeDialog的node模块分类
-//QMap<QString,QSet<QString>> MainWindow::nodeCategoryDataModels(const std::list<Invocable> parserResult){
-//    QMap<QString,QSet<QString>> ret;
-//    //定义写入分类数据函数
-//    auto f_insertNodeCategoryMap = [&ret](const QString className,const QString nodeName){
-//        QSet<QString> category;
-//        category = ret.value(className);
-//        category.insert(nodeName);
-//        ret.insert(className,category);
-//    };
-//    AICCSqlite sqlite;
-//    for(auto it = parserResult.begin();it!=parserResult.end();++it){
-//        const auto &inv = *it;
-//        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
-//        QSqlQuery squery = sqlite.query(sql);
-//        if(squery.next()){
-//            QString className = squery.value(2).toString();
-//            f_insertNodeCategoryMap(className,QString::fromStdString(inv.getName()));
-//        }else{
-//            f_insertNodeCategoryMap("Other",QString::fromStdString(inv.getName()));
-//        }
-//    }
-//    return ret;
-//}
 
 ///新版负责NodeTreeDialog的node模块分类信息
 QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::list<Invocable> parserResult){

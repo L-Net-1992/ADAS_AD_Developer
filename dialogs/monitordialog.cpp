@@ -15,476 +15,534 @@ using namespace utility;
 
 #define AXIS_X_SIZE_DEFAULT  (50)
 
-MonitorDialog::MonitorDialog(QWidget *parent)
+MonitorDialog::MonitorDialog(const QString ip,QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
+    , inspector(ip)
 {
     ui->setupUi(this);
 
-    // clear buffer
-    signal_name_list_.clear();
-    signals_dataset_.clear();
-    color_group_.clear();
-    series_group_.clear();
-    chartview_list_.clear();
+    this->setAttribute(Qt::WA_DeleteOnClose);
+    ui->tabWidget->setCurrentIndex(0);
 
-    init_button();
-    init_table();
-    init_chart();
+    data_model_ = new MonitorDataModel;
+    InitTable();
+    CreatNewChart(data_model_);
+    connect(data_model_, &MonitorDataModel::SignalListEvent, this, &MonitorDialog::tableSignalUpdate);
 
-    // timer1
+    //    Inspector inspector{"127.0.0.1"};
+
+    //获得所有可监测变量，map中key为名字，value是否监测
+    auto var_state = inspector.getVarWatchState();
+
+    for(auto it=var_state.begin();it!=var_state.end();++it) {
+        QString name = it.key();
+        qDebug() << it.key();
+        QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
+        data_model_->addSignalList(name,qc);
+    }
+
+
+    //变量更新的signal，参数为变量名字和值
+    QObject::connect(&inspector, &Inspector::varUpdated, [=](const QString & name, float value){
+        std::cout << "var " << name.toStdString() << ": " << value << std::endl;
+        QPointF data(x_index_,value);
+        QString str = name;
+        data_model_->addSignalData(str, data);
+        if(data.y() > y_val_range_.at(0)) y_val_range_[0] = data.y(); // max
+        if(data.y() < y_val_range_.at(1)) y_val_range_[1] = data.y(); // min
+
+        //        if(++current_number == signal_active_number_) { x_index_++; current_number=0;}
+        //        qDebug() << "x_index: " << x_index_ <<" signal_active_number_: " << signal_active_number_;
+
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
+        }
+
+    });
+    // timer3
+    timer3 = new QTimer(this);
+    timer3->setInterval(50);
+    connect(timer3, &QTimer::timeout, this, [=](){
+        x_index_++;
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            if(x_index_ > 50) {
+                chart_list_.value(it.key())->axisX()->setRange(x_index_-50, x_index_);
+            }
+            chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
+
+            auto tmp = data_model_->get_signal_list();
+            for(int i=0;i<tmp.size();++i) {
+                if(data_model_->getSignalCheckboxState(tmp.at(i))) {
+                    series_group_.value(tmp.at(i))->setVisible(1);
+                } else {
+                    series_group_.value(tmp.at(i))->setVisible(0);
+                }
+            }
+        }
+
+    });
+    //    QObject::connect(mainWindow.ui->actionInspector, &QAction::triggered, [&inspector](){
+
+    //        //监控使用
+    //        //获得所有可监测变量，map中key为名字，value是否监测
+    //        auto var_state = inspector.getVarWatchState();
+    //        qDebug() << "vars: "<< var_state;
+    //        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
+    //        QMap<QString, bool> set_state;
+    //        set_state["task0.seq.out"] = true;
+    //        inspector.setVarWatchState(set_state);
+
+
+    //        //标定使用
+    //        //获得所有可标定参数的列表，map中key为名字，value为当前值
+    //        auto param_value = inspector.getParamValue();
+    //        qDebug() << "params: " << param_value;
+    //        //标定参数，通过map可以一次设置多个变量
+    //        QMap<QString, float> set_param;
+    //        set_param["task0.n4"] = 3.14f;
+    //        inspector.setParamValue(set_param);
+
+    //    });
+
+
+
+    // timer0
+    timer0 = new QTimer(this);
+    timer0->setInterval(20);
+    connect(timer0, &QTimer::timeout, this, [=](){
+        if(!data_model_->signalCount()) {
+            qDebug() << "no signal";
+            return;
+        }
+        static qreal t=0,intv=0.1;
+        qreal y4=5*qSin(t);
+        qreal y5=5*qSin(t+1);
+        qreal y6=5*qSin(t+2);
+        qreal y1=8*qSin(t+3);
+        qreal y2=8*qSin(t+4);
+        qreal y3=8*qSin(t+5);
+        QVector<qreal> val{y1,y2,y3,y4,y5,y6};
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            auto tmp = data_model_->get_signal_list();
+            for(int i=0;i<tmp.size();++i) {
+                data_model_->addSignalData(tmp.at(i),QPointF(t,val.at(i)));
+            }
+
+            if(t > 50) {
+                chart_list_.value(it.key())->axisX()->setRange(t-50, t);
+            }
+        }
+        t+=intv;
+    });
+
+    // timer1 for test
     timer1 = new QTimer(this);
     timer1->setInterval(20);
-    connect(timer1, &QTimer::timeout, this, [=](){
-        if(x_index_ >= signal_num_) {
-            replay_running_ = 0;
-        }
+    connect(timer1, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer1);
+    //    timer1->start();
 
-        int rowcount = ui->tb_signal->rowCount();
-        for(int i=0;i<rowcount;i++) {
-            auto checkbox = (QCheckBox*)ui->tb_signal->cellWidget(i, 0)->children().at(1);
-            if(checkbox->checkState()) {
-                series_group_.at(i)->setVisible(1);
-            } else {
-                series_group_.at(i)->setVisible(0);
-            }
-
-            // update series data
-            if(replay_running_){
-                auto name = ui->tb_signal->item(i,2)->text();
-                auto it = signals_dataset_.find(name.toStdString());
-                if(it != signals_dataset_.end()) {
-                    series_group_.at(i)->append(x_index_,it->second.at(x_index_));
-                }
-                if(it->second.at(x_index_) > y_range_.at(i).at(1)) y_range_.at(i).at(1) = it->second.at(x_index_);
-                if(it->second.at(x_index_) < y_range_.at(i).at(0)) y_range_.at(i).at(0) = it->second.at(x_index_);
-            }
-        }
-
-        // update data index
-        if(replay_running_) {
-            x_index_ ++;
-            if(x_index_ > AXIS_X_SIZE_DEFAULT) {
-               axisX_->setRange(x_index_-AXIS_X_SIZE_DEFAULT, x_index_);
-            }
-            // TODO: select the series 0 as y-axis range
-            axisY_->setRange(y_range_.at(2).at(0)-2, y_range_.at(2).at(1)+2);
-        }
-    });
-
-
-    // timer2
+    // timer2 for replay
     timer2 = new QTimer(this);
-    timer2->setInterval(200);
-    connect(timer2, &QTimer::timeout, this, [=](){
-            qDebug() << "timer2 update";
-    });
-    //timer2->start();
+    timer2->setInterval(20);
+    connect(timer2, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer2);
 
-    connect(ui->chart, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_mouseMovePoint(QPoint)));
-//    connect()
-}
-
-QCheckBox * MonitorDialog::getCheckBox(int row, int column)
-{
 
 }
+
 MonitorDialog::~MonitorDialog()
 {
     delete ui;
 }
 
-void MonitorDialog::init_table()
+void MonitorDialog::InitTable()
 {
-    // table
-    //ui->tb_signal->setRowCount(4);
-    ui->tb_signal->setColumnCount(4);
-    //ui->tb_signal->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
-    //ui->tb_signal->setColumnWidth(0,1);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
-    //ui->tb_signal->horizontalHeader()->setSectionResizeMode(2,QHeaderView::Interactive);
-    ui->tb_signal->setColumnWidth(2,150);
-    ui->tb_signal->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
-
-//    ui->tb_signal->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->setColumnCount(4);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
+    ui->tableWidget->setColumnWidth(2,150);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
 
     QStringList headers;
     headers << QStringLiteral("选择") << QStringLiteral("图例") << QStringLiteral("信号") << QStringLiteral("值") ;
-    ui->tb_signal->setHorizontalHeaderLabels(headers);
-
-    //Temp Data
-    for(int i=0;i<ui->tb_signal->rowCount();i++){
-        //Checkbox
-        QCheckBox *ckb = new QCheckBox(this);
-        QHBoxLayout *hLayout = new QHBoxLayout();
-        hLayout->addWidget(ckb);
-        hLayout->setMargin(0);
-        hLayout->setAlignment(ckb,Qt::AlignCenter);
-        QWidget *wckb = new QWidget(ui->tb_signal);
-        wckb->setLayout(hLayout);
-        ui->tb_signal->setCellWidget(i,0,wckb);
-
-
-        //Name
-        QTableWidgetItem *itemName=ui->tb_signal->item(i,2);
-        QString item = itemName->text();
-
-        //Line  ▃▃▃▃▃
-        QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
-        //itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
-        QByteArray byte = item.toUtf8();
-        int color=0;
-        for(int j=0;j<item.size();j++){
-            color=color+int(byte.at(j));
-        }
-        itemLine->setTextColor(QColor((color*2)%256,(color*3)%256,(color*5)%256));
-        ui->tb_signal->setItem(i,1,itemLine);
-    }
+    ui->tableWidget->setHorizontalHeaderLabels(headers);
 }
 
-void MonitorDialog::init_chart()
+void MonitorDialog::InitModel()
 {
-//ui->chart->close();
-    QChart *chart = new QChart();
-//    chart->setTheme(QChart::ChartThemeBrownSand);
-    chart->layout()->setContentsMargins(2,2,2,2);
-    chart->setMargins(QMargins(0,0,0,0));
-    axisX_ = new QValueAxis();
-    axisY_ = new QValueAxis();
 
-    QSplineSeries *series = new QSplineSeries(this);
-    series->setName("sample");
-    series->setPen(QPen(Qt::red,1,Qt::SolidLine));
-    series->append(0,6);
-    series->append(2,4);
-    series->append(3,8);
-    series->append(6,4);
-    series->append(8,6);
-    series->append(10,5);
-    *series << QPointF(11,1) << QPointF(13,3) << QPointF(17,6) << QPointF(18,3) << QPointF(20,2);
-
-    chart->addSeries(series);
-//    chart->setTitle("信号波形");
-
-//    chart->createDefaultAxes();
-    chart->addAxis(axisX_, Qt::AlignBottom);
-    chart->addAxis(axisY_, Qt::AlignLeft);
-    axisX_->setRange(0, AXIS_X_SIZE_DEFAULT);
-//    axisX_->setTickCount(11);
-//    axisX_->setMinorTickCount(9);
-//    axisX_->setTitleText("Time(s)");
-    axisX_->setGridLineVisible(1);
-    axisY_->setRange(-10,10);
-//    axisY_->setTickCount(6);
-    axisY_->setTitleText("Value");
-    axisY_->setGridLineVisible(1);
-    series->attachAxis(axisX_);
-    series->attachAxis(axisY_);
-
-    ui->chart->setChart(chart);
-    chart->setAnimationOptions(QChart::NoAnimation);
-    ui->chart->setRenderHint(QPainter::Antialiasing);
-
-    chartview_list_.emplace_back(std::move(ui->chart));
-    qDebug() << "chartview: " << chartview_list_.size();
-    connect(ui->chart, &AiccChartView::sendObjectAddr, this, [=](size_t addr){
-        for(auto it=chartview_list_.begin();it!=chartview_list_.end();it++) {
-            if( (*it) == (AiccChartView*)addr) {
-                qDebug() << "chartview erase: " << *it;
-                it = chartview_list_.erase(it);
-                break;
-            }
-        }
-    });
-    connect(ui->chart, &AiccChartView::currentSelect, this, [=](size_t addr){
-        current_chartview_ = (AiccChartView*)addr;
-    });
 }
 
-void MonitorDialog::init_button()
-{
-    // btn_monitor_start
-    ui->btn_monitor_start->setText("run");
-    connect(ui->btn_monitor_start, &QPushButton::clicked, this, [=](){
-        QHeaderView *header_view = ui->tb_signal->verticalHeader();
-        header_view->setHidden(true);
-        ui->tb_signal->horizontalHeader()->setStretchLastSection(true);
-    });
-
-    // btn_monitor_stop
-    connect(ui->btn_monitor_stop, &QPushButton::clicked, this, [=](){
-
-    });
-
-    // btn_monitor_record
-    connect(ui->btn_monitor_record, &QPushButton::clicked, this, [=](){
-        QString dir_str = "log";
-        QDir dir;
-        if(!dir.exists(dir_str)) {
-            dir.mkpath(dir_str);
-        }
-
-        QDateTime datetime;
-        QString timestr = datetime.currentDateTime().toString("yyyy_MM_dd_HH_mm_ss");
-        std::string file_name = "log_" + timestr.toStdString() + ".h5";
-        std::string path = dir_str.toStdString() + "/" + file_name;
-        Hdf5Handle new_file;
-        new_file.creat(path);
-        if(new_file.get_file_id()) {
-            new_file.close();
-        }
-    });
-
-    //    //Record data
-    //    connect(ui->btn_save,&QPushButton::clicked,this,[&]{
-    //        QJsonObject hdf5_save;
-
-    //        QJsonDocument qjdoc;
-    //        qjdoc.setObject(hdf5_save);
-    //        qDebug() << hdf5_save;
-
-    //        //TODO::此处保存文件位置以后可以设置到项目目录中
-    //        QString spath = QFileDialog::getSaveFileName(this,tr("Save File"),QApplication::applicationDirPath(),tr("Calibration Data (*.hdf5)"));
-    //        if(QFileInfo(spath).suffix()!="json"||QFileInfo(spath).suffix().isEmpty())
-    //            spath+=".hdf5";
-    //        QSharedPointer<QFile> save_file(new QFile(spath));
-    //        save_file->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);
-    //        //save_file->write(qjdoc.toJson());
-    //        save_file->close();
-    //    });
-
-    // btn_replay_start
-    ui->btn_replay_start->setText("replay");
-    connect(ui->btn_replay_start, &QPushButton::clicked, this, [=](){
-        if(ui->btn_replay_start->text() == "replay"){
-            ui->btn_replay_start->setText("stop");
-            QIcon icon;
-            icon.addFile(QString::fromUtf8(":/res/stop.png"), QSize(), QIcon::Normal, QIcon::Off);
-            ui->btn_replay_start->setIcon(icon);
-            ui->btn_replay_start->setIconSize(QSize(40, 40));
-            ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
-            ui->btn_replay_start->setAutoRaise(false);
-            ui->btn_replay_start->setToolTip("停止");
-            if(!replay_running_) {
-                //TODO
-                replay_running_ = 1;
-            }
-            timer1->start();
-
-        }
-        else {
-            ui->btn_replay_start->setText("replay");
-            QIcon icon;
-            icon.addFile(QString::fromUtf8(":/res/replay.png"), QSize(), QIcon::Normal, QIcon::Off);
-            ui->btn_replay_start->setIcon(icon);
-            ui->btn_replay_start->setIconSize(QSize(40, 40));
-            ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
-            ui->btn_replay_start->setAutoRaise(false);
-            ui->btn_replay_start->setToolTip("开始");
-
-            if(x_index_ >= signal_num_) {
-                int cnt = series_group_.size();
-                for(int i=0;i<cnt;i++) {
-                    series_group_[i]->clear();
-                }
-                x_index_ = 0;
-                axisX_->setRange(0, AXIS_X_SIZE_DEFAULT);
-                timer1->stop();
-                return;
-            }
-            timer1->stop();
-
-        }
-    });
-
-    // btn_replay_open
-    connect(ui->btn_replay_open, &QPushButton::clicked, this, [=](){
-        if(ui->btn_replay_start->text() == "stop") {
-            QMessageBox::warning(this,"提示", "请先关闭回放按键", QMessageBox::Close, QMessageBox::Close);
-            return;
-        }
-
-        Hdf5Handle file1;
-        QString str = QFileDialog::getOpenFileName(this,"open file", QApplication::applicationDirPath(),tr("HDF5 (*.h5 *.hdf5)"));
-        if(str == "") {
-            return;
-        }
-        hid_t ret = file1.open(str.toStdString());
-        if(ret == 1) {
-            // new_file.read();
-            signal_name_list_.clear();
-            signal_name_list_ = file1.get_list("/Signal");
-
-            // update table content
-            update_table_content(signal_name_list_.size());
-
-            // save files date to buffer
-            for(size_t i=0; i<signal_name_list_.size();++i) {
-                std::vector<float> arr_float = file1.get_data<float>(signal_name_list_[i], "/Signal");
-                signals_dataset_[signal_name_list_[i]] = arr_float;
-            }
-            signal_num_ = signals_dataset_.begin()->second.size();
-            qDebug() << "data size: " << signal_num_;
-            file1.close();
-
-            // creat series for signals
-            int rowcount = ui->tb_signal->rowCount();
-            for(int i=0;i<rowcount;i++) {
-                QLineSeries *tmp = new QLineSeries(this);
-                auto color = color_group_.at(i);
-                tmp->setColor(color);
-                tmp->setName(QString::fromStdString(signal_name_list_.at(i)));
-                series_group_.push_back(tmp);
-                ui->chart->chart()->addSeries(tmp);
-                tmp->attachAxis(axisX_);
-                tmp->attachAxis(axisY_);
-                tmp->hide();
-            }
-            qDebug() <<"series size: " << series_group_.size();
-        }
-        else {
-            QMessageBox::warning(this,"提示", "打开文件错误", QMessageBox::Close, QMessageBox::Close);
-        }
-    });
-
-    // btn_add_chart
-    connect(ui->btn_add_chart, &QPushButton::clicked, this, [=](){
-        CreateNewChart();
-    });
-}
-
-void MonitorDialog::update_table_content(int number)
-{
-    ui->tb_signal->clearContents();
-    qDebug() << ui->chart->chart()->series().size();
-    ui->chart->chart()->removeAllSeries();
-
-    qDebug() << ui->chart->chart()->series().size();
-    series_group_.clear();
-    ui->tb_signal->setRowCount(number);
-
-    y_range_.clear();
-    std::vector<float> tmp{0.0, 0.0};
-    for(int i=0;i<number;i++) {
-        y_range_.push_back(tmp);
-    }
-    qDebug() << "y_range_: " << y_range_.size();
-
-    //Temp Data
-    for(int i=0;i<number;i++){
-        //Checkbox
-        QCheckBox *ckb = new QCheckBox(this);
-        QHBoxLayout *hLayout = new QHBoxLayout();
-        hLayout->addWidget(ckb);
-        hLayout->setMargin(0);
-        hLayout->setAlignment(ckb,Qt::AlignCenter);
-        QWidget *wckb = new QWidget(ui->tb_signal);
-        wckb->setLayout(hLayout);
-        ui->tb_signal->setCellWidget(i,0,wckb);
-
-        // color
-        QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
-        itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
-        ui->tb_signal->setItem(i,1,itemLine);
-        color_group_.push_back(itemLine->textColor());
-
-        // name
-        QTableWidgetItem *it = new QTableWidgetItem("");
-        QString str = signal_name_list_.at(i).c_str();
-        it->setText(str);
-        ui->tb_signal->setItem(i,2,it);
-    }
-}
-
-void MonitorDialog::update_table_content2(int number)
-{
-    ui->tb_signal->clearContents();
-    for(auto it=chartview_list_.rbegin();it!=chartview_list_.rend();it++) {
-        (*it)->chart()->removeAllSeries();
-        (*it)->close();
-    }
-    CreateNewChart();
-    current_chartview_ = chartview_list_.front();
-
-    series_group_.clear();
-    ui->tb_signal->setRowCount(number);
-
-    y_range_.clear();
-    std::vector<float> tmp{0.0, 0.0};
-    for(int i=0;i<number;i++) {
-        y_range_.push_back(tmp);
-    }
-    qDebug() << "y_range_: " << y_range_.size();
-
-    //Temp Data
-    for(int i=0;i<number;i++){
-        //Checkbox
-        QCheckBox *ckb = new QCheckBox(this);
-        QHBoxLayout *hLayout = new QHBoxLayout();
-        hLayout->addWidget(ckb);
-        hLayout->setMargin(0);
-        hLayout->setAlignment(ckb,Qt::AlignCenter);
-        QWidget *wckb = new QWidget(ui->tb_signal);
-        wckb->setLayout(hLayout);
-        ui->tb_signal->setCellWidget(i,0,wckb);
-
-        // color
-        QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
-        itemLine->setTextColor(QColor(rand()%256,rand()%256,rand()%256));
-        ui->tb_signal->setItem(i,1,itemLine);
-        color_group_.push_back(itemLine->textColor());
-
-        // name
-        QTableWidgetItem *it = new QTableWidgetItem("");
-        QString str = signal_name_list_.at(i).c_str();
-        it->setText(str);
-        ui->tb_signal->setItem(i,2,it);
-    }
-}
-
-void MonitorDialog::on_mouseMovePoint(QPoint point)
-{
-    QPointF pt = ui->chart->chart()->mapToValue(point);
-    //    qDebug() << pt.x() << " " << pt.y();
-}
-
-void MonitorDialog::CreateNewChart()
+void MonitorDialog::CreatNewChart(MonitorDataModel *model)
 {
     QChart *chart = new QChart();
     chart->setParent(this);
-//    chart->setTheme(QChart::ChartThemeBrownSand);
-    chart->layout()->setContentsMargins(2,2,2,2);
-    chart->setMargins(QMargins(0,0,0,0));
+    QChartView * chartview = new QChartView(this);
+    chartview->setRenderHint(QPainter::Antialiasing);
+    chartview->setChart(chart);
+
+    //    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
+    chart->layout()->setContentsMargins(2,2,2,2);   // 外边距
+    chart->setMargins(QMargins(0,0,0,0));           // 內变距
+    chart->setBackgroundRoundness(0);               // 边角直角
+
     QValueAxis *axisX = new QValueAxis(this);
     QValueAxis *axisY = new QValueAxis(this);
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
-    axisX->setRange(0, AXIS_X_SIZE_DEFAULT);
-    axisX->setGridLineVisible(1);
+    axisX->setRange(0, 50);
+    axisX->setTickCount(11);
+    axisX->setGridLineVisible(0);
     axisY->setRange(-10,10);
     axisY->setGridLineVisible(1);
     axisY->setTitleText("Value");
-
-    AiccChartView *chartview = new AiccChartView(this);
-    chartview->setChart(chart);
     chart->setAnimationOptions(QChart::NoAnimation);
-    ui->verticalLayout_2->addWidget(chartview);
-//    chartview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);//
 
-    chartview_list_.emplace_back(std::move(chartview));
-    qDebug() << "chartview: " << chartview_list_.size();
-    connect(chartview, &AiccChartView::sendObjectAddr, this, [=](size_t addr){
-        for(auto it=chartview_list_.begin();it!=chartview_list_.end();it++) {
-            if( (*it) == (AiccChartView*)addr) {
-                qDebug() << "chartview erase: " << *it;
-                it = chartview_list_.erase(it);
-                break;
-            }
+    QString obj_name = QString("newchart"+QString::number(chart_number++));
+    chartview->setObjectName(obj_name);
+    ui->verticalLayout_2->addWidget(chartview);
+
+    chart_list_.insert(chartview->objectName(), chart);
+    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+        qDebug() << it.key() << " " << it.value();
+    }
+
+    for(int i=0;i<model->get_signal_list().size();i++) {
+        QLineSeries *series = new QLineSeries(this);
+        series->setName(model->get_signal_list().at(i));
+        series->setPen(QPen(Qt::red,1,Qt::SolidLine));
+        chart->addSeries(series);
+        series->attachAxis(chart->axisX());
+        series->attachAxis(chart->axisY());
+    }
+    connect(model, &MonitorDataModel::SignalListEvent, this, [=](QString name, QColor color){
+        QLineSeries *series = new QLineSeries(this);
+        series->setName(name);
+        //        series->setPen(QPen(Qt::red,1,Qt::SolidLine));
+        series->setColor(color);
+        chart->addSeries(series);
+        series->attachAxis(chart->axisX());
+        series->attachAxis(chart->axisY());
+
+        series_group_[name] = series;
+        //        qDebug() << "series_group size: " << series_group_.size();
+    });
+    connect(model, &MonitorDataModel::SignalDataEvent, this, [=](QString name, QPointF data){
+        series_group_.value(name)->append(data.x(),data.y());
+    });
+}
+
+void MonitorDialog::tableSignalUpdate(QString signal, QColor color)
+{
+    auto rowcount = ui->tableWidget->rowCount();
+    ui->tableWidget->setRowCount(rowcount + 1);
+
+    //Checkbox
+    QCheckBox *ckb = new QCheckBox(this);
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout->addWidget(ckb);
+    hLayout->setMargin(0);
+    hLayout->setAlignment(ckb,Qt::AlignCenter);
+    QWidget *wckb = new QWidget(ui->tableWidget);
+    wckb->setLayout(hLayout);
+    ui->tableWidget->setCellWidget(rowcount,0,wckb);
+
+    data_model_->setSignalCheckboxState(signal,Qt::Unchecked);
+
+    // color
+    QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
+    itemLine->setTextColor(color/*QColor(rand()%256,rand()%256,rand()%256)*/);
+    ui->tableWidget->setItem(rowcount,1,itemLine);
+
+    // name
+    QTableWidgetItem *it = new QTableWidgetItem("");
+    it->setText(signal);
+    ui->tableWidget->setItem(rowcount,2,it);
+
+    connect(ckb, &QCheckBox::clicked, this, [=](){
+        qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
+        data_model_->setSignalCheckboxState(signal,ckb->checkState());
+
+        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
+        QMap<QString, bool> set_state;
+        if(ckb->checkState() == Qt::Checked) {
+            set_state[signal] = true;
+            inspector.setVarWatchState(set_state);
+            signal_active_number_++;
+        } else {
+            set_state[signal] = false;
+            inspector.setVarWatchState(set_state);
+            if(signal_active_number_ == 0) return;
+            signal_active_number_--;
         }
     });
-    connect(chartview, &AiccChartView::currentSelect, this, [=](size_t addr){
-        current_chartview_ = (AiccChartView*)addr;
-    });
+}
+
+void MonitorDialog::timeoutSlotTimer1()
+{
+    static qreal t=0,intv=0.1;
+    qreal y1=5*qSin(t);
+    qreal y2=5*qSin(t+5);
+    qreal y3=8*qCos(t);
+    QVector<qreal> val{y1,y2,y3};
+
+    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+        auto tmp = chart_list_.value(it.key());
+        for(int i=0;i<tmp->series().size();i++) {
+            auto line1 =static_cast<QLineSeries*>(tmp->series().at(i));
+            line1->append(t,val.at(i));
+        }
+
+        if(t > 50) {
+            chart_list_.value(it.key())->axisX()->setRange(t-50, t);
+        }
+    }
+    t+=intv;
+}
+
+void MonitorDialog::timeoutSlotTimer2()
+{
+    if(x_index_ >= signal_num_) {
+        replay_running_ = 0;
+    }
+
+    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+        auto tmp = data_model_->get_signal_list();
+
+        for(int i=0;i<tmp.size();++i) {
+            if(replay_running_) {
+                auto data = data_model_->getSignalDataSet(tmp.at(i),x_index_);
+                data_model_->addSignalData(tmp.at(i), data);
+                if(data.y() > y_val_range_.at(0)) y_val_range_[0] = data.y(); // max
+                if(data.y() < y_val_range_.at(1)) y_val_range_[1] = data.y(); // min
+            }
+            if(data_model_->getSignalCheckboxState(tmp.at(i))) {
+                series_group_.value(tmp.at(i))->setVisible(1);
+            } else {
+                series_group_.value(tmp.at(i))->setVisible(0);
+            }
+        }
+
+        if(replay_running_) {
+            if(x_index_ > 50) {
+                chart_list_.value(it.key())->axisX()->setRange(x_index_-50, x_index_);
+            }
+            // TODO: select the series 0 as y-axis range
+            chart_list_.value(it.key())->axisY()->setRange(y_val_range_.at(1)-2, y_val_range_.at(0)+2);
+            x_index_++;
+        }
+    }
+}
+
+void MonitorDialog::on_btn_replay_open_clicked()
+{
+    if(ui->btn_replay_start->text() == "stop") {
+        QMessageBox::information(this, "提示", "请先关闭回放按键", QMessageBox::Close, QMessageBox::Close);
+        return;
+    }
+
+    QString filename = QFileDialog::getOpenFileName(this, "打开一个文件", QApplication::applicationDirPath(), tr("HDF5 (*.h5 *.hdf5)"));
+    if(filename.isEmpty()) return ;
+
+    Hdf5Handle file;
+    hid_t ret = file.open(filename.toStdString());
+    if(ret) {
+        // clear model
+        data_model_->clearModel();
+
+        while(ui->tableWidget->rowCount()) {
+            ui->tableWidget->removeRow(0);
+        }
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            it.value()->removeAllSeries();
+        }
+        series_group_.clear();
+        x_index_ = 0;
+        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+            chart_list_.value(it.key())->axisX()->setRange(0, 50);
+        }
+
+        // save signal list to model
+        auto signalname = file.get_list("/Signal");
+        for(int i=0;i<signalname.size();i++) {
+            QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
+            data_model_->addSignalList(QString::fromStdString(signalname.at(i)), qc);
+        }
+
+        // save data
+        for(size_t i=0; i<signalname.size();i++) {
+            std::vector<float> arr_float = file.get_data<float>(signalname.at(i), "/Signal");
+            QVector<QPointF> tmp;
+            for(size_t j=0;j<arr_float.size();j++) {
+                tmp.push_back(QPointF(j,arr_float.at(j)));
+            }
+            data_model_->setSignalDataSet(QString::fromStdString(signalname.at(i)), tmp);
+        }
+        file.close();
+        replay_loadfile =1;
+        signal_num_ = data_model_->signalDataSize();
+    }
+    else {
+        QMessageBox::information(this,"提示", "打开文件错误", QMessageBox::Close, QMessageBox::Close);
+    }
+}
+
+void MonitorDialog::on_btn_monitor_record_clicked()
+{
+    QString dir_str = "log";
+    QDir dir;
+    if(!dir.exists(dir_str)) {
+        dir.mkpath(dir_str);
+    }
+
+    QDateTime datetime;
+    QString timestr = datetime.currentDateTime().toString("yyyy_MM_dd_HH_mm_ss");
+    std::string file_name = "log_" + timestr.toStdString() + ".h5";
+    std::string path = dir_str.toStdString() + "/" + file_name;
+    Hdf5Handle new_file;
+    new_file.creat(path);
+    if(new_file.get_file_id()) {
+        new_file.close();
+    }
+}
+
+void MonitorDialog::on_btn_monitor_start_clicked()
+{
+    // 读取要监测的信号列表，创建信号
+    timer3->start();
+
+    if(0){
+        QString name = "signal" + QString::number(line_number_++);
+        QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
+        data_model_->addSignalList(name,qc);
+    }
+}
+
+void MonitorDialog::on_btn_monitor_stop_clicked()
+{
+    timer3->stop();
+
+    //    QMap<QString, bool> set_state;
+    //    for(auto it=series_group_.begin();it!=series_group_.end();++it) {
+    //        set_state[it.key()] = false;
+    //        inspector.setVarWatchState(set_state);
+    //    }
+    //    for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+    //        it.value()->removeAllSeries();
+    //    }
+    //    current_number = 0;
+    //    signal_active_number_ = 0;
+    //    x_index_ = 0;
+
+    //    if(ui->btn_monitor_stop->text() == "on"){
+    //        ui->btn_monitor_stop->setText("stop");
+    //        timer0->start();
+    //        qDebug() << ui->btn_monitor_stop->text();
+    //    }
+    //    else {
+    //        ui->btn_monitor_stop->setText("on");
+    //        timer0->stop();
+    //        qDebug() << ui->btn_monitor_stop->text();
+    //    }
+
+}
+
+void MonitorDialog::on_btn_add_clicked()
+{
+    //    CreatNewChart(data_model_);
+}
+
+void MonitorDialog::on_btn_replay_start_clicked()
+{
+    if((replay_loadfile==0) || (data_model_->signalCount()==0)) return;
+
+    if(ui->btn_replay_start->text() == "replay"){
+        ui->btn_replay_start->setText("stop");
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/res/stop.png"), QSize(), QIcon::Normal, QIcon::Off);
+        ui->btn_replay_start->setIcon(icon);
+        ui->btn_replay_start->setIconSize(QSize(40, 40));
+        ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->btn_replay_start->setAutoRaise(false);
+        ui->btn_replay_start->setToolTip("停止");
+        if(!replay_running_) {
+            //TODO
+            replay_running_ = 1;
+        }
+        timer2->start();
+
+    }
+    else {
+        ui->btn_replay_start->setText("replay");
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/res/replay.png"), QSize(), QIcon::Normal, QIcon::Off);
+        ui->btn_replay_start->setIcon(icon);
+        ui->btn_replay_start->setIconSize(QSize(40, 40));
+        ui->btn_replay_start->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->btn_replay_start->setAutoRaise(false);
+        ui->btn_replay_start->setToolTip("开始");
+
+        if(x_index_ >= signal_num_) {
+            // clear model
+            data_model_->clearModel();
+            while(ui->tableWidget->rowCount()) {
+                ui->tableWidget->removeRow(0);
+            }
+            for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+                it.value()->removeAllSeries();
+            }
+            series_group_.clear();
+
+            x_index_ = 0;
+            for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+                chart_list_.value(it.key())->axisX()->setRange(0, 50);
+            }
+            timer2->stop();
+            return;
+        }
+        replay_running_ = 0;
+        timer2->stop();
+    }
+}
+
+void MonitorDialog::closeEvent(QCloseEvent *e)
+{
+    if((replay_running_==1) || (monitor_running==1)) {
+        QMessageBox::information(this, "提示", "停止运行按键", QMessageBox::Close, QMessageBox::Close);
+        e->ignore();
+        return;
+    }
+    auto button =  QMessageBox::information(this, "关闭窗口", "确定退出监测窗口", QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+    if(button==QMessageBox::No)
+    {
+        e->ignore(); // 忽略退出信号，程序继续进行
+    }
+    else if(button==QMessageBox::Yes)
+    {
+        // clear model
+
+//        if(data_model_!=Q_NULLPTR)
+//            data_model_->clearModel();
+
+//        while(ui->tableWidget->rowCount()) {
+//            ui->tableWidget->removeRow(0);
+//        }
+
+//        for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
+//            it.value()->removeAllSeries();
+//        }
+
+//        series_group_.clear();
+//        x_index_=0;
+//        signal_num_=0;
+//        replay_running_=0;
+//        monitor_running = 0;
+//        replay_loadfile = 0;
+        e->accept(); // 接受退出信号，程序退出
+    }
+}
+
+void MonitorDialog::showEvent(QShowEvent *)
+{
 
 }

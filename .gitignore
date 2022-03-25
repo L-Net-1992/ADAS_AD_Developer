@@ -75,5 +75,6 @@ Thumbs.db
 install/*
 
 conf/config.json
-
+/.idea/
+/cmake-build-*/
 

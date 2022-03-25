@@ -73,13 +73,20 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    //console
+    static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+    static void write(QString str);
+//private slots:
+
+public Q_SLOTS:
+    void on_pte_output_textChanged();
+    //console
 protected:
     void registrySceneGenerateNodeMenu(std::list<Invocable> parserResult);
 Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
 
 private:
-
 
     void initMenu();
     void initTreeView();
@@ -108,19 +115,17 @@ private:
     std::shared_ptr<DataModelRegistry> registerDataModels();
 //    QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
-    static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
+
     void processStart(const QVector<QString> scriptNames,const int platformIndex);
     void importCompletedAction();
-
-
-    static void write(QString str);
+    void invocableParserAction(const std::string msg);
 
 public:
 Q_SIGNALS:
      void redirectMsg(QString text);
 
 public:
-    static inline QPlainTextEdit *pte_out = Q_NULLPTR;
+//    static inline QPlainTextEdit *pte_out = Q_NULLPTR;
 
 private:
     Ui::MainWindow *ui;

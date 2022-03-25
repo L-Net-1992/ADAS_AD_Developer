@@ -10,15 +10,16 @@ MainWindow::MainWindow(QWidget *parent):
     npmilDialog ( new NodeParametersMILDialog(parent)),
     nodeTreeDialog ( new NodeTreeDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
-    monitorDialog ( new MonitorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
-    cDialog ( new CalibrationDialog(parent)),
     process ( new QProcess(parent))
 
 {
     sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
+
+//    qInstallMessageHandler(logOutput);
+
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
     pDataModel=new ProjectDataModel;
@@ -26,8 +27,7 @@ MainWindow::MainWindow(QWidget *parent):
     isDialog =new ImportScriptDialog(pDataModel,parent);
     emDialog = new ExportModuleDialog(pDataModel,parent);
 
-    //    MainWindow::pte_out = ui->pte_output;
-    //    qInstallMessageHandler(logOutput);
+
 
     //获得Process的标准输出
     connect(process,&QProcess::readyRead,this,[&](){
@@ -48,10 +48,10 @@ MainWindow::MainWindow(QWidget *parent):
     this->initProjectDialog();
     this->initRecentProjectDialog();
 
-//    std::shared_ptr<DataModelRegistry> dmr = this->_moduleLibrary->test2();
-//    _moduleLibrary->
+    //    qDebug() << "11111";
+    //    qInfo() << "22222";
 
-
+//    ui->pte_output->appendPlainText("cccc");
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +60,39 @@ MainWindow::~MainWindow()
     delete ui;
     delete pDataModel;
 }
+
+QString text;
+
+void MainWindow::on_pte_output_textChanged(){
+    //void MainWindow::on_pte_output_textChanged(){
+//    qDebug() << "arg1-----" ;
+//    ui->pte_output->appendPlainText(text);
+}
+
+void MainWindow::write(QString str){
+    text = str;
+}
+
+void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
+    QString text;
+    text.append(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+" ");
+    switch(type){
+    case QtDebugMsg:
+        text.append("Debug:");
+        break;
+    case QtWarningMsg:
+        text.append("Warning:");
+        break;
+    case QtCriticalMsg:
+        text.append("Critical:");
+        break;
+    case QtFatalMsg:
+        text.append("Fatal:");
+    }
+    text.append(msg);
+//    write(text);
+}
+
 
 ///初始化菜单
 void MainWindow::initMenu()
@@ -146,7 +179,7 @@ void MainWindow::initToolbar()
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
 
         //不放到项目路径中，放到平台执行目录中，否则编译时找不到
-//        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
+        //        std::string generatePath = (pDataModel->currentProjectPath()+"/"+pDataModel->currentProjectName()+"/generate").toStdString();
         std::string generatePath = (QApplication::applicationDirPath()+"/generate").toStdString();
         std::filesystem::path dir(generatePath);
         SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
@@ -189,9 +222,6 @@ void MainWindow::initToolbar()
                 return false;
         }
         copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
-
-//        qDebug() << "imPath:" <<imPath << "imPackage" << imPackage;
-
     });
 
 
@@ -234,7 +264,8 @@ void MainWindow::initToolbar()
 
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&](){
-        //        diDialog->show();
+        QJsonObject jo = getConfig();
+        monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),this);
         monitorDialog->show();
     });
 
@@ -264,25 +295,31 @@ void MainWindow::initToolbar()
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "run_bst.sh" << "run_jetson.sh" << "run_mdc.sh" << "run_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///stop
     connect(ui->tb_stop,&QToolButton::clicked,this,[&](){
         QVector<QString> v;
         v << "stop_bst.sh" << "stop_jetson.sh" << "stop_mdc.sh" << "stop_x86_64.sh";
-        processStart(v,ui->cb_select_platform->currentIndex());
+        if(ui->cb_select_platform->currentIndex()>0)
+            processStart(v,ui->cb_select_platform->currentIndex());
     });
 
     ///在线标定按钮OnlineCalibration->Calibration
     connect(ui->tb_calibration,&QToolButton::clicked,this,[&](){
+        QJsonObject jo = getConfig();
+        cDialog = new CalibrationDialog(jo.value("deviceIP").toString(),pDataModel,this);
+
         cDialog->show();
     });
 
@@ -320,20 +357,20 @@ void MainWindow::initToolbar()
 void MainWindow::processStart(const QVector<QString> scriptNames,const int platformIndex){
     QString bash="bash ";
     bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
-    QString killprocess = "kill -9 $(ps -ef|grep adas_generate|grep -v grep|awk '{print $2}')";
+    QString killprocess = "kill -9 $(ps -ef|gre        if(series_group_!=Q_NULLPTR)p adas_generate|grep -v grep|awk '{print $2}')";
     process->terminate();
     process->start(bash);
 
-//    bool ret = process->waitForFinished();
-//    if(ret){
-//        qDebug() << "process close";
-//        process->close();
-//        delete process;
-//    }
-//    if(process->waitForFinished())
-//        process->start(bash);
-//    else
-//        process->start(killprocess);
+    //    bool ret = process->waitForFinished();
+    //    if(ret){
+    //        qDebug() << "process close";
+    //        process->close();
+    //        delete process;
+    //    }
+    //    if(process->waitForFinished())
+    //        process->start(bash);
+    //    else
+    //        process->start(killprocess);
 }
 
 ///初始化面包屑导航
@@ -493,6 +530,12 @@ void MainWindow::initProjectDialog(){
     //    });
 }
 
+//void MainWindow::invocableParserAction(const std::string msg){
+//    qDebug() << "=============================";
+//    ui->pte_output->appendPlainText(QString::fromStdString(msg));
+
+//}
+
 ///NodeEditor数据处理部分
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
 //TODO:
@@ -500,6 +543,9 @@ void MainWindow::initNodeEditor(){
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
     //    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary(_moduleLibrary.get()));
     _moduleLibrary = new ModuleLibrary;
+    //获得解析程序输出
+    //    connect(_moduleLibrary,&ModuleLibrary::invocableParserCout,this,&MainWindow::invocableParserAction);
+
     _subsystemLibrary = new SubsystemLibrary;
 
     //1:解析pakage文件
@@ -511,6 +557,7 @@ void MainWindow::initNodeEditor(){
     ui->tw_toolbar->setEnabled(false);
     ui->tw_node->setEnabled(false);
 
+//    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
         try{
@@ -528,14 +575,15 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-//    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
+    //    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
     connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,[&](){
+        //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
     });
 
     //6:响应文件解析进度
     connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
-//        qDebug() << " ==================================================processing:" << index << "/" << count;
+        //        qDebug() << " ==================================================processing:" << index << "/" << count;
     });
 
 }
@@ -575,10 +623,10 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     auto ret = std::make_shared<DataModelRegistry>();
 
     //此处在单独的线程中，不能使用默认主线程的数据库连接
-//    QSqlDatabase sqlite;
-//    sqlite.addDatabase("QSQLITE");
-//    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
-//    sqlite.open();
+    //    QSqlDatabase sqlite;
+    //    sqlite.addDatabase("QSQLITE");
+    //    sqlite.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
+    //    sqlite.open();
     AICCSqlite sqlite;
 
 
@@ -720,29 +768,7 @@ QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::lis
     return ret;
 }
 
-void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
-    QString omsg;
-    omsg.append(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+" ");
-    switch(type){
-    case QtInfoMsg:
-    case QtDebugMsg:
-        omsg.append("Debug:");
-        break;
-    case QtWarningMsg:
-        omsg.append("Warning:");
-        break;
-    case QtCriticalMsg:
-        omsg.append("Critical:");
-        break;
-    case QtFatalMsg:
-        omsg.append("Fatal:");
-    }
-    omsg.append(msg);
-    //    pte_out->appendPlainText(omsg);
-}
 
-void MainWindow::write(QString str){
-    //    text = str;
-}
+
 
 

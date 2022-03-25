@@ -10,7 +10,25 @@
 #include <QtCharts/QSplineSeries>
 #include "aiccchartview.h"
 
+#include <QDialog>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QGraphicsLayout>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QVXYModelMapper>
+#include <QLineSeries>
+#include <QTimer>
+#include "monitordatamodel.hpp"
+#include "nodeparser/inspector.hpp"
+
 using namespace QtCharts;
+QT_CHARTS_USE_NAMESPACE
+#define     FixedColumnCount    4      //文件固定6列
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Dialog; }
@@ -22,43 +40,58 @@ class MonitorDialog : public QDialog
     Q_OBJECT
 
 public:
-    MonitorDialog(QWidget *parent = nullptr);
+    MonitorDialog(const QString ip,QWidget *parent = nullptr);
     ~MonitorDialog();
-
-    QCheckBox * getCheckBox(int row, int column);
-
-    void init_button();
-    void init_chart();
-    void init_table();
-    void update_table_content(int number);
-    void update_table_content2(int number);
+    void InitTable();
+    void InitModel();
+    void CreatNewChart(MonitorDataModel *model);
 
 private slots:
-    void on_mouseMovePoint(QPoint point);
+    void tableSignalUpdate(QString signal, QColor color);
+    void timeoutSlotTimer1();
+    void timeoutSlotTimer2();
+
+    void on_btn_replay_open_clicked();
+
+    void on_btn_monitor_record_clicked();
+
+    void on_btn_monitor_start_clicked();
+
+    void on_btn_monitor_stop_clicked();
+
+    void on_btn_add_clicked();
+
+    void on_btn_replay_start_clicked();
+
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
+    void showEvent(QShowEvent *) override;
 
 private:
-    void CreateNewChart();
-
-private:
-
     Ui::Dialog *ui;
-    QValueAxis *axisX_;
-    QValueAxis *axisY_;
+    QTimer *timer0;
     QTimer *timer1;
-    QTimer *timer2 ;
-//    QLineSeries *myseries;
-    std::vector<QColor> color_group_;           // 保存信号颜色
-    std::vector<QLineSeries*> series_group_;    // 保存信号series
-    std::vector<std::string> signal_name_list_; // 保存信号名称清单
-    std::map<std::string, std::vector<float>> signals_dataset_; // 保存信号数据
-    std::vector<AiccChartView*> chartview_list_;
-    AiccChartView *current_chartview_;
-    QValueAxis *current_axisX_;
-    QValueAxis *current_axisY_;
+    QTimer *timer2;
+    QTimer *timer3;
 
+private:
+    MonitorDataModel *data_model_;
+    QMap<QString, QChart*> chart_list_;
+    QMap<QString, QLineSeries*> series_group_;
+    QMap<QString, QColor> color_group_;           // 保存信号颜色
     std::vector<std::vector<float>> y_range_;   //保存y轴最大最小值<min,max>
+    QVector<float> y_val_range_{-10,10};
+    unsigned int line_number_ = 0;
+    unsigned int chart_number = 0;
     unsigned int x_index_ = 0;
     size_t signal_num_ = 0;     // 信号数据长度
     bool replay_running_ = 0;
+    bool monitor_running = 0;
+    bool replay_loadfile = 0;
+
+//    Inspector inspector{"127.0.0.1"};
+    Inspector inspector;
+    size_t signal_active_number_ = 0;
+    size_t current_number = 0;
 };
 #endif // DIALOG_H

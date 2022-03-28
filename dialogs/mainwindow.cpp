@@ -19,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent):
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
 
-    //    qInstallMessageHandler(logOutput);
+//        qInstallMessageHandler(OutPutMessage);
+
 
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
@@ -48,7 +49,9 @@ MainWindow::MainWindow(QWidget *parent):
     this->initProjectDialog();
     this->initRecentProjectDialog();
 
-    //    ui->pte_output->appendPlainText("cccc");
+        std::cout << "std::cout";
+        printf("printf");
+        qDebug() << "qDebug";
 }
 
 MainWindow::~MainWindow()
@@ -57,38 +60,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString text;
-
-void MainWindow::on_pte_output_textChanged(){
-    //void MainWindow::on_pte_output_textChanged(){
-    //    qDebug() << "arg1-----" ;
-    //    ui->pte_output->appendPlainText(text);
+///用于处理consoel内容重定向
+void MainWindow::showMsg(QString msg){
+    ui->pte_output->appendPlainText(msg);
 }
-
-void MainWindow::write(QString str){
-    text = str;
-}
-
-void MainWindow::logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
-    QString text;
-    text.append(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+" ");
-    switch(type){
-    case QtDebugMsg:
-        text.append("Debug:");
-        break;
-    case QtWarningMsg:
-        text.append("Warning:");
-        break;
-    case QtCriticalMsg:
-        text.append("Critical:");
-        break;
-    case QtFatalMsg:
-        text.append("Fatal:");
-    }
-    text.append(msg);
-    //    write(text);
-}
-
 
 ///初始化菜单
 void MainWindow::initMenu()
@@ -425,13 +400,13 @@ void MainWindow::saveProjectAction(){
 
 ///打开项目动作
 void MainWindow::openProjectAction(){
-        QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
-        QFileInfo fileInfo(fileName);
-        if(!fileInfo.exists(fileName)) return;
-        QString projectProject = fileInfo.absoluteFilePath().split("/.ap/project.xml")[0];
+    QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
+    QFileInfo fileInfo(fileName);
+    if(!fileInfo.exists(fileName)) return;
+    QString projectProject = fileInfo.absoluteFilePath().split("/.ap/project.xml")[0];
 
-        _currentProjectDataModel->setProject(QFileInfo(projectProject));
-        openProjectCompleted(_currentProjectDataModel->projectPath());
+    _currentProjectDataModel->setProject(QFileInfo(projectProject));
+    openProjectCompleted(_currentProjectDataModel->projectPath());
 }
 
 ///打开项目完成后执行部分

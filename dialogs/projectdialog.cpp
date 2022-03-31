@@ -159,7 +159,6 @@ void ProjectDialog::initStackedFirst()
     connect(ui->le_project_name,&QLineEdit::textChanged,this,[&](const QString &str){
         projectName = str;
         ui->le_summary_project_name->setText(projectName);
-        qDebug() << "project name:" << projectName;
     });
     connect(ui->le_project_path,&QLineEdit::textChanged,this,[&](const QString &str){projectPath = str;ui->le_summary_project_path->setText(projectPath);});
 }

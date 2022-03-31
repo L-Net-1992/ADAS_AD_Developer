@@ -11,6 +11,8 @@
 #include <QTreeWidgetItem>
 #include <QSqlQuery>
 #include <QJsonArray>
+#include <QMap>
+#include <QVariant>
 #include <iostream>
 #include <list>
 #include <vector>
@@ -58,6 +60,7 @@ signals:
 
 private slots:
     void treeWidgetItemClicked(QTreeWidgetItem *item, int column);
+    void itemClickedAction(QTreeWidgetItem *item,int column);
 
 private:
     void initTreeWidget();
@@ -65,12 +68,16 @@ private:
     void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
     void makeModelMenuItem(AICCTreeWidget *atw);
+    AICCToolButton *createToolButton( QString name,QString caption);
 
+private:
+    void initNodeTree(AICCTreeWidget * tw_root);
+    void recursionChildren(QTreeWidgetItem *twp,int pid);
 
 private:
     Ui::NodeTreeDialog *ui;
     QMap<QString,QSet<QString>> _nodeMap;
-
+    AICCSqlite _sqlite;
 
 };
 

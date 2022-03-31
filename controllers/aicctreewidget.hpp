@@ -76,6 +76,38 @@ private:
                 continue;
         }
     }
+    ///更新动态节点的位置
+    void updateDynamicNode(int objectClassID,QString caption,int currentClassID){
+        AICCSqlite sqlite;
+        QString sql = QString("update nodeDynamic set class_id = %0 where caption = '%1' and class_id = %2 ")
+                .arg(objectClassID).arg(caption).arg(currentClassID);
+        QSqlQuery query;
+        //        QSqlQuery query = sqlite.query(sql);
+        query.exec(sql);
+        this->refreshTreeViewDynamicNode();
+    }
+
+    ///清理所有动态节点
+    void clearDynamicNode(){
+        QVector<QTreeWidgetItem*> vector;
+        QTreeWidgetItemIterator it(this);
+        while(*it){
+            if((*it)->whatsThis(0)=="dynamic_node"){
+//                QTreeWidgetItem *pwi = (*it)->parent();
+                vector.append(*it);
+//                pwi->removeChild((*it));
+//                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
+            }
+            ++it;
+        }
+
+        for(int i=0;i<vector.count();i++){
+            QTreeWidgetItem *removeItem = vector.at(i);
+            QTreeWidgetItem *pwi = removeItem->parent();
+            pwi->removeChild(removeItem);
+
+        }
+    }
 
 protected:
     /**
@@ -158,40 +190,6 @@ protected:
         }
     }
 
-    ///更新动态节点的位置
-    void updateDynamicNode(int objectClassID,QString caption,int currentClassID){
-        AICCSqlite sqlite;
-        QString sql = QString("update nodeDynamic set class_id = %0 where caption = '%1' and class_id = %2 ")
-                .arg(objectClassID).arg(caption).arg(currentClassID);
-        QSqlQuery query;
-        //        QSqlQuery query = sqlite.query(sql);
-        query.exec(sql);
-
-
-        this->refreshTreeViewDynamicNode();
-    }
-
-    ///清理所有动态节点
-    void clearDynamicNode(){
-        QVector<QTreeWidgetItem*> vector;
-        QTreeWidgetItemIterator it(this);
-        while(*it){
-            if((*it)->whatsThis(0)=="dynamic_node"){
-//                QTreeWidgetItem *pwi = (*it)->parent();
-                vector.append(*it);
-//                pwi->removeChild((*it));
-//                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
-            }
-            ++it;
-        }
-
-        for(int i=0;i<vector.count();i++){
-            QTreeWidgetItem *removeItem = vector.at(i);
-            QTreeWidgetItem *pwi = removeItem->parent();
-            pwi->removeChild(removeItem);
-
-        }
-    }
 
 private:
     QTreeWidgetItem* _selectItem;

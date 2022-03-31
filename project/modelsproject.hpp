@@ -55,7 +55,6 @@ public:
         _projectSubSystemPath = _projectPath+"/subsystem";
         _projectXml = _projectPath+"/.ap/project.xml";
         parseProjectXml(_projectXml);
-        qDebug() << " project name:" << _projectName << " project path:" << _projectPath;
     }
 
 private:

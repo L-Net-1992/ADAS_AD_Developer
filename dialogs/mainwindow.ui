@@ -541,10 +541,16 @@ gridline-color:#FFFFFF;
    </widget>
   </widget>
   <widget class="QDockWidget" name="dw_toolbar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>1280</width>
-     <height>139</height>
+     <height>156</height>
     </size>
    </property>
    <property name="features">
@@ -578,16 +584,22 @@ gridline-color:#FFFFFF;
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>110</height>
+         <height>0</height>
         </size>
        </property>
        <property name="baseSize">
         <size>
          <width>0</width>
-         <height>110</height>
+         <height>0</height>
         </size>
        </property>
        <property name="font">
@@ -597,7 +609,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -662,7 +674,7 @@ gridline-color:#FFFFFF;
           <widget class="QWidget" name="widget_2" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <property name="spacing">
-             <number>2</number>
+             <number>1</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -678,6 +690,18 @@ gridline-color:#FFFFFF;
             </property>
             <item>
              <widget class="QPushButton" name="pb_open">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="font">
                <font/>
               </property>
@@ -704,21 +728,33 @@ gridline-color:#FFFFFF;
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="pb_print">
-              <property name="font">
-               <font/>
-              </property>
-              <property name="text">
-               <string>打印</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../image.qrc">
-                <normaloff>:/res/Print.png</normaloff>:/res/Print.png</iconset>
-              </property>
-             </widget>
-            </item>
            </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pb_print">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="text">
+            <string>打印</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/Print.png</normaloff>:/res/Print.png</iconset>
+           </property>
           </widget>
          </item>
          <item>
@@ -744,7 +780,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -784,7 +820,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -824,7 +860,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -881,42 +917,48 @@ gridline-color:#FFFFFF;
           <number>9</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <item>
           <widget class="QWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>90</height>
+             <width>90</width>
+             <height>0</height>
             </size>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <property name="spacing">
-             <number>5</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
             <property name="topMargin">
-             <number>3</number>
+             <number>0</number>
             </property>
             <property name="rightMargin">
              <number>0</number>
             </property>
             <property name="bottomMargin">
-             <number>3</number>
+             <number>0</number>
             </property>
             <item>
              <widget class="QComboBox" name="cb_select_platform">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -924,7 +966,7 @@ gridline-color:#FFFFFF;
               <property name="minimumSize">
                <size>
                 <width>120</width>
-                <height>35</height>
+                <height>0</height>
                </size>
               </property>
               <property name="font">
@@ -969,6 +1011,12 @@ gridline-color:#FFFFFF;
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>90</width>
+                <height>55</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -1015,7 +1063,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1055,7 +1103,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1095,7 +1143,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1158,7 +1206,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1206,7 +1254,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1246,7 +1294,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1294,14 +1342,14 @@ gridline-color:#FFFFFF;
        <widget class="QWidget" name="tab_3">
         <property name="minimumSize">
          <size>
-          <width>1276</width>
-          <height>89</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>1276</width>
-          <height>89</height>
+          <width>16777215</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="font">
@@ -1321,7 +1369,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1379,8 +1427,8 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>70</height>
+             <width>80</width>
+             <height>0</height>
             </size>
            </property>
            <property name="focusPolicy">
@@ -1427,7 +1475,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1462,7 +1510,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1510,7 +1558,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>
@@ -1548,7 +1596,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>70</width>
+             <width>80</width>
              <height>0</height>
             </size>
            </property>

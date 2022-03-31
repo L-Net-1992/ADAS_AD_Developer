@@ -20,15 +20,15 @@ class CalibrationDialog : public QDialog
     Q_OBJECT
 
 public:
-    CalibrationDialog(const QString ip,ProjectDataModel *pdm,QWidget *parent = nullptr);
+    CalibrationDialog(const QString ip,QSharedPointer<ProjectDataModel> pdm,QWidget *parent = nullptr);
     explicit CalibrationDialog(QWidget *parent = nullptr);
     ~CalibrationDialog();
 
-    void setProjectDataModel(ProjectDataModel *newProjectDataModel);
+    void setProjectDataModel(QSharedPointer<ProjectDataModel> newProjectDataModel);
 
 private:
     Ui::CalibrationDialog *ui;
-    ProjectDataModel *_projectDataModel;
+    QSharedPointer<ProjectDataModel> _projectDataModel;
 //    QString project_path;
     QMap<QString, float> value_group_;
     Inspector inspector;

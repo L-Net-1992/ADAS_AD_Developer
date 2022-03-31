@@ -1,13 +1,15 @@
 #include "recentprojectdialog.h"
 #include "ui_recentprojectdialog.h"
 
-RecentProjectDialog::RecentProjectDialog( ProjectDataModel *pdm ,QWidget *parent) :
+//RecentProjectDialog( RecentProjectDataModel *pdm,QWidget *parent = nullptr)
+RecentProjectDialog::RecentProjectDialog(QSharedPointer<RecentProjectDataModel>rpdm ,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RecentProjectDialog),
-    _project_data_model(pdm)
+    _recent_project_data_model(rpdm)
 {
     ui->setupUi(this);
     this->setModal(true);
+    setDoubleClickAction();
     initObserver();
     initPlatformConfig();
     initConnect();
@@ -52,17 +54,18 @@ void RecentProjectDialog::initPlatformConfig(){
         for(int i=0;i<nProject.count();i++){
             QString pname = nProject.at(i).toElement().attributeNode("name").value();
             QString ppath = nProject.at(i).toElement().attributeNode("path").value();
-            _project_data_model->addRecentProject(pname,ppath);
+            QSharedPointer<ProjectDataModel> pdm(new ProjectDataModel());
+            pdm->setProject(pname,ppath);
+            _recent_project_data_model->addRecentProject(pname,pdm);
         }
     }
 }
 
 ///初始化观察者控件
 void RecentProjectDialog::initObserver(){
-    connect(_project_data_model,&ProjectDataModel::addRecentProjectEvent,this,[&](const  QString name,const  QString path){
+    connect(_recent_project_data_model.get(),&RecentProjectDataModel::addRecentProjectEvent,this,[&](const  QString name,const QSharedPointer<ProjectDataModel> pdm){
         QListWidgetItem *item = new QListWidgetItem;
         item->setSizeHint(QSize(10,70));
-        setDoubleClickAction(item);
         ui->lw_project->addItem(item);
 
         //定义每行条目的模板
@@ -73,17 +76,18 @@ void RecentProjectDialog::initObserver(){
         QFont f_name ("Ubuntu",12,75);
         l_name->setFont(f_name);
 
-        QLabel *l_path = new QLabel(path,w);
+        QLabel *l_path = new QLabel(pdm->projectPath(),w);
         l_path->setObjectName("l_path");
 
         //判断项目在路径中是否存在,项目文件是否在路径中存在,如果不存在
-        if(!existProject(path)){
+        if(!existProject(pdm->projectPath())){
             l_name->setStyleSheet("color:red");
             l_path->setStyleSheet("color:red");
         }
 
         layout->addWidget(l_name);
         layout->addWidget(l_path);
+        qDebug() << " name:" << name << " path:" << pdm->projectPath();
         w->setLayout(layout);
         ui->lw_project->setItemWidget(item,w);
 
@@ -91,12 +95,9 @@ void RecentProjectDialog::initObserver(){
 }
 
 ///设置点击动作
-void RecentProjectDialog::setDoubleClickAction(QListWidgetItem *li){
-//    connect(ui->lw_project,&QListWidget::itemClicked,this,[&](){});
+void RecentProjectDialog::setDoubleClickAction(){
     connect(ui->lw_project,&QListWidget::itemDoubleClicked,this,[&](QListWidgetItem *item){
         this->openProject(item);
-
-//        qDebug() << "item double clicked";
     });
 }
 
@@ -132,15 +133,15 @@ void RecentProjectDialog::openProject(QListWidgetItem *item){
             else if(label->objectName()=="l_path")
                 ppath = label->text();
         }
-        _project_data_model->setCurrentProjectName(pname);
-        _project_data_model->setCurrentProjectPath(ppath);
-        if(!existProject(_project_data_model->currentProjectPath())){
+        QSharedPointer<ProjectDataModel> pdm = QSharedPointer<ProjectDataModel>(new ProjectDataModel);
+        if(!existProject(ppath)){
             QMessageBox::warning(Q_NULLPTR,"警告","项目不存在",QMessageBox::Ok,QMessageBox::Ok);
             return;
         }
 
-        //当数据点击item设置完当前项目的数据后，发送消息通知主窗口当前项目信息
-        emit setCurrentProjectDataModelCompleted(_project_data_model);
+       //当数据点击item设置完当前项目的数据后，发送消息通知主窗口当前项目信息
+        pdm->setProject(pname,ppath);
+        emit setCurrentProjectDataModelCompleted(pdm);
         this->hide();
     }
 }

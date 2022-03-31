@@ -6,7 +6,7 @@
 #include <QDomDocument>
 #include <QTextStream>
 #include <QListWidgetItem>
-#include <project/modelsproject.hpp>
+#include <project/modelsrecentproject.hpp>
 #include <QDebug>
 #include <QFont>
 #include <QLabel>
@@ -21,25 +21,26 @@ class RecentProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RecentProjectDialog( ProjectDataModel *pdm,QWidget *parent = nullptr);
+    RecentProjectDialog(QSharedPointer<RecentProjectDataModel>rpdm,QWidget *parent = nullptr);
     ~RecentProjectDialog();
 
 Q_SIGNALS:
-    void setCurrentProjectDataModelCompleted(ProjectDataModel *projectPath);
+    void setCurrentProjectDataModelCompleted(QSharedPointer<ProjectDataModel>pdm);
     void recentProjectDialogClosed();
     void newProjectTriggered();
 
 
 private:
     void initPlatformConfig();
-    void setDoubleClickAction(QListWidgetItem *li);
+    void setDoubleClickAction();
     void initObserver();
     void initConnect();
     void openProject(QListWidgetItem *item);
     bool existProject(const QString ppath);
 private:
     Ui::RecentProjectDialog *ui;
-    ProjectDataModel *_project_data_model;
+    QSharedPointer<RecentProjectDataModel> _recent_project_data_model;
+    QSharedPointer<ProjectDataModel> _project_data_model;
 };
 
 #endif // RECENTPROJECTDIALOG_H

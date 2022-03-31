@@ -20,7 +20,7 @@ class ImportScriptDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ImportScriptDialog(ProjectDataModel *pdm,QWidget *parent = nullptr);
+    explicit ImportScriptDialog(QSharedPointer<ProjectDataModel>pdm,QWidget *parent = nullptr);
     ~ImportScriptDialog();
     void setImportProcess(const int cvalue,const int mvalue);
     void setListModels(ModuleLibrary *moduleLibrary);
@@ -33,7 +33,7 @@ private:
     void initButton();
 private:
     Ui::ImportScriptDialog *ui;
-    ProjectDataModel *_projectDataModel;
+    QSharedPointer<ProjectDataModel>_projectDataModel;
 };
 
 #endif // IMPORTSCRIPTDIALOG_H

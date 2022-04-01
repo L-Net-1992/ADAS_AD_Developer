@@ -2,9 +2,7 @@
 #define MONITORDIALOG_H
 
 #include <QDialog>
-#include <QTimer>
-#include <QList>
-#include <QCheckBox>
+#include <QTableWidget>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -12,76 +10,91 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
-#include <QtCharts/QValueAxis>
-#include "aiccchartview.h"
-#include "monitordatamodel.hpp"
+#include <QtCharts/QVXYModelMapper>
+#include <QLineSeries>
+#include <QSplineSeries>
+#include <QTimer>
+#include "monitor_files/monitor_signal.h"
 #include "nodeparser/inspector.hpp"
+#include "monitor_files/monitor_chartview.h"
 
+using namespace monitor;
 QT_CHARTS_USE_NAMESPACE
-#define     FixedColumnCount    4      //文件固定6列
+
+#define     FixedColumnCount    4      //文件固定4列
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MonitorDialog; }
 QT_END_NAMESPACE
-
 
 class MonitorDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    MonitorDialog(const QString ip,QWidget *parent = nullptr);
+    MonitorDialog(QWidget *parent = nullptr);
     ~MonitorDialog();
-    void InitTable();
-    void InitModel();
-    void CreatNewChart(MonitorDataModel *model);
+
+    void InitTableHeader(QTableWidget *tableWidget);
+    void ReplayTabCreatNewChart(QString name);
+    void MonitorTabCreatNewChart(QString name);
 
 private slots:
-    void tableSignalUpdate(QString signal, QColor color);
-    void timeoutSlotTimer1();
+    void ReplayTabTableSignalUpdate(QString signal, QColor color);
+    void MonitorTabTableSignalUpdate(QString signal, QColor color);
+//    void timeoutSlotTimer1();
     void timeoutSlotTimer2();
+    void timeoutSlotTimer3();
+    void SaveSignalData(QString name, QPointF data);
+
+//protected:
+//    virtual void closeEvent(QCloseEvent *e) override;
+
+private slots:
+
+    void on_lineEdit_returnPressed();
+
+    void on_btn_device_connect_clicked();
+
+    void on_btn_replay_start_clicked();
 
     void on_btn_replay_open_clicked();
-
-    void on_btn_monitor_record_clicked();
 
     void on_btn_monitor_start_clicked();
 
     void on_btn_monitor_stop_clicked();
 
-    void on_btn_add_clicked();
+    void on_btn_monitor_record_clicked();
 
-    void on_btn_replay_start_clicked();
-
-protected:
-    virtual void closeEvent(QCloseEvent *e) override;
-    void showEvent(QShowEvent *) override;
+    void on_btn_monitor_record_stop_clicked();
 
 private:
     Ui::MonitorDialog *ui;
-    QTimer *timer0;
-    QTimer *timer1;
-    QTimer *timer2;
-    QTimer *timer3;
 
 private:
-    MonitorDataModel *data_model_;
-    QMap<QString, QChart*> chart_list_;
-    QMap<QString, QLineSeries*> series_group_;
-    QMap<QString, QColor> color_group_;           // 保存信号颜色
-    std::vector<std::vector<float>> y_range_;   //保存y轴最大最小值<min,max>
-    QVector<float> y_val_range_{-10,10};
-    unsigned int line_number_ = 0;
-    unsigned int chart_number = 0;
-    unsigned int x_index_ = 0;
-    size_t signal_num_ = 0;     // 信号数据长度
-    bool replay_running_ = 0;
-    bool monitor_running = 0;
-    bool replay_loadfile = 0;
+    Inspector *inspector_{nullptr};
 
-//    Inspector inspector{"127.0.0.1"};
-    Inspector inspector;
-    size_t signal_active_number_ = 0;
-    size_t current_number = 0;
+    // Monitor参数定义
+    Monitor monitor_;
+    QTimer *monitor_timer_;
+    MonitorChartView *m_chartview;
+    QMap<QString, QLineSeries*> monitor_series_;
+    QMap<QString, QChart*> monitor_chart_;
+    int x_index1_ = 0;
+    bool monitor_running_{false};
+    QVector<float> y_val_range1_{-10.0,10.0};
+
+    // Record参数定义
+    bool record_running_=false;
+
+    // Replay参数定义
+    Replay replay;
+    QTimer *replay_timer_;
+    bool replay_running_ = 0;
+    int x_index_ = 0;
+    QVector<float> y_val_range_{-10.0,10.0};
+    QMap<QString, QLineSeries*> replay_series_;
+    QMap<QString, QChart*> replay_chart_;
+
 };
-#endif // DIALOG_H
+#endif // MONITORDIALOG_H

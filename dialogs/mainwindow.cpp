@@ -194,7 +194,7 @@ void MainWindow::initToolbar()
     ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&]{
         QJsonObject jo = getConfig();
-        monitorDialog = new MonitorDialog(jo.value("deviceIP").toString(),this);
+        monitorDialog = new MonitorDialog(this);
         monitorDialog->show();
     });
 

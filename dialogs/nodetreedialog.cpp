@@ -194,7 +194,7 @@ AICCToolButton * NodeTreeDialog::createToolButton(QString id, QString name,QStri
     if(caption.lastIndexOf("::")!=-1)
         caption.insert(caption.lastIndexOf("::")+2,"\n");
     tb->setText(caption);
-    tb->setToolTip(name);
+    tb->setToolTip(caption+"\n"+name);
     tb->setNodeIcon(iconName);
     tb->setNodeId(id);
     tb->setNodeName(name);

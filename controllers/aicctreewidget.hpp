@@ -93,10 +93,7 @@ private:
         QTreeWidgetItemIterator it(this);
         while(*it){
             if((*it)->whatsThis(0)=="dynamic_node"){
-//                QTreeWidgetItem *pwi = (*it)->parent();
                 vector.append(*it);
-//                pwi->removeChild((*it));
-//                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
             }
             ++it;
         }
@@ -189,6 +186,44 @@ protected:
             }
         }
     }
+
+    ///此处需重载dragEnterEvent函数，否则dropEvent函数不会响应
+    void dragEnterEvent(QDragEnterEvent* event){
+//        qDebug() << "drag enter event:" << event;
+        //此处需要执行以下两句，否则dropEvent不会响应
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+
+    ///放置函数
+    void dropEvent(QDropEvent *event){
+        const QMimeData *mdata = event->mimeData();
+        mdata->data("Data/name");
+        mdata->data("Data/caption");
+
+
+        QByteArray itemDataId = mdata->data("Data/id");
+        QDataStream dataStreamId(&itemDataId,QIODevice::ReadOnly);
+        QString id;
+        dataStreamId >> id;
+
+        QTreeWidgetItem * item = this->itemAt(event->pos());
+        QVariant v = item->data(0,Qt::UserRole+1);
+        int pid = v.toJsonObject().value("id").toInt();
+
+        AICCSqlite sqlite;
+        QString sql = QString("update modelNode set parentid = %0 where id = %1").arg(pid).arg(id);
+        sqlite.query(sql);
+
+
+        emit dropCompleted(_selectItem);
+//        emit dropCompleted(item);
+    }
+
+public:
+    Q_SIGNALS:
+    void dropCompleted(QTreeWidgetItem * item);
+
 
 
 private:

@@ -37,7 +37,7 @@
 
 using QtNodes::DataModelRegistry;
 
-AICCToolButton * createToolButton( QString name);
+//AICCToolButton * createToolButton( QString name);
 
 namespace Ui {
 class NodeTreeDialog;
@@ -59,7 +59,6 @@ signals:
     void nodeDoubleClicked(const QString nodeName);
 
 private slots:
-    void treeWidgetItemClicked(QTreeWidgetItem *item, int column);
     void itemClickedAction(QTreeWidgetItem *item,int column);
 
 private:
@@ -68,7 +67,7 @@ private:
     void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
     void makeModelMenuItem(AICCTreeWidget *atw);
-    AICCToolButton *createToolButton( QString name,QString caption);
+    AICCToolButton *createToolButton(QString id, QString name,QString caption);
 
 private:
     void initNodeTree(AICCTreeWidget * tw_root);

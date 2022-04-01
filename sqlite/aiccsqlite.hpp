@@ -43,6 +43,7 @@ public:
         }
     }
 
+
     ///sql语句执行后返回容器结果,赋值过程在函数参数中处理
     QVector<QMap<QString,QVariant>> query1(const QString sql,QMap<QString,QVariant> (*func_ptr)(QSqlQuery) ){
         QVector<QMap<QString,QVariant>> vector;

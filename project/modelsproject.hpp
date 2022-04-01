@@ -1,3 +1,8 @@
+//
+// Created by 冯冲 on 2022/3/24.
+//
+
+
 #ifndef MODELS_PROJECT_H
 #define MODELS_PROJECT_H
 
@@ -7,6 +12,8 @@
 #include <QFile>
 #include <QDomDocument>
 #include <QMessageBox>
+#include <QDebug>
+#include <QFileInfo>
 
 class ProjectDataModel:public QObject{
     Q_OBJECT
@@ -15,76 +22,63 @@ public:
 
     }
     ~ProjectDataModel(){}
-
 Q_SIGNALS:
-    void addRecentProjectEvent(const QString name, const QString path);
+    void projectDataModelLoadCompleted(const QString pname,const QString ppath);
 
 private:
     ///当前打开的项目名称
-    QString _currentProjectName;
+    QString _projectName;
     ///当前打开的项目路径
-    QString _currentProjectPath;
+    QString _projectPath;
     ///当前项目的子系统路径
-    QString _currentProjectSubSystemPath;
-    ///当前项目的项目数据
-    QJsonObject _currentProjectInfo;
+    QString _projectSubSystemPath;
+    ///项目信息xml文件
+    QString _projectXml;
     ///当前项目的所有flowScene数据
-    QStringList _currentFlowSceneSaveFiles;
-    ///最近访问的项目 QMap的key为项目名称，value为项目的路径
-    QList<QMap<QString,QString>> _recentProjects;
+    QStringList _flowSceneSaveFiles;
 
 
 public:
-    const QString &currentProjectName() const{return _currentProjectName;}
-    void setCurrentProjectName(const QString &newCurrentProjectName){_currentProjectName = newCurrentProjectName;}
-    const QString &currentProjectPath() const{return _currentProjectPath;}
-    void setCurrentProjectPath(const QString &newCurrentProjectPath){
-        _currentProjectPath = newCurrentProjectPath;
-        _currentProjectSubSystemPath = newCurrentProjectPath+"/subsystem";
+    const QString &projectName() const{return _projectName;}
+    const QString &projectPath() const{return _projectPath;}
+    const QString &projectSubSystemPath() const{return _projectSubSystemPath;}
+    const QStringList &flowSceneSaveFiles() {return _flowSceneSaveFiles;}
+    void setProject(const QString pname,const QString ppath){
+        const QFileInfo fileInfo(ppath);
+        setProject(fileInfo);
     }
-    const QString &currentProjectSubSystemPath() const{return _currentProjectSubSystemPath;}
-    const QJsonObject &currentProjectInfo() const{return _currentProjectInfo;}
-    void setCurrentProjectInfo(const QJsonObject &newCurrentProjectInfo){_currentProjectInfo = newCurrentProjectInfo;}
-    const QStringList &currentFlowSceneSaveFiles() {return _currentFlowSceneSaveFiles;}
-    void setCurrentFlowSceneSaveFiles(const QStringList &newCurrentFlowSceneSaveFiles){_currentFlowSceneSaveFiles = newCurrentFlowSceneSaveFiles;}
-    const QList<QMap<QString, QString> > &recentProjects() const{return _recentProjects;}
-    void setRecentProjects(const QList<QMap<QString, QString> > &newRecentProjects){_recentProjects = newRecentProjects;}
-    void addRecentProject( QString pname, QString ppath){
-        QMap<QString,QString> map;
-        map.insert(pname,ppath);
-        _recentProjects.append(map);
-        emit addRecentProjectEvent(pname,ppath);
-    };
+    /// 设置项目信息
+    /// 通过设置项目名称、路径可以获得项目的名称、路径、子目录、项目文件目录、项目文件内容
+    void setProject(const QFileInfo pFileInfo){
+        _projectName = pFileInfo.baseName();
+        _projectPath = pFileInfo.absoluteFilePath();
+        _projectSubSystemPath = _projectPath+"/subsystem";
+        _projectXml = _projectPath+"/.ap/project.xml";
+        parseProjectXml(_projectXml);
+        qDebug() << " project name:" << _projectName << " project path:" << _projectPath;
+    }
 
+private:
+    ///解析项目的配置文件
+    bool parseProjectXml(const QString pxml){
+        QFile file(pxml);
 
-    void readProjectXml(QFile &file){
         QDomDocument doc;
 
         if(!doc.setContent(&file)){
             file.close();
-            return;
+            return false;
         }
 
-        //获取项目名称
+        //获取项目下所有的flowScene文件
         QDomElement root = doc.documentElement();
-        _currentProjectName = root.attributeNode("name").value();
-
-        //获取项目路径
-        QStringList qsl = file.fileName().split("/"+_currentProjectName+"/.ap");
-        _currentProjectPath=qsl[0];
-
-        if(_currentProjectName==""){
-            QMessageBox::critical(Q_NULLPTR,"危险","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
-    //        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
-            return;
-        }
-
         QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
+        _flowSceneSaveFiles.clear();
         for(int i=0;i<flowScenes.count();i++){
             QDomNode flowScene = flowScenes.item(i);
-            _currentFlowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
+            _flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
         }
-
+        return true;
     }
 };
 

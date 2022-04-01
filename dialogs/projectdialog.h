@@ -22,7 +22,7 @@ class ProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ProjectDialog(QWidget *parent = nullptr);
+    ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QWidget *parent);
     ~ProjectDialog();
 
     const QString &getProjectName() const;
@@ -50,7 +50,7 @@ private:
     QString config1;
     QString config2;
     QStringList flowSceneSaveFiles;
-    ProjectDataModel *pDataModel;
+    QSharedPointer<ProjectDataModel> pDataModel;
 
 };
 

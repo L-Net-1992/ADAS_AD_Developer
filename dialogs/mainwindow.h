@@ -73,14 +73,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    //console
-    static void logOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg);
-    static void write(QString str);
-//private slots:
-
-public Q_SLOTS:
-    void on_pte_output_textChanged();
-    //console
 protected:
     void registrySceneGenerateNodeMenu(std::list<Invocable> parserResult);
 Q_SIGNALS:
@@ -97,7 +89,6 @@ private:
     void initTableWidget();
     void refreshTreeViewDynamicNode();                                       //刷新动态节点
     void initToolbar();
-    void setTreeNode(QTreeWidget *tw,const char* ptext,const char* picon);
     void initBreadcrumbNavigation();
     void initStackedWidget();
     void initImportScriptDialog();
@@ -105,27 +96,23 @@ private:
     void initRecentProjectDialog();
     void initDataInspectorDialog();
 
+    void saveProjectAction();
+    void openProjectAction();
     //打开项目动作函数部分
-    void pbOpenAction(QString projectPath = Q_NULLPTR);
+    void openProjectCompleted(const QString projectPath);
     //创建子系统动作函数
     void createSubsysetmAction();
 
     void initNodeEditor();
     void scriptParserCompletedAction(std::list<Invocable> parserResult);
     std::shared_ptr<DataModelRegistry> registerDataModels();
-//    QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
 
     void processStart(const QVector<QString> scriptNames,const int platformIndex);
     void importCompletedAction();
     void invocableParserAction(const std::string msg);
-
 public:
-Q_SIGNALS:
-     void redirectMsg(QString text);
-
-public:
-//    static inline QPlainTextEdit *pte_out = Q_NULLPTR;
+    void showMsg(QString msg);
 
 private:
     Ui::MainWindow *ui;
@@ -152,7 +139,9 @@ private:
     AICCStackedWidget asw;
 
     //project部分
-    ProjectDataModel *pDataModel;
+
+    QSharedPointer<ProjectDataModel> _currentProjectDataModel;
+    QSharedPointer<RecentProjectDataModel> _recentProjectDataModel;
 };
 
 

@@ -21,7 +21,7 @@ QT_CHARTS_USE_NAMESPACE
 #define     FixedColumnCount    4      //文件固定6列
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Dialog; }
+namespace Ui { class MonitorDialog; }
 QT_END_NAMESPACE
 
 
@@ -58,7 +58,7 @@ protected:
     void showEvent(QShowEvent *) override;
 
 private:
-    Ui::Dialog *ui;
+    Ui::MonitorDialog *ui;
     QTimer *timer0;
     QTimer *timer1;
     QTimer *timer2;

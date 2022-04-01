@@ -67,7 +67,7 @@ private:
     void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
     void makeModelMenuItem(AICCTreeWidget *atw);
-    AICCToolButton *createToolButton(QString id, QString name,QString caption);
+    AICCToolButton *createToolButton(QString id, QString name,QString caption,QString iconName);
 
 private:
     void initNodeTree(AICCTreeWidget * tw_root);

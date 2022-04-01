@@ -81,8 +81,7 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
         QString className = m.value("class_name").toString();
         QString caption = m.value("caption").toString();
         QString iconName = m.value("icon_name").toString();
-        tb = createToolButton(id,className,caption);
-        tb->setNodeIcon(iconName.replace(":",""));
+        tb = createToolButton(id,className,caption,iconName);
         ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
         i++;
     }
@@ -189,17 +188,18 @@ void NodeTreeDialog::setNodeMap(QMap<QString,QSet<QString>> pnm){
 }
 
 ///根据名称创建button
-AICCToolButton * NodeTreeDialog::createToolButton(QString id, QString name,QString caption){
-
+AICCToolButton * NodeTreeDialog::createToolButton(QString id, QString name,QString caption,QString iconName){
     AICCToolButton *tb = new AICCToolButton();
+    tb->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextUnderIcon);
     if(caption.lastIndexOf("::")!=-1)
         caption.insert(caption.lastIndexOf("::")+2,"\n");
-    tb->setText("\n\n"+caption);
+    tb->setText(caption);
+    tb->setToolTip(name);
+    tb->setNodeIcon(iconName);
     tb->setNodeId(id);
     tb->setNodeName(name);
     tb->setNodeCaption(caption);
-    tb->setToolTip(name);
-    //    tb->setNodeIcon("/res/nodeIcon/math_add.png");
+
     return tb;
 }
 

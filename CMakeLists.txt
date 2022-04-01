@@ -46,10 +46,13 @@ set ( PROJECT_SOURCES
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
-#    dialogs/mychartview.h dialogs/mychartview.cpp
+
     dialogs/recentprojectdialog.h dialogs/recentprojectdialog.cpp dialogs/recentprojectdialog.ui
     dialogs/exportmoduledialog.h dialogs/exportmoduledialog.cpp dialogs/exportmoduledialog.ui
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
+
+    monitor_files/monitor_chartview.h monitor_files/monitor_chartview.cpp
+    monitor_files/monitor_signal.h  monitor_files/monitor_signal.cpp
 
     image.qrc
     itemreadonlydelegate.h
@@ -64,8 +67,6 @@ set ( PROJECT_SOURCES
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
-    controllers/aiccchartview.h
-    controllers/monitordatamodel.hpp
 
     nodeparser/inspector.hpp
     nodeparser/inspector.cpp

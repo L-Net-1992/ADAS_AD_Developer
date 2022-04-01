@@ -28,9 +28,11 @@ public:
     };
     ///设置Node的Icon
     void setNodeIcon(const QString iconUrl){
-        this->setStyleSheet(this->styleSheet()+"background-image:url(:"+iconUrl+");");
+//        this->setStyleSheet(this->styleSheet()+"background-image:url(:"+iconUrl+");");
+        QIcon icon(iconUrl);
+        this->setIcon(icon);
     }
-
+    void setNodeId(QString id){_nodeId = id;}
     void setNodeName(QString name){_nodeName = name;}
     void setNodeCaption(QString caption){_nodeCaption = caption;}
 protected:
@@ -48,10 +50,16 @@ protected:
             QString sidataCaption = _nodeCaption;
             dataStreamCaption << sidataCaption;
 
+            QByteArray dataItemId;
+            QDataStream dataStreamId(&dataItemId,QIODevice::WriteOnly);
+            QString dataId = _nodeId;
+            dataStreamId << dataId;
+
             QDrag *drag = new QDrag(this);
             QMimeData *mimeData = new QMimeData();
             mimeData->setData("Data/name",dataItemName);
             mimeData->setData("Data/caption",dataItemCaption);
+            mimeData->setData("Data/id",dataItemId);
 
             drag->setMimeData(mimeData);
             drag->exec(Qt::MoveAction);
@@ -79,6 +87,7 @@ private:
     QPoint _pressPoint;
     QString _nodeName;
     QString _nodeCaption;
+    QString _nodeId;
 
 };
 

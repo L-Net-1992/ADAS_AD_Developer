@@ -42,7 +42,6 @@ void CalibrationDialog::init(){
 
     //获得所有可标定参数的列表，map中key为名字，value为当前值
     auto param_value = inspector.getParamValue();
-    qDebug() << "params: " << param_value;
     for(auto it=param_value.begin();it!=param_value.end();++it) {
         auto rowcount = ui->tw_params->rowCount();
         ui->tw_params->setRowCount(rowcount + 1);
@@ -136,7 +135,10 @@ void CalibrationDialog::initButton(){
         for(int i=0;i<ui->tw_params->rowCount();i++) {
             QString name = ui->tw_params->item(i,0)->text();
             auto setval =ui->tw_params->item(i,2);
-            if(setval != 0) {
+            if((setval == nullptr) || (setval->text().isEmpty())) {
+                return;
+            }
+            else {
                 QMap<QString, float> set_param;
                 set_param[name] = setval->text().toFloat();
                 inspector.setParamValue(set_param);

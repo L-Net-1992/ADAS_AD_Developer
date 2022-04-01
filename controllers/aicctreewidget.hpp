@@ -131,7 +131,6 @@ protected:
             if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR &&QString::compare(sidata,"")!=0)
             {
                 QDrag* drag = new QDrag(this);
-//                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
 
                 QMimeData* mimeData = new QMimeData;
                 mimeData->setData("Data/caption",dataItem);
@@ -174,11 +173,9 @@ protected:
                         QMenu menu;
                         menu.addAction(tr("设置到应用软件"),this,[&]{
                             updateDynamicNode(37,item->text(0),query.value(1).toInt());
-//                            qDebug() << "37   pname:" << pname << "  item name:" << item->text(0) ;
                         });
                         menu.addAction(tr("设置到自定义模块"),this,[&]{
                             updateDynamicNode(38,item->text(0),query.value(1).toInt());
-//                            qDebug() << "38   pname:" << pname << "  item name:" << item->text(0);
                         });
                         menu.exec(QCursor::pos());
                     }
@@ -215,9 +212,8 @@ protected:
         QString sql = QString("update modelNode set parentid = %0 where id = %1").arg(pid).arg(id);
         sqlite.query(sql);
 
-
+        //将当前选择的item传送出去，用来刷新当前目录下的模块列表
         emit dropCompleted(_selectItem);
-//        emit dropCompleted(item);
     }
 
 public:

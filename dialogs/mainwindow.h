@@ -50,6 +50,7 @@
 #include "nodeparser/subsystem_library.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "project/modelsproject.hpp"
+#include "process/aiccprocess.hpp"
 
 
 QT_BEGIN_NAMESPACE
@@ -92,23 +93,23 @@ private:
     void initBreadcrumbNavigation();
     void initStackedWidget();
     void initImportScriptDialog();
-    void initProjectDialog();
+//    void initProjectDialog();
     void initRecentProjectDialog();
     void initDataInspectorDialog();
+    void initProjectDataModel();
 
     void saveProjectAction();
     void openProjectAction();
     //打开项目动作函数部分
-    void openProjectCompleted(const QString projectPath);
+    void openProjectCompleted(const QString pname,const QString ppath);
     //创建子系统动作函数
-    void createSubsysetmAction();
+//    void createSubsysetmAction();
 
     void initNodeEditor();
     void scriptParserCompletedAction(std::list<Invocable> parserResult);
     std::shared_ptr<DataModelRegistry> registerDataModels();
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
 
-    void processStart(const QVector<QString> scriptNames,const int platformIndex);
     void importCompletedAction();
     void invocableParserAction(const std::string msg);
 public:
@@ -132,7 +133,7 @@ private:
 //    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
     ModuleLibrary *_moduleLibrary;
     SubsystemLibrary *_subsystemLibrary;
-    QProcess * process;
+    QSharedPointer<AICCProcess> _process;
 
     //nodeeditor部分
     QMap<QString,QSet<QString>> nodeMap;

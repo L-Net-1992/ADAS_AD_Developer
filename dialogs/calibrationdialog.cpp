@@ -5,7 +5,7 @@ CalibrationDialog::CalibrationDialog(const QString ip,QSharedPointer<ProjectData
     QDialog(parent),
     ui(new Ui::CalibrationDialog),
     _projectDataModel(pdm),
-    inspector(ip)
+    _ip(ip)
 {
     ui->setupUi(this);
     init();
@@ -29,8 +29,8 @@ void CalibrationDialog::init(){
     //工具条按钮靠右
     QWidget *spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-//    ui->toolBar->addAction(ui->action_sync_to_module);
-//    ui->toolBar->addWidget(spacer);
+    //    ui->toolBar->addAction(ui->action_sync_to_module);
+    //    ui->toolBar->addWidget(spacer);
     ui->toolBar->addAction(ui->action_save);
     ui->toolBar->addAction(ui->action_load);
     ui->toolBar->addAction(ui->action_update);
@@ -41,27 +41,35 @@ void CalibrationDialog::init(){
     }
 
     //获得所有可标定参数的列表，map中key为名字，value为当前值
-    auto param_value = inspector.getParamValue();
-    for(auto it=param_value.begin();it!=param_value.end();++it) {
-        auto rowcount = ui->tw_params->rowCount();
-        ui->tw_params->setRowCount(rowcount + 1);
+    try{
+        Inspector inspector(_ip);
+        auto param_value = inspector.getParamValue();
+        for(auto it=param_value.begin();it!=param_value.end();++it) {
+            auto rowcount = ui->tw_params->rowCount();
+            ui->tw_params->setRowCount(rowcount + 1);
 
-        QTableWidgetItem *item = new QTableWidgetItem("");
-        item->setText(it.key());
-        ui->tw_params->setItem(rowcount,0,item);
+            QTableWidgetItem *item = new QTableWidgetItem("");
+            item->setText(it.key());
+            ui->tw_params->setItem(rowcount,0,item);
 
-        QTableWidgetItem *item2 = new QTableWidgetItem("");
-        item2->setText(QString("%1").arg(it.value()));
-        ui->tw_params->setItem(rowcount,1,item2);
+            QTableWidgetItem *item2 = new QTableWidgetItem("");
+            item2->setText(QString("%1").arg(it.value()));
+            ui->tw_params->setItem(rowcount,1,item2);
+        }
+
+    }catch(std::exception &e){
+        qCritical() << "calibrationdialog exception:" << e.what();
     }
 
-    //设置第三列为只读,但此方法会覆盖掉原来的数据
-//    for(int i=0;i<ui->tw_params->rowCount();i++){
-//        QTableWidgetItem *item = new QTableWidgetItem();
-//        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-//        //item->setText("3");
-//        ui->tw_params->setItem(i,1,item);
-//    }
+
+
+    //原来已经注释 设置第三列为只读,但此方法会覆盖掉原来的数据
+    //    for(int i=0;i<ui->tw_params->rowCount();i++){
+    //        QTableWidgetItem *item = new QTableWidgetItem();
+    //        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
+    //        //item->setText("3");
+    //        ui->tw_params->setItem(i,1,item);
+    //    }
 }
 
 ///初始化按钮事件
@@ -120,12 +128,12 @@ void CalibrationDialog::initButton(){
 
         //fill the new value from the seclectd file to calibration table followed the key value
         QJsonObject json_load=json_doc.object();
-            for(int i=0;i<tw->rowCount();i++){
-                param_name = tw->item(i,0)->text();
-                if(!json_load.value(param_name).isNull()){
-                    tw->setItem(i,2,new QTableWidgetItem(json_load.value(param_name).toString()));
-                }
+        for(int i=0;i<tw->rowCount();i++){
+            param_name = tw->item(i,0)->text();
+            if(!json_load.value(param_name).isNull()){
+                tw->setItem(i,2,new QTableWidgetItem(json_load.value(param_name).toString()));
             }
+        }
     });
 
     //Update按钮
@@ -141,12 +149,17 @@ void CalibrationDialog::initButton(){
             else {
                 QMap<QString, float> set_param;
                 set_param[name] = setval->text().toFloat();
+                try{
+                Inspector inspector(_ip);
                 inspector.setParamValue(set_param);
 
                 auto param_value = inspector.getParamValue();
                 QTableWidgetItem *item2 = new QTableWidgetItem("");
                 item2->setText(QString("%1").arg(param_value.value(name)));
                 ui->tw_params->setItem(i,1,item2);
+                }catch(std::exception &e){
+                    qCritical() << "calibrationdialog exception:" << e.what();
+                }
             }
         }
 

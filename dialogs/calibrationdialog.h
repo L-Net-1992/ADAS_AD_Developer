@@ -31,7 +31,8 @@ private:
     QSharedPointer<ProjectDataModel> _projectDataModel;
 //    QString project_path;
     QMap<QString, float> value_group_;
-    Inspector inspector;
+//    Inspector inspector;
+    QString _ip;
 
 private:
     void init();

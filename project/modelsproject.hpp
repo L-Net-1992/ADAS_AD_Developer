@@ -55,6 +55,7 @@ public:
         _projectSubSystemPath = _projectPath+"/subsystem";
         _projectXml = _projectPath+"/.ap/project.xml";
         parseProjectXml(_projectXml);
+        emit projectDataModelLoadCompleted(_projectName,_projectPath);
     }
 
 private:

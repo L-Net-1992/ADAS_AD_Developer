@@ -335,8 +335,8 @@ private:
         //        tool.appendArgumentsAdjuster(getInsertArgumentAdjuster("--language=c++", // C++
         //                                                               clang::tooling::ArgumentInsertPosition::END));
         FindInvocableActionFactory factory(findInvocableContext);
-        DiagnosticConsumer dc;
-        tool.setDiagnosticConsumer(&dc);
+//        DiagnosticConsumer dc;
+//        tool.setDiagnosticConsumer(&dc);
         int ret = tool.run(&factory);
         if (ret != 0) {
             error_message = "编译错误，请查看编译日志";

@@ -89,6 +89,7 @@ set ( PROJECT_SOURCES
 
     sqlite/aiccsqlite.hpp
 
+    process/aiccprocess.hpp
 #    nlohmann/json.hpp
     conf/config.json
     conf/model_menu.json

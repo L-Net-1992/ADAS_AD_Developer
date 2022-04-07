@@ -103,9 +103,10 @@ void ProjectDialog::initButton()
             if(file.open(QFile::ReadWrite))
             {
                 writeProjectXml(file);
+                ui->sw_project->setCurrentIndex(0);
                 pDataModel->setProject(projectName,projectPath+"/"+projectName);
+
                 this->accept();
-                emit projectCreateCompleted(true);
                 return;
             }
         }
@@ -113,7 +114,7 @@ void ProjectDialog::initButton()
         //set current page index is 0;
         ui->sw_project->setCurrentIndex(0);
 
-        emit projectCreateCompleted(false);
+//        emit projectCreateCompleted(false);
     });
 
 

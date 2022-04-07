@@ -32,7 +32,7 @@ public:
     void setProjectPath(const QString &newProjectPath);
 
 Q_SIGNALS:
-    void projectCreateCompleted(bool success);
+    void projectCreateCompleted(bool success,QString pname = Q_NULLPTR,QString ppath = Q_NULLPTR);
     void projectDialogCanceled();
 
 private:

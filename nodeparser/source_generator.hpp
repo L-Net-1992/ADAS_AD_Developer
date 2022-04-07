@@ -65,10 +65,7 @@ private:
                 std::string in = in_model->invocable().getVarName() + pl;
                 connections.find(out)->second.push_back(in);
             }
-
-
         }
-
     }
 
     static std::string indent(int n) {

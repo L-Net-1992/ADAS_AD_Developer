@@ -126,17 +126,6 @@ public:
                 pfile.flush();
                 pfile.close();
             }
-//            while(nProject.count()>0){
-//                qDebug() << "nProject:" << nProject.at(0).nodeName();
-//                nProjects.removeChild(nProject.at(0));
-//            }
-
-//            nProjects.removeChild()
-//            nProjects.childNodes().at(0).
-
-//            QDomNodeList nProject = nProjects.childNodes();
-
-
         }
 
     }

@@ -609,7 +609,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1055,6 +1055,9 @@ gridline-color:#FFFFFF;
          </item>
          <item>
           <widget class="QToolButton" name="tb_script_deploy">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -1095,6 +1098,9 @@ gridline-color:#FFFFFF;
          </item>
          <item>
           <widget class="QToolButton" name="tb_run">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -1135,6 +1141,9 @@ gridline-color:#FFFFFF;
          </item>
          <item>
           <widget class="QToolButton" name="tb_stop">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>

@@ -183,17 +183,18 @@ void MainWindow::initToolbar()
 
     ///平台选择下拉框
     connect(ui->cb_select_platform,&QComboBox::currentTextChanged,this,[&](const QString &text){
-        if(text==QString::fromLocal8Bit("SelectPlatform")){
+        //        if(text==QString::fromLocal8Bit("SelectPlatform") ){
+        if(ui->cb_select_platform->currentIndex()==0){
             ui->tb_code_compiler->setEnabled(false);
             ui->tb_script_deploy->setEnabled(false);
             ui->tb_run->setEnabled(false);
-            ui->tb_run->setEnabled(false);
+            ui->tb_stop->setEnabled(false);
         }
         else{
             ui->tb_code_compiler->setEnabled(true);
             ui->tb_script_deploy->setEnabled(true);
             ui->tb_run->setEnabled(true);
-            ui->tb_run->setEnabled(true);
+            ui->tb_stop->setEnabled(true);
         }
     });
 
@@ -419,7 +420,7 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
 
     //4:将当前打开的项目排序到第一位
     _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
-//    _recentProjectDataModel->sortProjectFirst("aaa",_currentProjectDataModel);
+    //    _recentProjectDataModel->sortProjectFirst("aaa",_currentProjectDataModel);
 
 }
 

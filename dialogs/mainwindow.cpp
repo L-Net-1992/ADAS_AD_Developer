@@ -123,15 +123,15 @@ void MainWindow::initToolbar()
         AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
 
         //不放到项目路径中，放到平台执行目录中，否则编译时找不到
-        std::string generatePath = (QApplication::applicationDirPath()+"/generate").toStdString();
+        std::string generatePath = (QApplication::applicationDirPath()+"/App").toStdString();
         std::filesystem::path dir(generatePath);
         SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
 
         //generate shell script
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/install/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
+        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
 
         generatePath.append("/generate.cpp");
         eDialog->openTextFile(QString::fromStdString(generatePath));
@@ -457,7 +457,7 @@ void MainWindow::initNodeEditor(){
     _subsystemLibrary = new SubsystemLibrary;
 
     //1:解析pakage文件
-    const QString path = QApplication::applicationDirPath()+"/install/";
+    const QString path = QApplication::applicationDirPath()+"/ICVOS/";
     QStringList files = getADASPackagesFileList(path);
 
     //2:执行加载前的准备动作

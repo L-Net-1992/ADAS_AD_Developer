@@ -419,6 +419,7 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
 
     //4:将当前打开的项目排序到第一位
     _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
+//    _recentProjectDataModel->sortProjectFirst("aaa",_currentProjectDataModel);
 
 }
 

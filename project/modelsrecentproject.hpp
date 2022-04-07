@@ -86,17 +86,50 @@ public:
         QDomDocument doc;
 
         //打开平台项目文件
-        if(pfile.open(QIODevice::ReadOnly) && doc.setContent(&pfile)){
+        if(pfile.open(QIODevice::ReadWrite) && doc.setContent(&pfile)){
             QDomElement root = doc.documentElement();
             QDomNodeList nlist = root.elementsByTagName("projects");
             QDomNode nProjects = nlist.at(0);
 
             QDomNodeList nProject = nProjects.childNodes();
 
+            //1：判断当前pname的节点是否存在
+            int isProjectExist = -1;
             for(int i=0;i<nProject.count();i++){
-                nProjects.removeChild(nProject.at(i));
-                qDebug() << "nProject " << i;
+                if(pname==nProject.at(i).attributes().namedItem("name").nodeValue()){
+                    isProjectExist = i;
+                    break;
+                }
             }
+
+            //2:不存在新增，存在则调整顺序
+            if(isProjectExist==-1){
+                QDomElement newProject = doc.createElement("project");
+                QDomAttr newNameAttr = doc.createAttribute("name");
+                newNameAttr.setValue(pname);
+                QDomAttr newPathAttr = doc.createAttribute("path");
+                newPathAttr.setValue(pdm->projectPath());
+                newProject.setAttributeNode(newNameAttr);
+                newProject.setAttributeNode(newPathAttr);
+                nProjects.insertBefore(newProject,nProject.at(0));
+            }else{
+                QDomNode n = nProject.at(isProjectExist);
+                nProjects.insertBefore(n,nProjects.firstChild());
+            }
+
+            //写入数据
+            pfile.close();
+            pfile.setFileName(platformPath);
+            if(pfile.open(QIODevice::WriteOnly)){
+                QTextStream outStream(&pfile);
+                doc.save(outStream,4);
+                pfile.flush();
+                pfile.close();
+            }
+//            while(nProject.count()>0){
+//                qDebug() << "nProject:" << nProject.at(0).nodeName();
+//                nProjects.removeChild(nProject.at(0));
+//            }
 
 //            nProjects.removeChild()
 //            nProjects.childNodes().at(0).

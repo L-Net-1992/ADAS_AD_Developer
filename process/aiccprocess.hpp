@@ -18,7 +18,7 @@ public:
 
     void processStart(const QVector<QString> scriptNames,const int platformIndex){
         QString bash="bash ";
-        bash.append(QApplication::applicationDirPath()).append("/generate/").append(scriptNames[platformIndex-1]);
+        bash.append(QApplication::applicationDirPath()).append("/App/").append(scriptNames[platformIndex-1]);
         QString killprocess = "kill -9 $(ps -ef|gre        if(series_group_!=Q_NULLPTR)p adas_generate|grep -v grep|awk '{print $2}')";
         this->terminate();
         this->start(bash);

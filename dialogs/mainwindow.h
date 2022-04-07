@@ -93,7 +93,6 @@ private:
     void initBreadcrumbNavigation();
     void initStackedWidget();
     void initImportScriptDialog();
-//    void initProjectDialog();
     void initRecentProjectDialog();
     void initDataInspectorDialog();
     void initProjectDataModel();
@@ -101,7 +100,7 @@ private:
     void saveProjectAction();
     void openProjectAction();
     //打开项目动作函数部分
-    void openProjectCompleted(const QString pname,const QString ppath);
+    void projectDataModelLoadCompletedAction(const QString pname,const QString ppath);
     //创建子系统动作函数
 //    void createSubsysetmAction();
 

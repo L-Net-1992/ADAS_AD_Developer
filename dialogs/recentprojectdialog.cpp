@@ -22,43 +22,7 @@ RecentProjectDialog::~RecentProjectDialog()
 
 
 void RecentProjectDialog::initPlatformConfig(){
-    QString platformPath = QApplication::applicationDirPath().append("/platform.xml");
-    QFile pfile(platformPath);
-    QDomDocument doc;
-    //如果没有平台项目文件则创建一个新的
-    if(!pfile.exists()){
-        pfile.open(QIODevice::ReadWrite | QIODevice::Text);
-        QDomProcessingInstruction ins;
-        ins = doc.createProcessingInstruction("xml","version=\'1.0\' encoding=\'UTF-8\'");
-        doc.appendChild(ins);
-        QDomElement root = doc.createElement("platform");
-        QDomElement projects = doc.createElement("projects");
-        root.appendChild(projects);
-        doc.appendChild(root);
-
-        QTextStream stream(&pfile);
-        stream.setCodec("UTF-8");
-
-        doc.save(stream,4);         //4表示缩进的空格数
-        pfile.close();
-    }
-
-    //打开平台项目文件
-    if(pfile.open(QIODevice::ReadOnly) && doc.setContent(&pfile)){
-        QDomElement root = doc.documentElement();
-        QDomNodeList nlist = root.elementsByTagName("projects");
-        QDomNode nProjects = nlist.at(0);
-
-        QDomNodeList nProject = nProjects.childNodes();
-
-        for(int i=0;i<nProject.count();i++){
-            QString pname = nProject.at(i).toElement().attributeNode("name").value();
-            QString ppath = nProject.at(i).toElement().attributeNode("path").value();
-            QSharedPointer<ProjectDataModel> pdm(new ProjectDataModel());
-            pdm->setProject(pname,ppath);
-            _recent_project_data_model->addRecentProject(pname,pdm);
-        }
-    }
+    _recent_project_data_model->readPlatformConfig();
 }
 
 ///初始化观察者控件
@@ -80,7 +44,7 @@ void RecentProjectDialog::initObserver(){
         l_path->setObjectName("l_path");
 
         //判断项目在路径中是否存在,项目文件是否在路径中存在,如果不存在
-        if(!existProject(pdm->projectPath())){
+        if(!_recent_project_data_model->existProject(pdm->projectPath())){
             l_name->setStyleSheet("color:red");
             l_path->setStyleSheet("color:red");
         }
@@ -97,7 +61,7 @@ void RecentProjectDialog::initObserver(){
 ///设置点击动作
 void RecentProjectDialog::setDoubleClickAction(){
     connect(ui->lw_project,&QListWidget::itemDoubleClicked,this,[&](QListWidgetItem *item){
-        this->openProject(item);
+        this->openProjectAction(item);
     });
 }
 
@@ -114,7 +78,7 @@ void RecentProjectDialog::initConnect(){
     });
     connect(ui->pb_open_project,&QPushButton::clicked,this,[&]{
         if(ui->lw_project->selectedItems().count()>0){
-            openProject(ui->lw_project->selectedItems().at(0));
+            openProjectAction(ui->lw_project->selectedItems().at(0));
         }else{
             QMessageBox::information(Q_NULLPTR,"信息","请在列表中先选择一个可用项目",QMessageBox::Ok,QMessageBox::Ok);
         }
@@ -122,7 +86,7 @@ void RecentProjectDialog::initConnect(){
 }
 
 ///打开项目操作
-void RecentProjectDialog::openProject(QListWidgetItem *item){
+void RecentProjectDialog::openProjectAction(QListWidgetItem *item){
     QWidget *widget = ui->lw_project->itemWidget(item);
     if(widget!=Q_NULLPTR){
         QList<QLabel *> labelList = widget->findChildren<QLabel*>();
@@ -134,7 +98,7 @@ void RecentProjectDialog::openProject(QListWidgetItem *item){
                 ppath = label->text();
         }
         QSharedPointer<ProjectDataModel> pdm = QSharedPointer<ProjectDataModel>(new ProjectDataModel);
-        if(!existProject(ppath)){
+        if(!_recent_project_data_model->existProject(ppath)){
             QMessageBox::warning(Q_NULLPTR,"警告","项目不存在",QMessageBox::Ok,QMessageBox::Ok);
             return;
         }
@@ -146,10 +110,4 @@ void RecentProjectDialog::openProject(QListWidgetItem *item){
     }
 }
 
-///判断项目是否存在
-bool RecentProjectDialog::existProject(const QString ppath){
-    QDir existDir(ppath);
-    QFile existFile(ppath+"/.ap/project.xml");
-    if(!existDir.exists() || !existFile.exists()) return false;
-    return true;
-}
+

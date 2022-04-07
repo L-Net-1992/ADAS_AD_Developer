@@ -35,8 +35,7 @@ private:
     void setDoubleClickAction();
     void initObserver();
     void initConnect();
-    void openProject(QListWidgetItem *item);
-    bool existProject(const QString ppath);
+    void openProjectAction(QListWidgetItem *item);
 private:
     Ui::RecentProjectDialog *ui;
     QSharedPointer<RecentProjectDataModel> _recent_project_data_model;

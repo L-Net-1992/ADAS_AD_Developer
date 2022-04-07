@@ -387,14 +387,14 @@ void MainWindow::openProjectAction(){
 }
 
 ///打开项目完成后执行部分
-void MainWindow::openProjectCompleted(const QString pname,const QString ppath){
+void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const QString ppath){
     //0:数据准备
     this->setWindowTitle(_currentProjectDataModel->projectName()+" ("+_currentProjectDataModel->projectPath()+") "+" - 图形化ADAS/AD应用开发系");
     ui->sw_flowscene->initDefaultScenes();
     FlowScene *scene =  static_cast<AICCFlowView *>(ui->sw_flowscene->currentWidget())->scene();
 
 
-    //2:判断是否有subsystem文件夹如果有则直接设置目录，否则创新的目录再进行设置
+    //1:判断是否有subsystem文件夹如果有则直接设置目录，否则创新的目录再进行设置
     QString psubsystem = _currentProjectDataModel->projectSubSystemPath();
     QDir dirSubsystem;
     if(!dirSubsystem.exists(psubsystem)) dirSubsystem.mkpath(psubsystem);
@@ -402,11 +402,11 @@ void MainWindow::openProjectCompleted(const QString pname,const QString ppath){
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
 
-    //3:注册所有的功能模块到右键上
+    //2:注册所有的功能模块到右键上
     std::shared_ptr<DataModelRegistry> dmr = registerDataModels();
     ui->sw_flowscene->getCurrentView()->scene()->setRegistry(dmr);
 
-    //4：将名称为mainFlowScene的文件内容加载到主FlowScene上
+    //3：将名称为mainFlowScene的文件内容加载到主FlowScene上
     QString loadFileName = _currentProjectDataModel->projectPath()+"/"+ _currentProjectDataModel->flowSceneSaveFiles()[0];
     if (!QFileInfo::exists(loadFileName)) return;
 
@@ -416,6 +416,10 @@ void MainWindow::openProjectCompleted(const QString pname,const QString ppath){
     scene->clearScene();
     QByteArray wholeFile = loadFile.readAll();
     scene->loadFromMemory(wholeFile);
+
+    //4:将当前打开的项目排序到第一位
+    _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
+
 }
 
 ///初始化最近打开项目窗口
@@ -437,7 +441,7 @@ void MainWindow::initRecentProjectDialog(){
 
 ///初始化数据模型
 void MainWindow::initProjectDataModel(){
-    connect(_currentProjectDataModel.get(),&ProjectDataModel::projectDataModelLoadCompleted,this,&MainWindow::openProjectCompleted);
+    connect(_currentProjectDataModel.get(),&ProjectDataModel::projectDataModelLoadCompleted,this,&MainWindow::projectDataModelLoadCompletedAction);
 }
 
 ///NodeEditor数据处理部分

@@ -92,5 +92,8 @@
         <file>res/Rec.png</file>
         <file>res/Rec1.png</file>
         <file>res/Stop1.png</file>
+        <file>res/nicon/node_output.png</file>
+        <file>res/nicon/node_none.png</file>
+        <file>res/nicon/node_input.png</file>
     </qresource>
 </RCC>

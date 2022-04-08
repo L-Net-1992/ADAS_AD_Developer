@@ -78,7 +78,6 @@ public:
 
         }
         return ret;
-
     }
 
     std::shared_ptr<QtNodes::DataModelRegistry> test2() const{
@@ -95,7 +94,6 @@ public:
             ret->registerModel<InvocableDataModel>(f, "test");
         }
         return ret;
-
     }
 
     std::list<Invocable> getParseResult() { return _parseResult; }

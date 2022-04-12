@@ -138,8 +138,8 @@ void CalibrationDialog::initButton(){
 
     //Update按钮
     connect(ui->action_update,&QAction::triggered,this,[=](){
+        Inspector inspector(_ip);
         //标定参数，通过map可以一次设置多个变量
-
         for(int i=0;i<ui->tw_params->rowCount();i++) {
             QString name = ui->tw_params->item(i,0)->text();
             auto setval =ui->tw_params->item(i,2);
@@ -150,13 +150,11 @@ void CalibrationDialog::initButton(){
                 QMap<QString, float> set_param;
                 set_param[name] = setval->text().toFloat();
                 try{
-                Inspector inspector(_ip);
-                inspector.setParamValue(set_param);
-
-                auto param_value = inspector.getParamValue();
-                QTableWidgetItem *item2 = new QTableWidgetItem("");
-                item2->setText(QString("%1").arg(param_value.value(name)));
-                ui->tw_params->setItem(i,1,item2);
+                    inspector.setParamValue(set_param);
+                    auto param_value = inspector.getParamValue();
+                    QTableWidgetItem *item2 = new QTableWidgetItem("");
+                    item2->setText(QString("%1").arg(param_value.value(name)));
+                    ui->tw_params->setItem(i,1,item2);
                 }catch(std::exception &e){
                     qCritical() << "calibrationdialog exception:" << e.what();
                 }

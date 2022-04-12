@@ -349,7 +349,7 @@
         </widget>
        </item>
        <item>
-        <widget class="AICCTreeWidget" name="tw_node">
+        <widget class="AICCStructTreeWidget" name="tw_node">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -1757,11 +1757,6 @@ gridline-color:#FFFFFF;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AICCTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>controllers/aicctreewidget.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>AICCBreadcrumbNavigation</class>
    <extends>QLabel</extends>
    <header>controllers/aiccbreadcrumbnavigation.hpp</header>
@@ -1771,6 +1766,11 @@ gridline-color:#FFFFFF;
    <extends>QStackedWidget</extends>
    <header>controllers/aiccstackedwidget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AICCStructTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>controllers/aiccstructtreewidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

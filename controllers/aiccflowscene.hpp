@@ -37,7 +37,7 @@ public:
 
         });
 
-
+//        connect(this,&FlowScene::)
 
     }
     ~AICCFlowScene(){}
@@ -52,6 +52,8 @@ public:
             this->nodePlaced(node);
         }
     }
+
+
 
 public:
 Q_SIGNALS:

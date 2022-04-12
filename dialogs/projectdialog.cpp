@@ -1,10 +1,11 @@
 #include "projectdialog.h"
 #include "ui_projectdialog.h"
 
-ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QWidget *parent) :
+ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer<RecentProjectDataModel> rpdm,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ProjectDialog),
-    pDataModel(pdm)
+    pDataModel(pdm),
+    rProjectDataModel(rpdm)
 {
     ui->setupUi(this);
     initButton();
@@ -106,6 +107,9 @@ void ProjectDialog::initButton()
                 ui->sw_project->setCurrentIndex(0);
                 pDataModel->setProject(projectName,projectPath+"/"+projectName);
 
+                //为最近项目数据模型增加数据
+                rProjectDataModel->sortProjectFirst(projectName,pDataModel);
+
                 this->accept();
                 return;
             }
@@ -114,7 +118,7 @@ void ProjectDialog::initButton()
         //set current page index is 0;
         ui->sw_project->setCurrentIndex(0);
 
-//        emit projectCreateCompleted(false);
+
     });
 
 

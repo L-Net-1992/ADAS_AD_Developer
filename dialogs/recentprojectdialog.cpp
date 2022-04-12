@@ -103,7 +103,7 @@ void RecentProjectDialog::openProjectAction(QListWidgetItem *item){
             return;
         }
 
-       //当数据点击item设置完当前项目的数据后，发送消息通知主窗口当前项目信息
+        //当数据点击item设置完当前项目的数据后，发送消息通知主窗口当前项目信息
         pdm->setProject(pname,ppath);
         emit setCurrentProjectDataModelCompleted(pdm);
         this->hide();

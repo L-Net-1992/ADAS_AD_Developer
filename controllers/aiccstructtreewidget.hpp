@@ -68,7 +68,7 @@ private:
         makeTreeWidgetItem(v_nodes,module_library,subsystem_library,ptwi);
     }
 
-    ///生成TreeWidgetItem控件
+    ///生成子系统控件的节点
     void makeTreeWidgetItem(std::vector<Node*> v_nodes,ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi){
         for(const Node* node:v_nodes){
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());

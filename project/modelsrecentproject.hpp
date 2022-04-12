@@ -75,7 +75,8 @@ public:
 
     }
 
-    ///将参数中的项目排序到第一位
+    /// 将参数中的项目排序到第一位
+    /// 排序操作会重写platform.xml文件
     void sortProjectFirst(const QString pname,const QSharedPointer<ProjectDataModel> pdm){
         QMap<QString,QSharedPointer<ProjectDataModel>> map;
         map.insert(pname,pdm);

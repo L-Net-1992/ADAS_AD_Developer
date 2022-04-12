@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
     rProjectDialog=new RecentProjectDialog(_recentProjectDataModel,parent);
-    projectDialog=new ProjectDialog(_currentProjectDataModel,parent);
+    projectDialog=new ProjectDialog(_currentProjectDataModel,_recentProjectDataModel,parent);
     isDialog =new ImportScriptDialog(_currentProjectDataModel,parent);
     emDialog = new ExportModuleDialog(_currentProjectDataModel,parent);
 

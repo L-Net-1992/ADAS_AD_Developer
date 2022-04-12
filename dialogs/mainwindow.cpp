@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
     rProjectDialog=new RecentProjectDialog(_recentProjectDataModel,parent);
-    projectDialog=new ProjectDialog(_currentProjectDataModel,parent);
+    projectDialog=new ProjectDialog(_currentProjectDataModel,_recentProjectDataModel,parent);
     isDialog =new ImportScriptDialog(_currentProjectDataModel,parent);
     emDialog = new ExportModuleDialog(_currentProjectDataModel,parent);
 
@@ -81,12 +81,14 @@ void MainWindow::initMenu()
 ///初始化左侧功能树
 void MainWindow::initTreeView()
 {
-    ui->tw_node->fillInitLeftTreeData();
+    //    ui->tw_node->fillInitLeftTreeData(_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+    //    qDebug() << ui->tw_node->normalGeometry();
+
 }
 
 void MainWindow::initSplitter()
 {
-    ui->dw_left->hide();
+    ui->dw_left->show();
     ui->dw_right->show();
 }
 
@@ -418,6 +420,9 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     QByteArray wholeFile = loadFile.readAll();
     scene->loadFromMemory(wholeFile);
 
+    //3.5加载左侧结构树内容
+    ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),scene);
+
     //4:将当前打开的项目排序到第一位
     _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
     //    _recentProjectDataModel->sortProjectFirst("aaa",_currentProjectDataModel);
@@ -485,11 +490,13 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-    //    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,&MainWindow::importCompletedAction);
     connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,[&](){
         //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
+
     });
+
+
 
     //6:响应文件解析进度
     connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){

@@ -67,6 +67,8 @@ set ( PROJECT_SOURCES
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
+    controllers/aiccstructtreewidget.hpp
+
 
     nodeparser/inspector.hpp
     nodeparser/inspector.cpp

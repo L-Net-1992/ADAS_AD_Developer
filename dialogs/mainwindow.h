@@ -30,6 +30,7 @@
 #include <nodes/DataModelRegistry>
 #include <controllers/aiccflowview.hpp>
 #include <controllers/aiccstackedwidget.hpp>
+#include <controllers/aiccstructtreewidget.hpp>
 #include <dialogs/projectdialog.h>
 #include <dialogs/nodeparametersdialog.h>
 #include <dialogs/nodeparametersmildialog.h>

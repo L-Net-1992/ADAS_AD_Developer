@@ -114,7 +114,7 @@ void CalibrationDialog::initButton(){
         QTableWidget * tw = ui->tw_params;
 
         //save the path of the selected file and open it.
-        QString lpath = QFileDialog::getOpenFileName(this,tr("Load File"),QApplication::applicationDirPath(),tr("标定数据json格式 (*.json)"));
+        QString lpath = QFileDialog::getSaveFileName(this,tr("Save File"),_projectDataModel->projectPath(),tr("标定数据json格式 (*.json)"));
         QFile load_file(lpath);
         load_file.open(QIODevice::ReadOnly | QIODevice::Text);
 

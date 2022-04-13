@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <nodeparser/module_library.hpp>
 
+
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
 using QtNodes::Node;
@@ -31,13 +32,22 @@ public:
             }
         });
 
-
         //测试nodeCreated事件
         connect(this, &FlowScene::nodeCreated, [&](QtNodes::Node & node){
+            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
+            const auto & invocable = model->invocable();
+            if(invocable.getType()==Invocable::Subsystem){
+                qDebug() << "node created:" << invocable.getType();
 
+            }
         });
 
-//        connect(this,&FlowScene::)
+        connect(this,&FlowScene::nodeDeleted,[&](QtNodes::Node & node){
+            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
+            const auto & invocable = model->invocable();
+            if(invocable.getType()==Invocable::Subsystem)
+                qDebug() << "node deleted:" << invocable.getType();
+        });
 
     }
     ~AICCFlowScene(){}

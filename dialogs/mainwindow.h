@@ -49,6 +49,7 @@
 #include "nodeparser/source_generator.hpp"
 #include "nodeparser/models.hpp"
 #include "nodeparser/subsystem_library.h"
+#include "nodeparser/subsystem_window.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "project/modelsproject.hpp"
 #include "process/aiccprocess.hpp"

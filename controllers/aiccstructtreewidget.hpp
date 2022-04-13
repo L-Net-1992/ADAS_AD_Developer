@@ -14,6 +14,7 @@
 #include <QApplication>
 #include "utils.h"
 #include <QStandardItem>
+#include <QTreeWidgetItem>
 #include <nodes/FlowScene>
 #include <nodes/Node>
 #include "nodeparser/invocable.hpp"
@@ -27,7 +28,14 @@ class AICCStructTreeWidget : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit AICCStructTreeWidget(QWidget *parent=nullptr){}
+    explicit AICCStructTreeWidget(QWidget *parent=nullptr){
+        //设置默认双击时不能展开收缩
+        this->setExpandsOnDoubleClick(false);
+        //双击打开子系统窗口
+        connect(this,&AICCStructTreeWidget::itemDoubleClicked,this,[&](QTreeWidgetItem *item,int column){
+            emit treeNodeDoubleClicked(item);
+        });
+    }
 
     ~AICCStructTreeWidget(){}
 
@@ -50,6 +58,9 @@ public:
 
         this->expandAll();
     }
+
+Q_SIGNALS:
+    void treeNodeDoubleClicked(QTreeWidgetItem *item);
 
 private:
     ///解析所有子系统的节点
@@ -93,6 +104,9 @@ private:
 
         return buffer;
     }
+
+
+
 };
 
 #endif // AICCSTRUCTTREEWIDGET_H

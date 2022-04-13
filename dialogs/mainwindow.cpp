@@ -78,11 +78,22 @@ void MainWindow::initMenu()
     //        connect(ui->actionCreateSubSystem,&QAction::triggered,this,[&]{_moduleLibrary->newSubsystem(this);});
 }
 
-///初始化左侧功能树
+///初始化左侧子系统关系树
 void MainWindow::initTreeView()
 {
-    //    ui->tw_node->fillInitLeftTreeData(_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
-    //    qDebug() << ui->tw_node->normalGeometry();
+    //当双击树形菜单节点后打开子窗口
+    connect(ui->tw_node,&AICCStructTreeWidget::treeNodeDoubleClicked,this,[&](QTreeWidgetItem *item){
+        QString pn = item->text(0);
+        QStringList sl = pn.split("::");
+        //当拆解出的字符串包含包名与类名打开子窗口
+        if(sl.size()==2){
+            _moduleLibrary->openSubsystem(this,sl.at(0).toStdString(),sl.at(1).toStdString());
+        }
+    });
+
+//    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+//    std::vector<Node*> v_nodes = scene->allNodes();
+//     v_nodes.at(0)->nodeDataModel()
 
 }
 

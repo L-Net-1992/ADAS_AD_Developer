@@ -4,15 +4,17 @@
 #include <QWidget>
 #include <QVector>
 #include <QMap>
-
+#include <QTimerEvent>
+#include <QDateTime>
+#include <QDebug>
 namespace monitor
 {
 
-class Replay : public QWidget
+class Replay : public QObject
 {
     Q_OBJECT
 public:
-    explicit Replay(QWidget *parent = nullptr);
+    explicit Replay(QObject *parent = nullptr);
     ~Replay();
 
     void Clear();
@@ -42,11 +44,15 @@ class Record : public QObject
 public:
     explicit Record(QObject *parent = nullptr);
     ~Record();
+    void reset();
 
 signals:
 
 private:
-
+    unsigned long start_time_;
+    unsigned long end_time_;
+    std::string file_name_;
+    QMap<QString, QVector<QPointF>> data_;
 };
 
 class Monitor : public QObject
@@ -75,6 +81,48 @@ private:
     QString file_;
     unsigned long start_time_;
     unsigned long end_time_;
+};
+
+class SignalTimer : public QObject
+{
+    Q_OBJECT
+public:
+    explicit SignalTimer(QObject *parent = nullptr)
+        : QObject{parent}
+    {
+    }
+    ~SignalTimer()
+    {}
+    int start(int ms)
+    {
+        return id_ = this->startTimer(ms, Qt::PreciseTimer);
+    }
+    void stop()
+    {
+        this->killTimer(id_);
+    }
+signals:
+
+protected:
+    void timerEvent(QTimerEvent *event) override
+    {
+        static int num=0;
+        if(event->timerId() == id_)
+        {
+            qDebug() << QDateTime::currentMSecsSinceEpoch();
+            stop();
+            start(50+num*10);
+            num++;
+            if(num == 10)
+            {
+                this->killTimer(id_);
+            }
+        }
+    }
+
+private:
+    int id_;
+    int interval_;
 };
 
 }

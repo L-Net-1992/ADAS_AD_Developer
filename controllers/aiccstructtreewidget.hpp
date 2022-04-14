@@ -69,11 +69,9 @@ private:
     ///解析所有子系统的节点
     void parseSubSystemNode(ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi,const Node* node) {
 
-        qDebug() << "begin parse:" << QString::number(QTime::currentTime().msec());
         const auto *model = static_cast<InvocableDataModel*>(node->nodeDataModel());
         const auto & invocable = model->invocable();
         std::filesystem::path subsystem_path = subsystem_library->getSubsystem(invocable.getPackage(),invocable.getSubsystemName());
-        qDebug() << "   ----FlowScene:" << QString::number(QTime::currentTime().msec());
         //将子系统的flow文件加载到scene中
         FlowScene scene;
         scene.setRegistry(dmr);
@@ -81,7 +79,6 @@ private:
 
         //获得scene中的所有node对象
         std::vector<Node*> v_nodes = scene.allNodes();
-        qDebug() << "end parse:" << QString::number(QTime::currentTime().msec());
         makeTreeWidgetItem(v_nodes,module_library,subsystem_library,ptwi);
     }
 
@@ -102,16 +99,11 @@ private:
 
     ///加载flow文件，以QByteArray形式返回
     QByteArray loadFlowFile(const std::filesystem::path subsystem_path){
-//        if(mapFlowFileCache.contains(subsystem_path.string())){
-//            qDebug() << "cache:" << QString::fromStdString(subsystem_path.string());
-//            return mapFlowFileCache.value(subsystem_path.string());
-//        }
 
         int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
         QByteArray buffer(file_size,0);
         std::ifstream file(subsystem_path,std::ios::binary);
         file.read(buffer.data(),buffer.size());
-//        mapFlowFileCache.insert(subsystem_path.string(),buffer);
         return buffer;
     }
 

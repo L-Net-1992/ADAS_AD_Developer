@@ -11,8 +11,8 @@ using namespace utility;
 namespace monitor {
 
 // reaply
-Replay::Replay(QWidget *parent)
-    : QWidget{parent}
+Replay::Replay(QObject *parent)
+    : QObject{parent}
 {
 
 }
@@ -92,11 +92,22 @@ void Replay::SetSignalDataSet(QString signal, QVector<QPointF> data)
 // reord
 Record::Record(QObject *parent) : QObject(parent)
 {
-
+    start_time_ = 0;
+    end_time_ = 0;
+    qDebug() << "record";
 }
 
 Record::~Record()
 {
+    qDebug() << "~record";
+}
+
+void Record::reset()
+{
+    start_time_ = 0;
+    end_time_ = 0;
+    file_name_ = "";
+    data_.clear();
 
 }
 

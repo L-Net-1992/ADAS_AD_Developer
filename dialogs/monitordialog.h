@@ -73,28 +73,35 @@ private:
 
 private:
     Inspector *inspector_{nullptr};
-
+    QElapsedTimer timer_measure;
+SignalTimer t;
+QTimer *tmp;
     // Monitor参数定义
     Monitor monitor_;
     QTimer *monitor_timer_;
     MonitorChartView *m_chartview;
     QMap<QString, QLineSeries*> monitor_series_;
     QMap<QString, QChart*> monitor_chart_;
-    int x_index1_ = 0;
+    double monitor_axis_x_ = 0;
     bool monitor_running_{false};
-    QVector<float> y_val_range1_{-10.0,10.0};
 
     // Record参数定义
+    QMap<QString, QVector<QPointF>> record_data_;
     bool record_running_=false;
+    unsigned long start_time_{0};
+    unsigned long end_time_{0};
+    std::string record_file_name_;
 
     // Replay参数定义
     Replay replay;
     QTimer *replay_timer_;
+    MonitorChartView *r_chartview;
     bool replay_running_ = 0;
     int x_index_ = 0;
-    QVector<float> y_val_range_{-10.0,10.0};
+    double replay_axis_x_ = 0;
     QMap<QString, QLineSeries*> replay_series_;
     QMap<QString, QChart*> replay_chart_;
+    QMap<QString, QVector<QPointF>> replay_data_;
 
 };
 #endif // MONITORDIALOG_H

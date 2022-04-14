@@ -91,9 +91,9 @@ void MainWindow::initTreeView()
         }
     });
 
-//    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
-//    std::vector<Node*> v_nodes = scene->allNodes();
-//     v_nodes.at(0)->nodeDataModel()
+    //    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+    //    std::vector<Node*> v_nodes = scene->allNodes();
+    //     v_nodes.at(0)->nodeDataModel()
 
 }
 
@@ -504,16 +504,54 @@ void MainWindow::initNodeEditor(){
     connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,[&](){
         //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
-
     });
 
+    //6:当主界面内容加载完成，连接节点的创建、删除信号
+    connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::sceneLoadFromMemoryCompleted,this,&MainWindow::sceneLoadFromMemoryCompletedAction);
 
+    //7:子系统节点创建或删除时刷新左侧节点
+    connect(_moduleLibrary,&ModuleLibrary::subsystemCreatedOrDeleted,this,[&](){
+        ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+    });
 
-    //6:响应文件解析进度
+    //8:响应文件解析进度
     connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
         //        qDebug() << " ==================================================processing:" << index << "/" << count;
     });
 
+}
+
+///主场景加载完成后初始化连接node的创建、删除信号
+void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
+    if(isCompleted){
+        AICCFlowScene * scene = ui->sw_flowscene->getCurrentView()->scene();
+        connect(scene,&AICCFlowScene::nodeCreated,this,[&](Node &node){
+            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
+            const auto & invocable = model->invocable();
+            if(invocable.getType()==Invocable::Subsystem){
+                qDebug() << "create";
+//                refreshLeftTreeData();
+                ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+            }
+        });
+
+        //在响应节点删除后信号前先判断该节点是什么类型
+        Invocable::Type invocableType = Invocable::Class;
+        connect(scene,&AICCFlowScene::nodeDeleted,this,[&](Node &node){
+            invocableType = static_cast<InvocableDataModel*>(node.nodeDataModel())->invocable().getType();
+        });
+
+        connect(scene,&AICCFlowScene::afterNodeDeleted,this,[&](){
+            //判断当前记录的invocableType类型为Subsysem才执行刷新操作
+            if(invocableType==Invocable::Subsystem)
+                ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+//                refreshLeftTreeData();
+        });
+    }
+}
+
+void MainWindow::refreshLeftTreeData(){
+        ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
 }
 
 ///导入完成响应动作，此处不要用lambda表达式，会导致跨线程调用问题

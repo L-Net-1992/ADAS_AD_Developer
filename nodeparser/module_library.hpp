@@ -47,6 +47,8 @@ Q_SIGNALS:
 
     void fileParserCompleted(int count, int index);
 
+    void subsystemCreatedOrDeleted();
+
 private:
     std::vector<Invocable> _invocableList;
     std::list<Invocable> _parseResult;

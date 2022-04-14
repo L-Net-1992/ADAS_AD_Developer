@@ -87,6 +87,11 @@ void ModuleLibrary::newSubsystem(QWidget *parent) {
 
 void ModuleLibrary::openSubsystem(QWidget *parent, const std::string &package, const std::string &name) {
     auto *subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
+    //当子系统有node创建或删除时，将信号继续传送到外部
+    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+//        qDebug() << "module_library subsystem created or deleted";
+        emit subsystemCreatedOrDeleted();
+    });
     subsystemWindow->show();
 
 }

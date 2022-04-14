@@ -70,9 +70,6 @@ public:
                 addRecentProject(pname,pdm);
             }
         }
-
-
-
     }
 
     /// 将参数中的项目排序到第一位

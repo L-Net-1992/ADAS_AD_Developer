@@ -29,6 +29,7 @@
 #include <nodes/ConnectionStyle>
 #include <nodes/DataModelRegistry>
 #include <controllers/aiccflowview.hpp>
+#include <controllers/aiccflowscene.hpp>
 #include <controllers/aiccstackedwidget.hpp>
 #include <controllers/aiccstructtreewidget.hpp>
 #include <dialogs/projectdialog.h>
@@ -65,6 +66,7 @@ using QtNodes::FlowView;
 using QtNodes::FlowViewStyle;
 using QtNodes::NodeStyle;
 using QtNodes::ConnectionStyle;
+
 
 
 
@@ -112,6 +114,8 @@ private:
     QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
 
     void importCompletedAction();
+    void sceneLoadFromMemoryCompletedAction(bool isCompleted);
+    void refreshLeftTreeData();
     void invocableParserAction(const std::string msg);
 public:
     void showMsg(QString msg);

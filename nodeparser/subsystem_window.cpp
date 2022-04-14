@@ -18,6 +18,8 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
     connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
+    //子系统窗口中先不在创建、删除节点时发送信号，只在保存操作的时候发送信号
+//    connect(&scene_, &QtNodes::FlowScene::sceneLoadFromMemoryCompleted,this,&SubsystemWindow::sceneLoadFromMemoryCompletedAction);
     scene_.setRegistry(module_library->test2());
     int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
     QByteArray buffer(file_size, 0);
@@ -35,6 +37,34 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
 SubsystemWindow::~SubsystemWindow() {
     std::cout << "delete SubsystemWindow" << std::endl;
     delete ui;
+}
+
+/// 主场景加载完成后初始化连接node的创建、删除信号
+/// 该函数暂未使用，在保存操作时发送更新结构树操作
+void SubsystemWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
+//    qDebug() << "subsystem window scene load from memory completed action";
+    if(isCompleted){
+
+        connect(&scene_,&QtNodes::FlowScene::nodeCreated,this,[&](QtNodes::Node &node){
+            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
+            const auto & invocable = model->invocable();
+            if(invocable.getType()==Invocable::Subsystem)
+                emit subsystemCreatedOrDeleted();
+
+        });
+
+        //在响应节点删除后信号前先判断该节点是什么类型
+        Invocable::Type invocableType = Invocable::Class;
+        connect(&scene_,&QtNodes::FlowScene::nodeDeleted,this,[&](QtNodes::Node &node){
+            invocableType = static_cast<InvocableDataModel*>(node.nodeDataModel())->invocable().getType();
+        });
+
+        connect(&scene_,&QtNodes::FlowScene::afterNodeDeleted,this,[&](){
+            //判断当前记录的invocableType类型为Subsysem才执行刷新操作
+            if(invocableType==Invocable::Subsystem)
+                emit subsystemCreatedOrDeleted();
+        });
+    }
 }
 
 QtNodes::FlowScene &SubsystemWindow::scene() {
@@ -60,6 +90,7 @@ void SubsystemWindow::save() {
     file.write(buffer.data(), buffer.size());
     file.close();
     emit module_library_->importCompleted();
+    emit subsystemCreatedOrDeleted();
 
 }
 

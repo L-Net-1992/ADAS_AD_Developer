@@ -9,6 +9,7 @@
 #include <QMimeData>
 #include <QDrag>
 #include <QMenu>
+#include <QTime>
 #include <QVBoxLayout>
 #include <conf/Config.hpp>
 #include <QApplication>
@@ -35,6 +36,8 @@ public:
         connect(this,&AICCStructTreeWidget::itemDoubleClicked,this,[&](QTreeWidgetItem *item,int column){
             emit treeNodeDoubleClicked(item);
         });
+
+        icon.addPixmap(QPixmap(":/res/Open.png"));
     }
 
     ~AICCStructTreeWidget(){}
@@ -49,11 +52,11 @@ public:
         //设置根节点
         QTreeWidgetItem *twi_root = new QTreeWidgetItem(this);
         twi_root->setText(0,pname);
-        QIcon icon;
-        icon.addPixmap(QPixmap(":/res/Open.png"));
         twi_root->setIcon(0,icon);
 
         std::vector<Node*> v_nodes = scene->allNodes();
+        //在刷新左侧菜单之前，缓存DataModelRegistry对象
+        dmr = module_library->test2();
         makeTreeWidgetItem(v_nodes,module_library,subsystem_library,twi_root);
 
         this->expandAll();
@@ -71,7 +74,7 @@ private:
         std::filesystem::path subsystem_path = subsystem_library->getSubsystem(invocable.getPackage(),invocable.getSubsystemName());
         //将子系统的flow文件加载到scene中
         FlowScene scene;
-        scene.setRegistry(module_library->test2());
+        scene.setRegistry(dmr);
         scene.loadFromMemory(loadFlowFile(subsystem_path));
 
         //获得scene中的所有node对象
@@ -81,14 +84,13 @@ private:
 
     ///生成子系统控件的节点
     void makeTreeWidgetItem(std::vector<Node*> v_nodes,ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi){
+
         for(const Node* node:v_nodes){
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
             if(model->invocable().getType()==Invocable::Subsystem){
                 QString ncaption = node->nodeDataModel()->caption();
                 QTreeWidgetItem *twi = new QTreeWidgetItem(ptwi);
                 twi->setText(0,ncaption);
-                QIcon icon;
-                icon.addPixmap(QPixmap(":/res/Open.png"));
                 twi->setIcon(0,icon);
                 parseSubSystemNode(module_library,subsystem_library,twi,node);
             }
@@ -97,15 +99,17 @@ private:
 
     ///加载flow文件，以QByteArray形式返回
     QByteArray loadFlowFile(const std::filesystem::path subsystem_path){
+
         int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
         QByteArray buffer(file_size,0);
         std::ifstream file(subsystem_path,std::ios::binary);
         file.read(buffer.data(),buffer.size());
-
         return buffer;
     }
 
-
+private:
+    QIcon icon;
+    std::shared_ptr<QtNodes::DataModelRegistry> dmr;            //缓存DataModelregistry数据
 
 };
 

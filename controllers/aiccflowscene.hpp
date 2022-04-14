@@ -32,23 +32,13 @@ public:
             }
         });
 
-        //测试nodeCreated事件
-        connect(this, &FlowScene::nodeCreated, [&](QtNodes::Node & node){
-            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
-            const auto & invocable = model->invocable();
-            if(invocable.getType()==Invocable::Subsystem){
-                qDebug() << "node created:" << invocable.getType();
 
-            }
-        });
-
-        connect(this,&FlowScene::nodeDeleted,[&](QtNodes::Node & node){
-            const auto *model = static_cast<InvocableDataModel*>(node.nodeDataModel());
-            const auto & invocable = model->invocable();
-            if(invocable.getType()==Invocable::Subsystem)
-                qDebug() << "node deleted:" << invocable.getType();
-        });
-
+        //当场景文件加载完成后，连接节点创建信号与节点删除信号
+//        connect(this,&FlowScene::sceneLoadFromMemoryCompleted,this,[&](bool isCompleted){
+//            if(isCompleted){
+//                initConnect();
+//            }
+//        });
     }
     ~AICCFlowScene(){}
 
@@ -65,7 +55,7 @@ public:
 
 
 
-public:
+
 Q_SIGNALS:
     void getNodeDataModel(NodeDataModel *nodeDataModel);
 

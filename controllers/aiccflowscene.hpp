@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <nodeparser/module_library.hpp>
 
+
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
 using QtNodes::Node;
@@ -32,13 +33,12 @@ public:
         });
 
 
-        //测试nodeCreated事件
-        connect(this, &FlowScene::nodeCreated, [&](QtNodes::Node & node){
-
-        });
-
-
-
+        //当场景文件加载完成后，连接节点创建信号与节点删除信号
+//        connect(this,&FlowScene::sceneLoadFromMemoryCompleted,this,[&](bool isCompleted){
+//            if(isCompleted){
+//                initConnect();
+//            }
+//        });
     }
     ~AICCFlowScene(){}
 
@@ -53,7 +53,9 @@ public:
         }
     }
 
-public:
+
+
+
 Q_SIGNALS:
     void getNodeDataModel(NodeDataModel *nodeDataModel);
 

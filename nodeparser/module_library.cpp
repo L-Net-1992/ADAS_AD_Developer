@@ -28,7 +28,7 @@ void ModuleLibrary::importFiles(const QStringList &files) {
         if (!parser.parse(_packageLibrary, _parseResult, error_message)) {
             emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(file, QString::fromStdString(error_message)));
         } else {
-            qDebug() << "result size: " << _parseResult.size();
+//            qDebug() << "result size: " << _parseResult.size();
             setInvocables(_parseResult);
         }
         emit fileParserCompleted(files.count(), i);
@@ -87,6 +87,11 @@ void ModuleLibrary::newSubsystem(QWidget *parent) {
 
 void ModuleLibrary::openSubsystem(QWidget *parent, const std::string &package, const std::string &name) {
     auto *subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
+    //当子系统有node创建或删除时，将信号继续传送到外部
+    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+//        qDebug() << "module_library subsystem created or deleted";
+        emit subsystemCreatedOrDeleted();
+    });
     subsystemWindow->show();
 
 }
@@ -154,7 +159,7 @@ void ModuleLibrary::addPackage(const std::filesystem::path &path) {
         emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(QString::fromStdString(path.string()),
                                                              QString::fromStdString(error_message)));
     } else {
-        qDebug() << "result size: " << _parseResult.size();
+//        qDebug() << "result size: " << _parseResult.size();
         setInvocables(_parseResult);
     }
     emit fileParserCompleted(1, 0);

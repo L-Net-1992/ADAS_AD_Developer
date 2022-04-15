@@ -21,6 +21,7 @@
 #include "models.hpp"
 #include <iostream>
 #include <QWidget>
+#include <QDebug>
 #include <filesystem>
 #include "package_library.h"
 #include "subsystem_library.h"
@@ -45,6 +46,8 @@ Q_SIGNALS:
     void importCompleted();
 
     void fileParserCompleted(int count, int index);
+
+    void subsystemCreatedOrDeleted();
 
 private:
     std::vector<Invocable> _invocableList;
@@ -77,7 +80,6 @@ public:
 
         }
         return ret;
-
     }
 
     std::shared_ptr<QtNodes::DataModelRegistry> test2() const{
@@ -92,10 +94,8 @@ public:
         for (const auto &inv: _subsystemLibrary.getInvocableList()) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
             ret->registerModel<InvocableDataModel>(f, "test");
-
         }
         return ret;
-
     }
 
     std::list<Invocable> getParseResult() { return _parseResult; }

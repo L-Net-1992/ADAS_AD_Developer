@@ -51,7 +51,7 @@ std::vector<Invocable> SubsystemLibrary::getInvocableList() const {
             invocable.setSubsystemName(p.stem().string());
             invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
             invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
-            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
+//            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
             boost::json::object scene = readScene(p);
             parsePorts(scene, invocable);
             ret.push_back(invocable);
@@ -79,11 +79,13 @@ void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocab
         if(model["subsystem_in"].is_object()) {
             boost::json::object & subsystem_in  = model["subsystem_in"].as_object();
             port.setDirection(Port::In);
-            port.setType(subsystem_in["type"].as_string().c_str());
+            std::string type = subsystem_in["type"].as_string().c_str();
+            port.setType(type);
         } else if(model["subsystem_out"].is_object()) {
             boost::json::object & subsystem_out  = model["subsystem_out"].as_object();
             port.setDirection(Port::Out);
-            port.setType(subsystem_out["type"].as_string().c_str());
+            std::string type = subsystem_out["type"].as_string().c_str();
+            port.setType(type);
         } else {
             continue;
         }

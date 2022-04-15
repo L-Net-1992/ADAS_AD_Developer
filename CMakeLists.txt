@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(cmake/linux-x86-64-gnu.cmake)
 set(CMAKE_PREFIX_PATH /home/environment/x86_64/boost /home/environment/llvm12_ubuntu16)
 
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
@@ -27,7 +28,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
 find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
-find_package(NodeEditor REQUIRED)
+#find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
@@ -48,15 +49,20 @@ set ( PROJECT_SOURCES
     dialogs/calibrationdialog.h dialogs/calibrationdialog.cpp dialogs/calibrationdialog.ui
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
-#    dialogs/mychartview.h dialogs/mychartview.cpp
+
     dialogs/recentprojectdialog.h dialogs/recentprojectdialog.cpp dialogs/recentprojectdialog.ui
+    dialogs/exportmoduledialog.h dialogs/exportmoduledialog.cpp dialogs/exportmoduledialog.ui
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
+
+    monitor_files/monitor_chartview.h monitor_files/monitor_chartview.cpp
+    monitor_files/monitor_signal.h  monitor_files/monitor_signal.cpp
 
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp
 
     project/modelsproject.hpp
+    project/modelsrecentproject.hpp
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
@@ -64,8 +70,13 @@ set ( PROJECT_SOURCES
     controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
-    controllers/aiccchartview.h
+    controllers/aiccstructtreewidget.hpp
 
+
+    nodeparser/inspector.hpp
+    nodeparser/inspector.cpp
+    nodeparser/inspector_thread.cpp
+    nodeparser/inspector_thread.hpp
     nodeparser/invocable.hpp
     nodeparser/invocable_parser.hpp
     nodeparser/models.hpp
@@ -78,10 +89,12 @@ set ( PROJECT_SOURCES
     nodeparser/subsystem_window.ui nodeparser/subsystem_window.h nodeparser/subsystem_window.cpp
     nodeparser/new_subsystem_dialog.ui nodeparser/new_subsystem_dialog.h nodeparser/new_subsystem_dialog.cpp
     nodeparser/var_name_dialog.ui nodeparser/var_name_dialog.h nodeparser/var_name_dialog.cpp
+    nodeparser/inspector.hpp nodeparser/inspector.cpp nodeparser/inspector_thread.hpp nodeparser/inspector_thread.cpp
 
 
     sqlite/aiccsqlite.hpp
 
+    process/aiccprocess.hpp
 #    nlohmann/json.hpp
     # conf/config.json
     ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json
@@ -98,7 +111,9 @@ target_include_directories(ADAS_AD_Developer
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
+    nodes
     )
+find_library(QSCINTILLA libqscintilla2_qt5.so REQUIRED)
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -106,7 +121,8 @@ target_link_libraries(ADAS_AD_Developer
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Charts
     Qt${QT_VERSION_MAJOR}::Concurrent
-    NodeEditor::nodes
+#    NodeEditor::nodes
+    nodes
     ${LLVM_AVAILABLE_LIBS}
     clangAST
     clangBasic
@@ -115,11 +131,11 @@ target_link_libraries(ADAS_AD_Developer
     clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
-    qscintilla2_qt5
+    ${QSCINTILLA}
     )
 
 
-
+add_subdirectory(nodeeditor)
 
 
 

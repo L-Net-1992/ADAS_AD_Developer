@@ -76,6 +76,35 @@ private:
                 continue;
         }
     }
+    ///更新动态节点的位置
+    void updateDynamicNode(int objectClassID,QString caption,int currentClassID){
+        AICCSqlite sqlite;
+        QString sql = QString("update nodeDynamic set class_id = %0 where caption = '%1' and class_id = %2 ")
+                .arg(objectClassID).arg(caption).arg(currentClassID);
+        QSqlQuery query;
+        //        QSqlQuery query = sqlite.query(sql);
+        query.exec(sql);
+        this->refreshTreeViewDynamicNode();
+    }
+
+    ///清理所有动态节点
+    void clearDynamicNode(){
+        QVector<QTreeWidgetItem*> vector;
+        QTreeWidgetItemIterator it(this);
+        while(*it){
+            if((*it)->whatsThis(0)=="dynamic_node"){
+                vector.append(*it);
+            }
+            ++it;
+        }
+
+        for(int i=0;i<vector.count();i++){
+            QTreeWidgetItem *removeItem = vector.at(i);
+            QTreeWidgetItem *pwi = removeItem->parent();
+            pwi->removeChild(removeItem);
+
+        }
+    }
 
 protected:
     /**
@@ -102,7 +131,6 @@ protected:
             if(_selectItem!=Q_NULLPTR && _selectItem->parent()!=Q_NULLPTR &&QString::compare(sidata,"")!=0)
             {
                 QDrag* drag = new QDrag(this);
-                qDebug() << "aicctreewidget.hpp:" << _selectItem->data(0,Qt::UserRole+1).toString();
 
                 QMimeData* mimeData = new QMimeData;
                 mimeData->setData("Data/caption",dataItem);
@@ -145,11 +173,9 @@ protected:
                         QMenu menu;
                         menu.addAction(tr("设置到应用软件"),this,[&]{
                             updateDynamicNode(37,item->text(0),query.value(1).toInt());
-                            qDebug() << "37   pname:" << pname << "  item name:" << item->text(0) ;
                         });
                         menu.addAction(tr("设置到自定义模块"),this,[&]{
                             updateDynamicNode(38,item->text(0),query.value(1).toInt());
-                            qDebug() << "38   pname:" << pname << "  item name:" << item->text(0);
                         });
                         menu.exec(QCursor::pos());
                     }
@@ -158,40 +184,43 @@ protected:
         }
     }
 
-    ///更新动态节点的位置
-    void updateDynamicNode(int objectClassID,QString caption,int currentClassID){
+    ///此处需重载dragEnterEvent函数，否则dropEvent函数不会响应
+    void dragEnterEvent(QDragEnterEvent* event){
+//        qDebug() << "drag enter event:" << event;
+        //此处需要执行以下两句，否则dropEvent不会响应
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+
+    ///放置函数
+    void dropEvent(QDropEvent *event){
+        const QMimeData *mdata = event->mimeData();
+        mdata->data("Data/name");
+        mdata->data("Data/caption");
+
+
+        QByteArray itemDataId = mdata->data("Data/id");
+        QDataStream dataStreamId(&itemDataId,QIODevice::ReadOnly);
+        QString id;
+        dataStreamId >> id;
+
+        QTreeWidgetItem * item = this->itemAt(event->pos());
+        QVariant v = item->data(0,Qt::UserRole+1);
+        int pid = v.toJsonObject().value("id").toInt();
+
         AICCSqlite sqlite;
-        QString sql = QString("update nodeDynamic set class_id = %0 where caption = '%1' and class_id = %2 ")
-                .arg(objectClassID).arg(caption).arg(currentClassID);
-        QSqlQuery query;
-        //        QSqlQuery query = sqlite.query(sql);
-        query.exec(sql);
+        QString sql = QString("update modelNode set parentid = %0 where id = %1").arg(pid).arg(id);
+        sqlite.query(sql);
 
-
-        this->refreshTreeViewDynamicNode();
+        //将当前选择的item传送出去，用来刷新当前目录下的模块列表
+        emit dropCompleted(_selectItem);
     }
 
-    ///清理所有动态节点
-    void clearDynamicNode(){
-        QVector<QTreeWidgetItem*> vector;
-        QTreeWidgetItemIterator it(this);
-        while(*it){
-            if((*it)->whatsThis(0)=="dynamic_node"){
-//                QTreeWidgetItem *pwi = (*it)->parent();
-                vector.append(*it);
-//                pwi->removeChild((*it));
-                qDebug() << "whats this:" << (*it)->text(0) << (*it)->whatsThis(0);
-            }
-            ++it;
-        }
+public:
+    Q_SIGNALS:
+    void dropCompleted(QTreeWidgetItem * item);
 
-        for(int i=0;i<vector.count();i++){
-            QTreeWidgetItem *removeItem = vector.at(i);
-            QTreeWidgetItem *pwi = removeItem->parent();
-            pwi->removeChild(removeItem);
 
-        }
-    }
 
 private:
     QTreeWidgetItem* _selectItem;

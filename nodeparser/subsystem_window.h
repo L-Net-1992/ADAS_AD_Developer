@@ -25,6 +25,8 @@ public:
     ~SubsystemWindow() override;
     QtNodes::FlowScene & scene();
 
+Q_SIGNALS:
+    void subsystemCreatedOrDeleted();
 
 private:
     Ui::SubsystemWindow *ui;
@@ -33,6 +35,7 @@ private:
     QWidget *parent_;
     std::filesystem::path subsystem_path_;
     void save();
+    void sceneLoadFromMemoryCompletedAction(bool isCompleted);
 
 private Q_SLOTS:
     void nodeDoubleClicked(QtNodes::Node & node);

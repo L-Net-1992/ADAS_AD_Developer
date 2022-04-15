@@ -1,9 +1,11 @@
 #include "projectdialog.h"
 #include "ui_projectdialog.h"
 
-ProjectDialog::ProjectDialog(QWidget *parent) :
+ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer<RecentProjectDataModel> rpdm,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ProjectDialog)
+    ui(new Ui::ProjectDialog),
+    pDataModel(pdm),
+    rProjectDataModel(rpdm)
 {
     ui->setupUi(this);
     initButton();
@@ -59,7 +61,7 @@ void ProjectDialog::initButton()
 
 
     //完成按钮事件
-    connect(ui->pb_project_finish,&QPushButton::clicked,this,[&,this]()
+    connect(ui->pb_project_finish,&QPushButton::clicked,this,[&]()
     {
         //create folder
         QDir folder;
@@ -102,8 +104,13 @@ void ProjectDialog::initButton()
             if(file.open(QFile::ReadWrite))
             {
                 writeProjectXml(file);
+                ui->sw_project->setCurrentIndex(0);
+                pDataModel->setProject(projectName,projectPath+"/"+projectName);
+
+                //为最近项目数据模型增加数据
+                rProjectDataModel->sortProjectFirst(projectName,pDataModel);
+
                 this->accept();
-                emit projectCreateCompleted(true);
                 return;
             }
         }
@@ -111,7 +118,7 @@ void ProjectDialog::initButton()
         //set current page index is 0;
         ui->sw_project->setCurrentIndex(0);
 
-        emit projectCreateCompleted(false);
+
     });
 
 
@@ -154,7 +161,10 @@ void ProjectDialog::initOpenPath()
 
 void ProjectDialog::initStackedFirst()
 {
-    connect(ui->le_project_name,&QLineEdit::textChanged,this,[&](const QString &str){projectName = str;ui->le_summary_project_name->setText(projectName);});
+    connect(ui->le_project_name,&QLineEdit::textChanged,this,[&](const QString &str){
+        projectName = str;
+        ui->le_summary_project_name->setText(projectName);
+    });
     connect(ui->le_project_path,&QLineEdit::textChanged,this,[&](const QString &str){projectPath = str;ui->le_summary_project_path->setText(projectPath);});
 }
 
@@ -188,54 +198,4 @@ void ProjectDialog::writeProjectXml(QFile &file)
     QTextStream out_stream(&file);
     doc.save(out_stream,4);
     file.close();
-}
-
-///读取项目文件，当前只读取project的name值
-void ProjectDialog::readProjectXml(QFile &file){
-    QDomDocument doc;
-
-    if(!doc.setContent(&file)){
-        file.close();
-        return;
-    }
-
-    //获取项目名称
-    QDomElement root = doc.documentElement();
-    this->projectName = root.attributeNode("name").value();
-
-    //获取项目路径
-    QStringList qsl = file.fileName().split("/"+this->projectName+"/ap");
-    this->setProjectPath(qsl[0]);
-
-    if(this->projectName==""){
-        QMessageBox::critical(Q_NULLPTR,"critical","项目文件出错，请重新选择项目文件",QMessageBox::Ok,QMessageBox::Ok);
-        return;
-    }
-
-    QDomNodeList flowScenes = root.childNodes().item(0).childNodes();
-    for(int i=0;i<flowScenes.count();i++){
-        QDomNode flowScene = flowScenes.item(i);
-        flowSceneSaveFiles.append(flowScene.toElement().attributeNode("saveFile").value());
-    }
-
-}
-
-const QString &ProjectDialog::getProjectPath() const
-{
-    return projectPath;
-}
-
-const QString &ProjectDialog::getProjectName() const
-{
-    return projectName;
-}
-
-const QStringList &ProjectDialog::getFlowSceneSaveFiles() const
-{
-    return flowSceneSaveFiles;
-}
-
-void ProjectDialog::setProjectPath(const QString &newProjectPath)
-{
-    projectPath = newProjectPath;
 }

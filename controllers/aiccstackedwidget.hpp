@@ -58,7 +58,7 @@ public:
         {
           "FlowViewStyle": {
       "BackgroundColor": [255, 255, 255],
-      "FineGridColor": [255, 255, 255],
+      "FineGridColor": [245, 245, 230],
       "CoarseGridColor": [255, 255, 255]
           }
         }
@@ -158,7 +158,7 @@ public:
             while(it!=this->_routeDataMap.end()){
                 QString key = it.key();
                 QStringList qsl = key.split(deletePathName);
-                qDebug() << "delete path name:" << deletePathName << "key:" << key << "qsl:" << qsl;
+//                qDebug() << "delete path name:" << deletePathName << "key:" << key << "qsl:" << qsl;
                 it++;
             }
         });

@@ -10,6 +10,7 @@
 #include <QtXml/QDomDocument>
 #include <cmath>
 #include <project/modelsproject.hpp>
+#include <project/modelsrecentproject.hpp>
 
 namespace Ui {
 class ProjectDialog;
@@ -22,7 +23,7 @@ class ProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ProjectDialog(QWidget *parent = nullptr);
+    ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer<RecentProjectDataModel> rpdm,QWidget *parent);
     ~ProjectDialog();
 
     const QString &getProjectName() const;
@@ -32,7 +33,6 @@ public:
     void setProjectPath(const QString &newProjectPath);
 
 Q_SIGNALS:
-    void projectCreateCompleted(bool success);
     void projectDialogCanceled();
 
 private:
@@ -50,7 +50,8 @@ private:
     QString config1;
     QString config2;
     QStringList flowSceneSaveFiles;
-    ProjectDataModel *pDataModel;
+    QSharedPointer<ProjectDataModel> pDataModel;
+    QSharedPointer<RecentProjectDataModel> rProjectDataModel;
 
 };
 

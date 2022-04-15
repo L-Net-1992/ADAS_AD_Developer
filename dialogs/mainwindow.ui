@@ -349,7 +349,7 @@
         </widget>
        </item>
        <item>
-        <widget class="AICCTreeWidget" name="tw_node">
+        <widget class="AICCStructTreeWidget" name="tw_node">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -541,10 +541,16 @@ gridline-color:#FFFFFF;
    </widget>
   </widget>
   <widget class="QDockWidget" name="dw_toolbar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
-     <width>572</width>
-     <height>139</height>
+     <width>1280</width>
+     <height>156</height>
     </size>
    </property>
    <property name="features">
@@ -578,16 +584,22 @@ gridline-color:#FFFFFF;
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>110</height>
+         <height>0</height>
         </size>
        </property>
        <property name="baseSize">
         <size>
          <width>0</width>
-         <height>110</height>
+         <height>0</height>
         </size>
        </property>
        <property name="font">
@@ -617,221 +629,281 @@ gridline-color:#FFFFFF;
         <attribute name="title">
          <string>编辑器</string>
         </attribute>
-        <widget class="QPushButton" name="pb_open">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>10</y>
-           <width>71</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="text">
-          <string>打开</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pb_save">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>40</y>
-           <width>71</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="text">
-          <string>保存</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Save.png</normaloff>:/res/Save.png</iconset>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pb_print">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>70</y>
-           <width>71</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="text">
-          <string>打印</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Print.png</normaloff>:/res/Print.png</iconset>
-         </property>
-        </widget>
-        <widget class="Line" name="line">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>150</x>
-           <y>20</y>
-           <width>3</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="pb_dataInspector">
-         <property name="geometry">
-          <rect>
-           <x>360</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>数据</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/DataInspector.png</normaloff>:/res/DataInspector.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="pb_script_generator">
-         <property name="geometry">
-          <rect>
-           <x>260</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>代码生成</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/code-generator.png</normaloff>:/res/code-generator.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="pb_library_browser">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>模块</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/LibraryBrower.png</normaloff>:/res/LibraryBrower.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_new">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>51</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>新建</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QToolButton" name="tb_new">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>新建</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_2" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>1</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="pb_open">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font/>
+              </property>
+              <property name="text">
+               <string>打开</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../image.qrc">
+                <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_save">
+              <property name="font">
+               <font/>
+              </property>
+              <property name="text">
+               <string>保存</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../image.qrc">
+                <normaloff>:/res/Save.png</normaloff>:/res/Save.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pb_print">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="text">
+            <string>打印</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/Print.png</normaloff>:/res/Print.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="pb_library_browser">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>模块</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/LibraryBrower.png</normaloff>:/res/LibraryBrower.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="pb_script_generator">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>代码生成</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/code-generator.png</normaloff>:/res/code-generator.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="pb_dataInspector">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>数据</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/DataInspector.png</normaloff>:/res/DataInspector.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_2">
         <property name="font">
@@ -840,186 +912,290 @@ gridline-color:#FFFFFF;
         <attribute name="title">
          <string>部署</string>
         </attribute>
-        <widget class="QToolButton" name="tb_code_compiler">
-         <property name="enabled">
-          <bool>false</bool>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <property name="leftMargin">
+          <number>9</number>
          </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>141</width>
-           <height>51</height>
-          </rect>
+         <property name="topMargin">
+          <number>9</number>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
+         <property name="rightMargin">
+          <number>9</number>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>     代码构建</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/compiler.png</normaloff>:/res/compiler.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>false</bool>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::NoArrow</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_script_deploy">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>代码部署</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/deploy.png</normaloff>:/res/deploy.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QComboBox" name="cb_select_platform">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>141</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
+         <property name="bottomMargin">
+          <number>9</number>
          </property>
          <item>
-          <property name="text">
-           <string>选择平台</string>
-          </property>
+          <widget class="QWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>0</height>
+            </size>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QComboBox" name="cb_select_platform">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <item>
+               <property name="text">
+                <string>选择平台</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>FAD</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Xavier</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>mdc610</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>x86_64</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="tb_code_compiler">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>90</width>
+                <height>55</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>     代码构建</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../image.qrc">
+                <normaloff>:/res/compiler.png</normaloff>:/res/compiler.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>false</bool>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>FAD</string>
-          </property>
+          <widget class="QToolButton" name="tb_script_deploy">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>代码部署</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/deploy.png</normaloff>:/res/deploy.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>Xavier</string>
-          </property>
+          <widget class="QToolButton" name="tb_run">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>运行</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>mdc610</string>
-          </property>
+          <widget class="QToolButton" name="tb_stop">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>停止</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
          </item>
-        </widget>
-        <widget class="QToolButton" name="tb_run">
-         <property name="geometry">
-          <rect>
-           <x>260</x>
-           <y>10</y>
-           <width>51</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>运行</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_stop">
-         <property name="geometry">
-          <rect>
-           <x>320</x>
-           <y>10</y>
-           <width>51</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>停止</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab">
         <property name="font">
@@ -1028,159 +1204,219 @@ gridline-color:#FFFFFF;
         <attribute name="title">
          <string>仿真</string>
         </attribute>
-        <widget class="QToolButton" name="tb_inject">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>注入</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/inject.png</normaloff>:/res/inject.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_run_2">
-         <property name="geometry">
-          <rect>
-           <x>120</x>
-           <y>10</y>
-           <width>71</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>MIL运行</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_stop_2">
-         <property name="geometry">
-          <rect>
-           <x>200</x>
-           <y>10</y>
-           <width>71</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>MIL停止</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="Line" name="line_6">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>20</y>
-           <width>3</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QToolButton" name="tb_inject">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>注入</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/inject.png</normaloff>:/res/inject.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_6">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_run_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>MIL运行</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_stop_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>MIL停止</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_3">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="font">
          <font/>
         </property>
         <attribute name="title">
          <string>标定</string>
         </attribute>
-        <widget class="QToolButton" name="tb_calibration">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>标定</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/calibration.png</normaloff>:/res/calibration.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QToolButton" name="tb_calibration">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>标定</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/calibration.png</normaloff>:/res/calibration.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_custom_module">
         <property name="font">
@@ -1189,221 +1425,248 @@ gridline-color:#FFFFFF;
         <attribute name="title">
          <string>自定义模块</string>
         </attribute>
-        <widget class="QToolButton" name="tb_import">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>导入脚本</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/Import_24.png</normaloff>:/res/Import_24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_import_module">
-         <property name="geometry">
-          <rect>
-           <x>320</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>导入模块</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/import-module.png</normaloff>:/res/import-module.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_export_module">
-         <property name="geometry">
-          <rect>
-           <x>220</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>导出模块</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/export-module.png</normaloff>:/res/export-module.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="Line" name="line_4">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>210</x>
-           <y>20</y>
-           <width>3</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-        <widget class="Line" name="line_5">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>420</x>
-           <y>20</y>
-           <width>3</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font/>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_merge_module">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>530</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>组合模块</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/merge-mould.png</normaloff>:/res/merge-mould.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_edit_script">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>编写脚本</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/edit_script.png</normaloff>:/res/edit_script.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="tb_create_subsystem">
-         <property name="geometry">
-          <rect>
-           <x>430</x>
-           <y>10</y>
-           <width>91</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>组合模块</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../image.qrc">
-           <normaloff>:/res/subsystem.png</normaloff>:/res/subsystem.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QToolButton" name="tb_edit_script">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>编写脚本</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/edit_script.png</normaloff>:/res/edit_script.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_4">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_export_module">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>导出</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/export-module.png</normaloff>:/res/export-module.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_import_module">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>导入</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/import-module.png</normaloff>:/res/import-module.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_5">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_create_subsystem">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>组合模块</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/subsystem.png</normaloff>:/res/subsystem.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_merge_module">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>组合模块</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/merge-mould.png</normaloff>:/res/merge-mould.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_import">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>导入脚本</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/Import_24.png</normaloff>:/res/Import_24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -1494,11 +1757,6 @@ gridline-color:#FFFFFF;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AICCTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>controllers/aicctreewidget.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>AICCBreadcrumbNavigation</class>
    <extends>QLabel</extends>
    <header>controllers/aiccbreadcrumbnavigation.hpp</header>
@@ -1508,6 +1766,11 @@ gridline-color:#FFFFFF;
    <extends>QStackedWidget</extends>
    <header>controllers/aiccstackedwidget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AICCStructTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>controllers/aiccstructtreewidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

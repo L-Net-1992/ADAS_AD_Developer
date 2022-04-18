@@ -8,3 +8,8 @@
 在Qt Creator中Projects->Build中Batch Edit...按钮->在窗口中写入
 -DBoost_JSON_LIBRARY_RELEASE:FILEPATH=D:/Boost/boost_1_76_0/lib64-msvc-14.2/libboost_json-vc142-mt-x64-1_76.lib
 -DBoost_CONTAINER_LIBRARY_RELEASE:FILEPATH=D:/Boost/boost_1_76_0/lib64-msvc-14.2/libboost_container-vc142-mt-x64-1_76.lib
+
+FlowScene增加了以下3句才能重置线的正确位置
+connection->connectionGeometry().setSelected(true);
+nodeOut.resetReactionToConnection();
+connection->connectionGeometry().setSelected(false);

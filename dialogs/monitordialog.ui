@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>MonitorDialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -38,10 +38,7 @@
       <attribute name="title">
        <string>信号监测</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -92,7 +89,7 @@
              <string>run</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
             </property>
             <property name="iconSize">
@@ -118,7 +115,7 @@
              <string>on</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
             </property>
             <property name="iconSize">
@@ -167,7 +164,7 @@
              <string>record</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/Rec.png</normaloff>:/res/Rec.png</iconset>
             </property>
             <property name="iconSize">
@@ -190,7 +187,7 @@
              <string>stop</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/Stop1.png</normaloff>:/res/Stop1.png</iconset>
             </property>
             <property name="iconSize">
@@ -256,7 +253,7 @@
              <string>连接</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/device.png</normaloff>:/res/device.png</iconset>
             </property>
             <property name="iconSize">
@@ -295,7 +292,7 @@
              <string>ADD</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
             </property>
             <property name="toolButtonStyle">
@@ -307,83 +304,113 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <property name="spacing">
-          <number>2</number>
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-         <item>
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>信号列表</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <property name="title">
-            <string>信号列表</string>
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTableWidget" name="monitortableWidget"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
+           <property name="rightMargin">
+            <number>0</number>
            </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
+           <property name="bottomMargin">
+            <number>0</number>
            </property>
-           <property name="title">
-            <string>信号图表</string>
+           <item>
+            <widget class="QTableWidget" name="monitortableWidget">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>信号图表</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-           </layout>
-          </widget>
-         </item>
-        </layout>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -391,10 +418,7 @@
       <attribute name="title">
        <string>信号回放</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -457,7 +481,7 @@
              <string>replay</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/replay.png</normaloff>:/res/replay.png</iconset>
             </property>
             <property name="iconSize">
@@ -501,7 +525,7 @@
              <string>Save</string>
             </property>
             <property name="icon">
-             <iconset resource="../image.qrc">
+             <iconset resource="res.qrc">
               <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
             </property>
             <property name="iconSize">
@@ -529,83 +553,107 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>2</number>
+        <widget class="QSplitter" name="splitter_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-         <item>
-          <widget class="QGroupBox" name="groupBox">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>信号列表</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+           <property name="spacing">
+            <number>0</number>
            </property>
-           <property name="title">
-            <string>信号列表</string>
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTableWidget" name="replaytableWidget"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <italic>false</italic>
-             <bold>false</bold>
-             <underline>false</underline>
-             <strikeout>false</strikeout>
-            </font>
+           <property name="rightMargin">
+            <number>0</number>
            </property>
-           <property name="title">
-            <string>信号图表</string>
+           <property name="bottomMargin">
+            <number>0</number>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <item>
+            <widget class="QTableWidget" name="replaytableWidget">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <italic>false</italic>
+            <bold>false</bold>
+            <underline>false</underline>
+            <strikeout>false</strikeout>
+           </font>
+          </property>
+          <property name="title">
+           <string>信号图表</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-           </layout>
-          </widget>
-         </item>
-        </layout>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -614,7 +662,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../image.qrc"/>
+  <include location="res.qrc"/>
  </resources>
  <connections/>
 </ui>

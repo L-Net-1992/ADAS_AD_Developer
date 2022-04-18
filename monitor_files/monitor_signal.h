@@ -7,6 +7,7 @@
 #include <QTimerEvent>
 #include <QDateTime>
 #include <QDebug>
+
 namespace monitor
 {
 
@@ -83,46 +84,26 @@ private:
     unsigned long end_time_;
 };
 
+// 用于回放时对每个信号创建定时发送
 class SignalTimer : public QObject
 {
     Q_OBJECT
 public:
-    explicit SignalTimer(QObject *parent = nullptr)
-        : QObject{parent}
-    {
-    }
-    ~SignalTimer()
-    {}
-    int start(int ms)
-    {
-        return id_ = this->startTimer(ms, Qt::PreciseTimer);
-    }
-    void stop()
-    {
-        this->killTimer(id_);
-    }
+    explicit SignalTimer(QString name, QVector<QPointF> data,QObject *parent = nullptr);
+    ~SignalTimer();
+
+    void GetSignalData(QString &name, QVector<QPointF> &data);
 signals:
-
-protected:
-    void timerEvent(QTimerEvent *event) override
-    {
-        static int num=0;
-        if(event->timerId() == id_)
-        {
-            qDebug() << QDateTime::currentMSecsSinceEpoch();
-            stop();
-            start(50+num*10);
-            num++;
-            if(num == 10)
-            {
-                this->killTimer(id_);
-            }
-        }
-    }
-
+    void Send(QString name, QPointF data);
+    void Complate(int size);
+public slots:
+    void Start(bool state);
+    void Update();
 private:
-    int id_;
-    int interval_;
+    QTimer *tm_;
+    QString name_;
+    QVector<QPointF> data_;
+    int size_{0};
 };
 
 }

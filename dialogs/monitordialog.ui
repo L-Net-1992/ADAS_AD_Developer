@@ -89,7 +89,7 @@
              <string>run</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/Run_24.png</normaloff>:/res/Run_24.png</iconset>
             </property>
             <property name="iconSize">
@@ -115,7 +115,7 @@
              <string>on</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/stop.png</normaloff>:/res/stop.png</iconset>
             </property>
             <property name="iconSize">
@@ -164,7 +164,7 @@
              <string>record</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/Rec.png</normaloff>:/res/Rec.png</iconset>
             </property>
             <property name="iconSize">
@@ -187,7 +187,7 @@
              <string>stop</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/Stop1.png</normaloff>:/res/Stop1.png</iconset>
             </property>
             <property name="iconSize">
@@ -253,7 +253,7 @@
              <string>连接</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/device.png</normaloff>:/res/device.png</iconset>
             </property>
             <property name="iconSize">
@@ -292,7 +292,7 @@
              <string>ADD</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/New_24.png</normaloff>:/res/New_24.png</iconset>
             </property>
             <property name="toolButtonStyle">
@@ -317,7 +317,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>300</width>
+            <width>0</width>
             <height>0</height>
            </size>
           </property>
@@ -481,7 +481,7 @@
              <string>replay</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/replay.png</normaloff>:/res/replay.png</iconset>
             </property>
             <property name="iconSize">
@@ -525,7 +525,7 @@
              <string>Save</string>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../image.qrc">
               <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
             </property>
             <property name="iconSize">
@@ -566,7 +566,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>300</width>
+            <width>0</width>
             <height>0</height>
            </size>
           </property>
@@ -662,7 +662,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../image.qrc"/>
  </resources>
  <connections/>
 </ui>

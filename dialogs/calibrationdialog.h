@@ -33,6 +33,7 @@ private:
     QMap<QString, float> value_group_;
 //    Inspector inspector;
     QString _ip;
+    Inspector *inspector_{nullptr};
 
 private:
     void init();

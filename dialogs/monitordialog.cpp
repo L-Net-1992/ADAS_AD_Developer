@@ -382,6 +382,7 @@ void MonitorDialog::on_btn_device_connect_clicked()
                 monitor_.AddSignalList(it.key(), qc);
             }
            ui->btn_device_connect->setText(tr("断开"));
+           ui->lineEdit->setEnabled(false);
            // 使能按键功能 tab1
            ui->btn_monitor_start->setEnabled(true);
        } else
@@ -400,6 +401,7 @@ void MonitorDialog::on_btn_device_connect_clicked()
         delete inspector_;
         inspector_ = nullptr;
 
+        ui->lineEdit->setEnabled(true);
         // 禁止按键功能
         ui->btn_add_chart->setEnabled(false);
         ui->btn_monitor_record->setEnabled(false);

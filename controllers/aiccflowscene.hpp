@@ -32,7 +32,11 @@ public:
             }
         });
 
+        this->addText("(0,0)");
+        this->addEllipse(0,0,1,1);
 
+//        this->addEllipse(72,1,1,1);
+//        this->addEllipse(72,94,1,1);
         //当场景文件加载完成后，连接节点创建信号与节点删除信号
 //        connect(this,&FlowScene::sceneLoadFromMemoryCompleted,this,[&](bool isCompleted){
 //            if(isCompleted){

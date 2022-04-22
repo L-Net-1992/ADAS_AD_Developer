@@ -53,6 +53,7 @@
 #include "nodeparser/subsystem_window.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "project/modelsproject.hpp"
+#include "model/modelcategory.hpp"
 #include "process/aiccprocess.hpp"
 
 
@@ -122,7 +123,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    AICCSqlite sqlite;
+//    AICCSqlite sqlite;
     ProjectDialog *projectDialog;
     RecentProjectDialog *rProjectDialog;
     NodeParametersDialog *npDialog;
@@ -148,6 +149,7 @@ private:
 
     QSharedPointer<ProjectDataModel> _currentProjectDataModel;
     QSharedPointer<RecentProjectDataModel> _recentProjectDataModel;
+    QSharedPointer<CategoryDataModel> _categoryDataModel;
 };
 
 

@@ -15,21 +15,27 @@ class AICCSqlite
     //    Q_OBJECT
 public:
     AICCSqlite(){
-        //        initDatabaseConnection();
+        _sqlQuery = initDatabaseConnection();
     }
-    ///初始化数据库链接
-    void initDatabaseConnection(){
-        //        if(_database.isOpen()) return;
+    ~AICCSqlite(){
+        closeConnection();
+    }
 
-        QSqlDatabase sqlDatabase;
-        _database = sqlDatabase.addDatabase("QSQLITE");
-        _database.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
-        if(!_database.open()){
-            //            QMessageBox::warning(0,QObject::tr("Database Error"),database.lastError());
-            qDebug() <<  _database.lastError();
-            return ;
+    ///初始化数据库链接
+    QSqlQuery initDatabaseConnection(){
+        if(QSqlDatabase::contains("qt_sql_default_connection"))
+            _database = QSqlDatabase::database("qt_sql_default_connection");
+        else {
+            QSqlDatabase sqlDatabase;
+            _database = sqlDatabase.addDatabase("QSQLITE");
+            _database.setDatabaseName(QApplication::applicationDirPath()+"/sqlite/node.db3");
+            if(!_database.open()){
+                //            QMessageBox::warning(0,QObject::tr("Database Error"),database.lastError());
+                qDebug() <<  _database.lastError();
+                return _sqlQuery;
+            }
         }
-        _sqlQuery = QSqlQuery(_database);
+        return QSqlQuery(_database);
     }
 
     ///sql语句执行

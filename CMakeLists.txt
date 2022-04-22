@@ -15,23 +15,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
-#file(GLOB allCopyFiles "${CMAKE_CURRENT_SOURCE_DIR}/nodeconfig/*.hpp")
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
 find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
-#find_package(NodeEditor REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
-
 
 set ( PROJECT_SOURCES
     main.cpp
@@ -62,6 +57,8 @@ set ( PROJECT_SOURCES
     project/modelsproject.hpp
     project/modelsrecentproject.hpp
 
+    model/modelcategory.hpp
+
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
     controllers/aiccflowview.hpp
@@ -69,7 +66,6 @@ set ( PROJECT_SOURCES
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccstructtreewidget.hpp
-
 
     nodeparser/inspector.hpp
     nodeparser/inspector.cpp
@@ -119,7 +115,6 @@ target_link_libraries(ADAS_AD_Developer
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Charts
     Qt${QT_VERSION_MAJOR}::Concurrent
-#    NodeEditor::nodes
     nodes
     ${LLVM_AVAILABLE_LIBS}
     clangAST
@@ -134,28 +129,3 @@ target_link_libraries(ADAS_AD_Developer
 
 
 add_subdirectory(nodeeditor)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

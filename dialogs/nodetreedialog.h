@@ -34,6 +34,8 @@
 #include <nodeparser/models.hpp>
 #include <nodeparser/module_library.hpp>
 
+#include <model/modelcategory.hpp>
+
 
 using QtNodes::DataModelRegistry;
 
@@ -50,7 +52,8 @@ class NodeTreeDialog : public QDialog
 public:
     using CategoriesSet = std::set<QString>;
 
-    explicit NodeTreeDialog(QWidget *parent = Q_NULLPTR);
+//    explicit NodeTreeDialog(QWidget *parent = Q_NULLPTR);
+    NodeTreeDialog(QSharedPointer<CategoryDataModel> cdm,QSharedPointer<ProjectDataModel> pdm,QWidget *parent = Q_NULLPTR);
 //    explicit NodeTreeDialog(QWidget *parent = Q_NULLPTR,ImportScriptDialog *isd=Q_NULLPTR);
     ~NodeTreeDialog();
     void setNodeMap(QMap<QString,QSet<QString>> pnm);
@@ -70,13 +73,15 @@ private:
     AICCToolButton *createToolButton(QString id, QString name,QString caption,QString iconName);
 
 private:
-    void initNodeTree(AICCTreeWidget * tw_root);
-    void recursionChildren(QTreeWidgetItem *twp,int pid);
+    void initNodeTree(AICCTreeWidget * tw_root,const QJsonObject json);
+    void recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int pid);
 
 private:
     Ui::NodeTreeDialog *ui;
     QMap<QString,QSet<QString>> _nodeMap;
-    AICCSqlite _sqlite;
+    QSharedPointer<CategoryDataModel> _categoryDataModel;
+    QSharedPointer<ProjectDataModel> _projectDataModel;
+
 
 };
 

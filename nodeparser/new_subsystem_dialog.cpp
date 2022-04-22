@@ -16,6 +16,7 @@ NewSubsystemDialog::NewSubsystemDialog(QWidget *parent) :
     QRegExp tokenRegex(R"([a-zA-Z][\w_]*)");
     ui->packageEdit->setValidator(new QRegExpValidator(tokenRegex, ui->packageEdit));
     ui->nameEdit->setValidator(new QRegExpValidator(tokenRegex, ui->nameEdit));
+
 }
 
 NewSubsystemDialog::~NewSubsystemDialog() {
@@ -27,3 +28,6 @@ NewSubsystemDialog::SubsystemNameType NewSubsystemDialog::getSubsystemName() {
 
 }
 
+//NewSubsystemDialog::setCategoryComboBox(QMap<QString,QSet<QString>> map){
+
+//}

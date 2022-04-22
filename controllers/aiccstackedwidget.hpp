@@ -23,7 +23,6 @@
 #include <nodeparser/invocable_parser.hpp>
 #include <controllers/aiccflowview.hpp>
 #include <controllers/aiccflowscene.hpp>
-#include <sqlite/aiccsqlite.hpp>
 
 
 using QtNodes::DataModelRegistry;

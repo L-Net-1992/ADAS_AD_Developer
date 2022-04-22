@@ -447,12 +447,14 @@ gridline-color:#C0DCF2;
 
 
 QTreeView::branch:closed:has-children{
-margin:4px;
+margin-top:4px;
+margin-bottom:4px;
 border-image:url(:/qss/lightblue/branch_open.png);
 }
 
 QTreeView::branch:open:has-children{
-margin:4px;
+margin-top:4px;
+margin-bottom:4px;
 border-image:url(:/qss/lightblue/branch_close.png);
 }
 

@@ -55,17 +55,60 @@ public:
         twi_root->setIcon(0,icon);
 
         std::vector<Node*> v_nodes = scene->allNodes();
-        //在刷新左侧菜单之前，缓存DataModelRegistry对象
+        //在刷新左侧菜单之前，第一次从test2中获得所有的DataModelRegistry数据，后面每次遍历的时候使用缓存即可
         dmr = module_library->test2();
         makeTreeWidgetItem(v_nodes,module_library,subsystem_library,twi_root);
 
         this->expandAll();
     }
 
+    ///过滤出制定字符串的节点
+    void filterTreeWidgetItem(const QString &text){
+
+        QVector<QTreeWidgetItem*> v_twi;
+        v_twi = recursionTreeWidgetItem(text,this->topLevelItem(0),v_twi);
+
+        for(QTreeWidgetItem *item :v_twi){
+            item->setHidden(false);
+        }
+    }
+
 Q_SIGNALS:
     void treeNodeDoubleClicked(QTreeWidgetItem *item);
 
 private:
+    ///遍历所有的节点，假如节点名称与字符串参数不匹配，该节点隐藏
+    QVector<QTreeWidgetItem*> recursionTreeWidgetItem(const QString &text ,const QTreeWidgetItem *pitem,QVector<QTreeWidgetItem*> v_twi){
+        int count = pitem->childCount();
+        for(int i=0;i < count;++i){
+            auto child = pitem->child(i);
+            auto itemName = child->text(0);
+            const bool match = (itemName.contains(text,Qt::CaseInsensitive));
+            if(match){
+                v_twi = recursionParentTreeWidgetItem(false,child,v_twi);
+                v_twi.append(child);
+                child->setHidden(true);
+//                for(QTreeWidgetItem *i:v_twi)
+//                    i->setHidden(false);
+            }else{}
+//                child->setHidden(true);
+        }
+        return v_twi;
+    }
+    ///遍历当前节点所有父级节点，设置这些节点的隐藏值
+    QVector<QTreeWidgetItem*> recursionParentTreeWidgetItem(bool hidden,QTreeWidgetItem *item,QVector<QTreeWidgetItem*> v){
+//        item->setHidden(hidden);
+        QTreeWidgetItem *pitem = item->parent();
+        if(pitem!=Q_NULLPTR){
+            v.append(pitem);
+//            pitem->setHidden(hidden);
+//            qDebug() << "pitem:" << hidden;
+
+            return recursionParentTreeWidgetItem(hidden,pitem,v);
+        }
+        return v;
+    }
+
     ///解析所有子系统的节点
     void parseSubSystemNode(ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi,const Node* node) {
 

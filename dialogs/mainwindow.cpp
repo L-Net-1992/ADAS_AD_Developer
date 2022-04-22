@@ -526,6 +526,7 @@ void MainWindow::initNodeEditor(){
 
 }
 
+static Invocable::Type invocableType = Invocable::Class;
 ///主场景加载完成后初始化连接node的创建、删除信号
 void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
     if(isCompleted){
@@ -540,7 +541,6 @@ void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
         });
 
         //在响应节点删除后信号前先判断该节点是什么类型
-        Invocable::Type invocableType = Invocable::Class;
         connect(scene,&AICCFlowScene::nodeDeleted,this,[&](Node &node){
             invocableType = static_cast<InvocableDataModel*>(node.nodeDataModel())->invocable().getType();
         });

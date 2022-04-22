@@ -25,6 +25,7 @@ public:
 
     SubsystemNameType getSubsystemName();
 
+
 private:
     Ui::NewSubsystemDialog *ui;
 };

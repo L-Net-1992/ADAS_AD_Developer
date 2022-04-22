@@ -7,20 +7,17 @@ MainWindow::MainWindow(QWidget *parent):
     ui(new Ui::MainWindow),
     npDialog(new NodeParametersDialog(parent)),
     npmilDialog ( new NodeParametersMILDialog(parent)),
-    nodeTreeDialog ( new NodeTreeDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
     _process (QSharedPointer<AICCProcess>(new AICCProcess)),
     _currentProjectDataModel(QSharedPointer<ProjectDataModel>(new ProjectDataModel)),
-    _recentProjectDataModel(QSharedPointer<RecentProjectDataModel>(new RecentProjectDataModel))
+    _recentProjectDataModel(QSharedPointer<RecentProjectDataModel>(new RecentProjectDataModel)),
+    _categoryDataModel(QSharedPointer<CategoryDataModel>(new CategoryDataModel))
 
 {
-    sqlite.initDatabaseConnection();
+//    sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
-
-    //        qInstallMessageHandler(OutPutMessage);
-
 
     this->setWindowState(Qt::WindowMaximized);
     this->setAttribute(Qt::WA_QuitOnClose);
@@ -28,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent):
     projectDialog=new ProjectDialog(_currentProjectDataModel,_recentProjectDataModel,parent);
     isDialog =new ImportScriptDialog(_currentProjectDataModel,parent);
     emDialog = new ExportModuleDialog(_currentProjectDataModel,parent);
+    nodeTreeDialog = new NodeTreeDialog(_categoryDataModel,_currentProjectDataModel,parent);
 
 
     //获得Process的标准输出
@@ -49,14 +47,16 @@ MainWindow::MainWindow(QWidget *parent):
     this->initRecentProjectDialog();
     this->initProjectDataModel();
 
-    std::cout << "std::cout";
-    printf("printf");
-    qDebug() << "qDebug";
+//    std::cout << "std::cout";
+//    printf("printf");
+//    qDebug() << "qDebug";
+
+
 }
 
 MainWindow::~MainWindow()
 {
-    sqlite.closeConnection();
+//    sqlite.closeConnection();
     delete ui;
 }
 
@@ -91,11 +91,15 @@ void MainWindow::initTreeView()
         }
     });
 
-    //    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
-    //    std::vector<Node*> v_nodes = scene->allNodes();
-    //     v_nodes.at(0)->nodeDataModel()
+    //初始化过滤器文本框
+    connect(ui->le_tree_filter,&QLineEdit::textChanged,[&](const QString &text){
+        ui->tw_node->filterTreeWidgetItem(text);
+    });
 
 }
+
+
+
 
 void MainWindow::initSplitter()
 {
@@ -482,6 +486,7 @@ void MainWindow::initNodeEditor(){
     ui->statusbar->showMessage("正在加载节点模块数据");
     ui->tw_toolbar->setEnabled(false);
     ui->tw_node->setEnabled(false);
+    ui->menubar->setEnabled(false);
 
     //    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
@@ -530,7 +535,6 @@ void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
             const auto & invocable = model->invocable();
             if(invocable.getType()==Invocable::Subsystem){
                 qDebug() << "create";
-//                refreshLeftTreeData();
                 ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
             }
         });
@@ -545,13 +549,8 @@ void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
             //判断当前记录的invocableType类型为Subsysem才执行刷新操作
             if(invocableType==Invocable::Subsystem)
                 ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
-//                refreshLeftTreeData();
         });
     }
-}
-
-void MainWindow::refreshLeftTreeData(){
-        ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
 }
 
 ///导入完成响应动作，此处不要用lambda表达式，会导致跨线程调用问题
@@ -588,13 +587,10 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
 
-    //此处在单独的线程中，不能使用默认主线程的数据库连接
-    AICCSqlite sqlite;
-
-
     //注册所有已有的模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
+        AICCSqlite sqlite;
         QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
         QSqlQuery squery = sqlite.query(sql);
         if(squery.next()){
@@ -671,14 +667,6 @@ void MainWindow::initImportScriptDialog(){
 }
 
 
-///初始化数据检查窗口
-void MainWindow::initDataInspectorDialog(){
-
-}
-
-
-
-
 ///新版负责NodeTreeDialog的node模块分类信息
 QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::list<Invocable> parserResult){
     QMap<QString,QSet<QString>> ret;
@@ -690,6 +678,7 @@ QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::lis
         ret.insert(className,cn);
     };
     AICCSqlite sqlite;
+
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
         QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));

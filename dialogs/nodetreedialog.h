@@ -58,6 +58,10 @@ public:
     ~NodeTreeDialog();
     void setNodeMap(QMap<QString,QSet<QString>> pnm);
 
+    void setModuleLibrary(ModuleLibrary *newModuleLibrary);
+
+    void setSubsystemLibrary(SubsystemLibrary *newSubsystemLibrary);
+
 signals:
     void nodeDoubleClicked(const QString nodeName);
 
@@ -78,9 +82,10 @@ private:
 
 private:
     Ui::NodeTreeDialog *ui;
-    QMap<QString,QSet<QString>> _nodeMap;
     QSharedPointer<CategoryDataModel> _categoryDataModel;
     QSharedPointer<ProjectDataModel> _projectDataModel;
+//    ModuleLibrary *_moduleLibrary;
+//    SubsystemLibrary *_subsystemLibrary;
 
 
 };

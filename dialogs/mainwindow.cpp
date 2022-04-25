@@ -311,10 +311,6 @@ void MainWindow::initBreadcrumbNavigation(){
 
 ///初始化StackedWidget
 void MainWindow::initStackedWidget(){
-    ///nodeeditor数据注册完后，要将数据传递给NodeTreeDialog窗口使用
-    connect(ui->sw_flowscene,&AICCStackedWidget::registerDataModelsCompleted,this,[&](const QMap<QString,QSet<QString>> nodeMap){
-        nodeTreeDialog->setNodeMap(nodeMap);
-    });
 
     ///获得数据后填充右侧属性窗口
     connect(ui->sw_flowscene,&AICCStackedWidget::getNodeDataModel,this,[&](NodeDataModel *ndm){
@@ -440,7 +436,9 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
 
     //4:将当前打开的项目排序到第一位
     _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
-    //    _recentProjectDataModel->sortProjectFirst("aaa",_currentProjectDataModel);
+
+    //5:打开新项目后分类数据要刷新
+    _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
 
 }
 
@@ -496,7 +494,7 @@ void MainWindow::initNodeEditor(){
             std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
             emit scriptParserCompleted(parserResult);
         }catch(const std::exception &e){
-            qDebug() << "exception:" << e.what();
+            qDebug() << "module library exception:" << e.what();
         }
 
     });
@@ -562,8 +560,9 @@ void MainWindow::importCompletedAction(){
 void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 
     //1:生成NodeTreeDialog的菜单结构
-    QMap<QString,QSet<QString>> nodeCategoryDataModels = this->newNodeCategoryDataModels(parserResult);
-    nodeTreeDialog->setNodeMap(nodeCategoryDataModels);
+    _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
+//    nodeTreeDialog->setModuleLibrary(_moduleLibrary);
+//    nodeTreeDialog->setSubsystemLibrary(_subsystemLibrary);
     //2:初始化模块变量相关操作
     FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
@@ -587,42 +586,35 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
 
-    //注册所有已有的模块
+    //注册系统默认模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
-        AICCSqlite sqlite;
-        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
-        QSqlQuery squery = sqlite.query(sql);
-        if(squery.next()){
-            QString caption = squery.value(1).toString();
-            QString className = squery.value(2).toString();
-            auto f = [inv,caption](){
-                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-
-                p->setCaption(caption);
-                return p;
-            };
-
-            ret->registerModel<InvocableDataModel>(f,className);
-        }else{
-            auto f = [inv](){
-                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-                p->setCaption(p->name());
-                return p;
-            };
-            ret->registerModel<InvocableDataModel>(f,"Other");
-        }
-
+        QString nodeName = QString::fromStdString(inv.getName());
+        QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
+        auto f = [inv,nodeName](){
+            std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+            return p;
+        };
+        if(category!="")
+            ret->registerModel<InvocableDataModel>(f,category);
+        else
+            ret->registerModel<InvocableDataModel>(f,"其他");
     }
 
     //注册所有的子系统
     for (const auto &inv: _subsystemLibrary->getInvocableList()) {
+        QString nodeName = QString::fromStdString(inv.getName());
+        QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
+
         auto f = [inv]() {
             std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-            p->setCaption(p->name());
+//            p->setCaption(p->name());
             return p;
         };
-        ret->registerModel<InvocableDataModel>(f, "自定义模块");
+        if(category!="")
+            ret->registerModel<InvocableDataModel>(f,category);
+        else
+            ret->registerModel<InvocableDataModel>(f, "自定义模块");
     }
 
     return ret;
@@ -667,33 +659,6 @@ void MainWindow::initImportScriptDialog(){
 }
 
 
-///新版负责NodeTreeDialog的node模块分类信息
-QMap<QString,QSet<QString>> MainWindow::newNodeCategoryDataModels(const std::list<Invocable> parserResult){
-    QMap<QString,QSet<QString>> ret;
-    //写入分类数据
-    auto f_insertNodeClassMap = [&ret](const QString className,const QString nodeName){
-        QSet<QString> cn;
-        cn = ret.value(className);
-        cn.insert(nodeName);
-        ret.insert(className,cn);
-    };
-    AICCSqlite sqlite;
-
-    for(auto it = parserResult.begin();it!=parserResult.end();++it){
-        const auto &inv = *it;
-        QString sql = QString("select n.name,n.caption,nc.class_name from node n inner join nodeClass nc on n.class_id = nc.id where n.name = '%0'").arg(QString::fromStdString(inv.getName()));
-        QSqlQuery squery = sqlite.query(sql);
-
-        if(squery.next()){
-            QString className = squery.value(2).toString();
-            QString nodeName = squery.value(0).toString();
-            f_insertNodeClassMap(className,nodeName);
-        }else{
-            f_insertNodeClassMap("Other",QString::fromStdString(inv.getName()));
-        }
-    }
-    return ret;
-}
 
 
 

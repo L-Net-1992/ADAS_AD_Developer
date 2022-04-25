@@ -112,7 +112,7 @@ private:
     void initNodeEditor();
     void scriptParserCompletedAction(std::list<Invocable> parserResult);
     std::shared_ptr<DataModelRegistry> registerDataModels();
-    QMap<QString,QSet<QString>> newNodeCategoryDataModels(const std::list<Invocable> parseResult);
+    QMap<QString,QSet<QString>> nodeCategoryDataModels(const std::list<Invocable> parseResult);
 
     void importCompletedAction();
     void sceneLoadFromMemoryCompletedAction(bool isCompleted);

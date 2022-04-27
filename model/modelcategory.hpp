@@ -40,7 +40,7 @@ public:
         _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
         _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
         QJsonObject json = recursionChildren(_category,0);
-        qDebug() << "---------------category json:" << json;
+//        qDebug() << "---------------category json:" << json;
         emit dataLoadCompleted(recursionChildren(_category,0));
     }
 

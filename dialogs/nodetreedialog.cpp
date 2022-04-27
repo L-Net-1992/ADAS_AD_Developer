@@ -95,9 +95,10 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
         if(_categoryDataModel->existNode(className.toStdString())){
             tb = createToolButton(id,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
+            i++;
         }
 
-        i++;
+
     }
 }
 
@@ -136,6 +137,7 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
         int isNode = jnode.value("is_node").toInt();
 
         if(isNode==0 && id !=0){
+
             QTreeWidgetItem *twi = new QTreeWidgetItem(twp);
             twi->setText(0,caption);
 

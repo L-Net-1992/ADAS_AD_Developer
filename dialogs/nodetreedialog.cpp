@@ -108,10 +108,11 @@ void NodeTreeDialog::initNodeTree(AICCTreeWidget * tw_root,const QJsonObject jso
     tw_root->clear();
 
     QTreeWidgetItem *twi_root = new QTreeWidgetItem(tw_root);
-    twi_root->setText(0,_projectDataModel->projectName());
-    QIcon icon;
-    icon.addPixmap(QPixmap(":/res/Open.png"));
-    twi_root->setIcon(0,icon);
+    //暂时隐藏
+//    twi_root->setText(0,_projectDataModel->projectName());
+//    QIcon icon;
+//    icon.addPixmap(QPixmap(":/res/Open.png"));
+//    twi_root->setIcon(0,icon);
 
     recursionChildren(json,twi_root,0);
     ui->tw_nodeTree->expandAll();
@@ -144,17 +145,6 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
 
     }
 }
-
-//void NodeTreeDialog::setSubsystemLibrary(SubsystemLibrary *newSubsystemLibrary)
-//{
-//    _subsystemLibrary = newSubsystemLibrary;
-//}
-
-//void NodeTreeDialog::setModuleLibrary(ModuleLibrary *newModuleLibrary)
-//{
-//    _moduleLibrary = newModuleLibrary;
-//}
-
 
 ///初始化工具条上的功能
 void NodeTreeDialog::initToolBar(){

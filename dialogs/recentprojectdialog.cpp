@@ -9,6 +9,7 @@ RecentProjectDialog::RecentProjectDialog(QSharedPointer<RecentProjectDataModel>r
 {
     ui->setupUi(this);
     this->setModal(true);
+    initStyle();
     setDoubleClickAction();
     initObserver();
     initPlatformConfig();
@@ -18,6 +19,10 @@ RecentProjectDialog::RecentProjectDialog(QSharedPointer<RecentProjectDataModel>r
 RecentProjectDialog::~RecentProjectDialog()
 {
     delete ui;
+}
+
+void RecentProjectDialog::initStyle(){
+//    QTitleBar *uTitleBar = new UTitleBar(this);
 }
 
 

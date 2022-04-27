@@ -2,7 +2,7 @@
 #define EXPORTMODULEDIALOG_H
 
 #include <QDialog>
-#include "project/modelsproject.hpp"
+#include "model/modelsproject.hpp"
 #include <QDir>
 #include <QDebug>
 #include <QFileDialog>

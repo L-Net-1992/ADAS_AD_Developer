@@ -468,13 +468,8 @@ void MainWindow::initProjectDataModel(){
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
 //TODO:
 void MainWindow::initNodeEditor(){
-    //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
-    //    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary(_moduleLibrary.get()));
-    _moduleLibrary = new ModuleLibrary;
-    //获得解析程序输出
-    //    connect(_moduleLibrary,&ModuleLibrary::invocableParserCout,this,&MainWindow::invocableParserAction);
-
-    _subsystemLibrary = new SubsystemLibrary;
+    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
+    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
 
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/ICVOS/";
@@ -504,7 +499,7 @@ void MainWindow::initNodeEditor(){
     connect(this,&MainWindow::scriptParserCompleted,this,&MainWindow::scriptParserCompletedAction);
 
     //5:响应importCompleted
-    connect(_moduleLibrary,&ModuleLibrary::importCompleted,this,[&](){
+    connect(_moduleLibrary.get(),&ModuleLibrary::importCompleted,this,[&](){
         //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
     });
@@ -513,12 +508,12 @@ void MainWindow::initNodeEditor(){
     connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::sceneLoadFromMemoryCompleted,this,&MainWindow::sceneLoadFromMemoryCompletedAction);
 
     //7:子系统节点创建或删除时刷新左侧节点
-    connect(_moduleLibrary,&ModuleLibrary::subsystemCreatedOrDeleted,this,[&](){
+    connect(_moduleLibrary.get(),&ModuleLibrary::subsystemCreatedOrDeleted,this,[&](){
         ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
     });
 
     //8:响应文件解析进度
-    connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
         //        qDebug() << " ==================================================processing:" << index << "/" << count;
     });
 
@@ -561,8 +556,6 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 
     //1:生成NodeTreeDialog的菜单结构
     _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
-//    nodeTreeDialog->setModuleLibrary(_moduleLibrary);
-//    nodeTreeDialog->setSubsystemLibrary(_subsystemLibrary);
     //2:初始化模块变量相关操作
     FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
@@ -645,7 +638,7 @@ void MainWindow::initImportScriptDialog(){
         //        });
     });
 
-    connect(_moduleLibrary,&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
         qDebug() << "index:" <<index << "   count:" << count;
     });
 

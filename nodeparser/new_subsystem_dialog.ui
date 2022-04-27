@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>394</width>
-    <height>220</height>
+    <height>274</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,12 +43,22 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>名称:</string>
+      <string>类:</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLineEdit" name="nameEdit"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>名称:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="lineEdit"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

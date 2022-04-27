@@ -34,7 +34,7 @@ public:
      * @param ml
      * @param sl
      */
-    void refreshCategoryDataModel(ModuleLibrary *ml,SubsystemLibrary *sl){
+    void refreshCategoryDataModel(QSharedPointer<ModuleLibrary> ml,QSharedPointer<SubsystemLibrary> sl){
 
         _currentUseNode = makeCurrentLoadedNode(ml,sl);
         emit dataLoadCompleted(recursionChildren(_category,0));
@@ -172,7 +172,7 @@ private:
      * @param sl                    子系统库参数
      * @return                      返回
      */
-    std::vector<std::string> makeCurrentLoadedNode(ModuleLibrary *ml,SubsystemLibrary *sl){
+    std::vector<std::string> makeCurrentLoadedNode(QSharedPointer<ModuleLibrary> ml,QSharedPointer<SubsystemLibrary> sl){
         std::list<Invocable> l_result = ml->getParseResult();
         std::list<Invocable>::iterator it_module_inv;
         std::vector<Invocable> l_subsystem_result = sl->getInvocableList();

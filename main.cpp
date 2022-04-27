@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
 
     //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");
-        QFile file(":/qss/lightblue.css");
+//        QFile file(":/qss/lightblue.css");
+        QFile file(":/qss/lakeblue.css");
 //            QFile file(":/qss/blacksoft.css");
 //            QFile file(":/qss/flatgray.css");
     file.open(QFile::ReadOnly);

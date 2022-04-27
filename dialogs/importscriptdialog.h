@@ -9,7 +9,7 @@
 #include "nodeparser/invocable.hpp"
 #include "nodeparser/invocable_parser.hpp"
 #include "nodeparser/module_library.hpp"
-#include "project/modelsproject.hpp"
+#include "model/modelsproject.hpp"
 
 namespace Ui {
 class ImportScriptDialog;

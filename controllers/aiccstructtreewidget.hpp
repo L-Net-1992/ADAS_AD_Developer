@@ -43,7 +43,7 @@ public:
     ~AICCStructTreeWidget(){}
 
     ///初始化左侧功能树数据,主界面使用
-    void fillInitLeftTreeData(ModuleLibrary *module_library,SubsystemLibrary *subsystem_library, const QString &pname,const FlowScene *scene){
+    void fillInitLeftTreeData(QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library, const QString &pname,const FlowScene *scene){
 
         //        this->setDragDropMode(QAbstractItemView::DragOnly);
         //        this->setDragEnabled(true);
@@ -110,7 +110,7 @@ private:
     }
 
     ///解析所有子系统的节点
-    void parseSubSystemNode(ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi,const Node* node) {
+    void parseSubSystemNode(QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library,QTreeWidgetItem *ptwi,const Node* node) {
 
         const auto *model = static_cast<InvocableDataModel*>(node->nodeDataModel());
         const auto & invocable = model->invocable();
@@ -126,7 +126,7 @@ private:
     }
 
     ///生成子系统控件的节点
-    void makeTreeWidgetItem(std::vector<Node*> v_nodes,ModuleLibrary *module_library,SubsystemLibrary *subsystem_library,QTreeWidgetItem *ptwi){
+    void makeTreeWidgetItem(std::vector<Node*> v_nodes,QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library,QTreeWidgetItem *ptwi){
 
         for(const Node* node:v_nodes){
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());

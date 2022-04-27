@@ -52,7 +52,7 @@
 #include "nodeparser/subsystem_library.h"
 #include "nodeparser/subsystem_window.h"
 #include "sqlite/aiccsqlite.hpp"
-#include "project/modelsproject.hpp"
+#include "model/modelsproject.hpp"
 #include "model/modelcategory.hpp"
 #include "process/aiccprocess.hpp"
 
@@ -135,10 +135,8 @@ private:
     EditorWindow *eDialog;
     CalibrationDialog *cDialog;
     ExportModuleDialog *emDialog;
-//    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-//    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
-    ModuleLibrary *_moduleLibrary;
-    SubsystemLibrary *_subsystemLibrary;
+    QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
+    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
     QSharedPointer<AICCProcess> _process;
 
     //nodeeditor部分

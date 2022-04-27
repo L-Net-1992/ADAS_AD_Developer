@@ -9,8 +9,8 @@
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
 #include <cmath>
-#include <project/modelsproject.hpp>
-#include <project/modelsrecentproject.hpp>
+#include <model/modelsproject.hpp>
+#include <model/modelsrecentproject.hpp>
 
 namespace Ui {
 class ProjectDialog;

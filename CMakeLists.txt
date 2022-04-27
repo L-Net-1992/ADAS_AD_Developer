@@ -54,9 +54,8 @@ set ( PROJECT_SOURCES
     itemreadonlydelegate.h
     utils.h utils.cpp
 
-    project/modelsproject.hpp
-    project/modelsrecentproject.hpp
-
+    model/modelsproject.hpp
+    model/modelsrecentproject.hpp
     model/modelcategory.hpp
 
     controllers/aicctoolbutton.hpp
@@ -66,6 +65,7 @@ set ( PROJECT_SOURCES
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccstructtreewidget.hpp
+    controllers/aicctitlebar.hpp
 
     nodeparser/inspector.hpp
     nodeparser/inspector.cpp

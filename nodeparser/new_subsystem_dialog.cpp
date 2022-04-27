@@ -17,6 +17,11 @@ NewSubsystemDialog::NewSubsystemDialog(QWidget *parent) :
     ui->packageEdit->setValidator(new QRegExpValidator(tokenRegex, ui->packageEdit));
     ui->nameEdit->setValidator(new QRegExpValidator(tokenRegex, ui->nameEdit));
 
+//    connect(_categoryDataModel.get(),&CategoryDataModel::dataLoadCompleted,this,[](){
+//        auto f = [](QJson){
+
+//        };
+//    });
 }
 
 NewSubsystemDialog::~NewSubsystemDialog() {

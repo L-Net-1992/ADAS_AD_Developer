@@ -6,7 +6,7 @@
 #include <QDomDocument>
 #include <QTextStream>
 #include <QListWidgetItem>
-#include <project/modelsrecentproject.hpp>
+#include <model/modelsrecentproject.hpp>
 #include <QDebug>
 #include <QFont>
 #include <QLabel>
@@ -31,6 +31,7 @@ Q_SIGNALS:
 
 
 private:
+    void initStyle();
     void initPlatformConfig();
     void setDoubleClickAction();
     void initObserver();

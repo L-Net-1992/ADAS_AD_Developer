@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QFile>
-#include <project/modelsproject.hpp>
+#include <model/modelsproject.hpp>
 #include "nodeparser/inspector.hpp"
 
 namespace Ui {

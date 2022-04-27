@@ -447,14 +447,14 @@ gridline-color:#C0DCF2;
 
 
 QTreeView::branch:closed:has-children{
-margin-top:4px;
-margin-bottom:4px;
+margin-top:3px;
+margin-bottom:3px;
 border-image:url(:/qss/lightblue/branch_open.png);
 }
 
 QTreeView::branch:open:has-children{
-margin-top:4px;
-margin-bottom:4px;
+margin-top:3px;
+margin-bottom:3px;
 border-image:url(:/qss/lightblue/branch_close.png);
 }
 
@@ -476,6 +476,7 @@ QTableView::item,QListView::item,QTreeView::item{
 padding:1px;
 margin:0px;
 border:0px;
+height:22px;
 }
 
 QHeaderView::section,QTableCornerButton:section{

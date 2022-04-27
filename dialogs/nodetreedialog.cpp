@@ -120,8 +120,16 @@ void NodeTreeDialog::initNodeTree(AICCTreeWidget * tw_root,const QJsonObject jso
 
 ///递归所有子级节点
 void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int pid){
-    for(const QString &key:json.keys()){
-        QJsonObject jnode = json.value(key).toObject();
+    //1:获得当前级别的id排序数据
+    QJsonArray ja = json.value("childSort").toArray();
+    //2:根据排序的id处理每个节点的内容
+    for(const QJsonValue jv:ja){
+        //3:获得当前id的内容
+        int kid = jv.toInt();
+
+        QJsonObject jnode = json.value(QString::number(kid)).toObject();
+
+        //4:处理数据库中获得的数据
         int id = jnode.value("id").toInt();
         QString caption = jnode.value("caption").toString();
         QString iconName = jnode.value("icon_name").toString();
@@ -143,7 +151,33 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
             recursionChildren(jnode,twi,id);
         }
 
+
     }
+
+//    for(const QString &key:json.keys()){
+//        QJsonObject jnode = json.value(key).toObject();
+//        int id = jnode.value("id").toInt();
+//        QString caption = jnode.value("caption").toString();
+//        QString iconName = jnode.value("icon_name").toString();
+//        int isNode = jnode.value("is_node").toInt();
+
+//        if(isNode==0 && id !=0){
+//            QTreeWidgetItem *twi = new QTreeWidgetItem(twp);
+//            twi->setText(0,caption);
+
+//            QIcon icon;
+//            icon.addPixmap(QPixmap(iconName));
+//            twi->setIcon(0,icon);
+
+//            QJsonObject jo;
+//            jo.insert("id",id);
+//            jo.insert("caption",caption);
+//            twi->setData(0,Qt::UserRole+1,QVariant::fromValue(jo));
+
+//            recursionChildren(jnode,twi,id);
+//        }
+
+//    }
 }
 
 ///初始化工具条上的功能

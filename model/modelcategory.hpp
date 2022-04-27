@@ -40,6 +40,7 @@ public:
         _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
         _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
         QJsonObject json = recursionChildren(_category,0);
+        qDebug() << "---------------category json:" << json;
         emit dataLoadCompleted(recursionChildren(_category,0));
     }
 
@@ -145,7 +146,7 @@ private:
      */
     QJsonObject recursionChildren(QJsonObject node,int pid){
         AICCSqlite sqlite;
-        QString sql = QString("select id,parentid,class_name,caption,is_node,icon_name from modelNode where parentid = %0").arg(pid);
+        QString sql = QString("select id,parentid,class_name,caption,is_node,icon_name,sort_same_parentid from modelNode where parentid = %0 order by sort_same_parentid").arg(pid);
 
         QVector<QMap<QString,QVariant>> vector = sqlite.query1(sql,
                                                                 [](QSqlQuery q){
@@ -158,6 +159,7 @@ private:
                 return v;
         });
 
+        QJsonArray jIdSort;
         QVectorIterator vit(vector);
         while(vit.hasNext()){
             const QMap<QString,QVariant> m = vit.next();
@@ -166,6 +168,7 @@ private:
             QString iconName = m.value("icon_name").toString();
             int isNode = m.value("is_node").toInt();
 
+            jIdSort.append(id);
 
             if(isNode==0){
                 QJsonObject childNode;
@@ -174,6 +177,7 @@ private:
                 childNode.insert("icon_name",iconName);
                 childNode.insert("is_node",isNode);
 
+                node.insert("childSort",jIdSort);
                 node.insert(QString::number(id),recursionChildren(childNode,id));
             }
         }

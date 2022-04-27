@@ -86,14 +86,14 @@ public:
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
         for (const auto &inv: _invocableList) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
-            ret->registerModel<InvocableDataModel>(f, "test");
+            ret->registerModel<InvocableDataModel>(f, "model");
 
         }
         if(ret->categories().empty())
             return ret;
         for (const auto &inv: _subsystemLibrary.getInvocableList()) {
             auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
-            ret->registerModel<InvocableDataModel>(f, "test");
+            ret->registerModel<InvocableDataModel>(f, "model");
         }
         return ret;
     }

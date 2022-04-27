@@ -8,6 +8,7 @@
 
 #include <QtCore/QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QMap>
 #include <QFile>
 #include <QDomDocument>
@@ -22,9 +23,9 @@ class CategoryDataModel:public QObject{
     Q_OBJECT
 public:
     CategoryDataModel(){
-        _category = recursionChildren(_category,0);
-        qDebug() << "make category full path:" << makeCategoryFullPath(7);
-        emit dataLoadCompleted(_category);
+//        _category = recursionChildren(_category,0);
+//        qDebug() << "make category full path:" << makeCategoryFullPath(7);
+//        emit dataLoadCompleted(_category);
 
     }
     const QJsonObject &category() const;
@@ -36,7 +37,9 @@ public:
      */
     void refreshCategoryDataModel(QSharedPointer<ModuleLibrary> ml,QSharedPointer<SubsystemLibrary> sl){
 
-        _currentUseNode = makeCurrentLoadedNode(ml,sl);
+        _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
+        _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
+        QJsonObject json = recursionChildren(_category,0);
         emit dataLoadCompleted(recursionChildren(_category,0));
     }
 
@@ -79,14 +82,25 @@ public:
     }
 
     /**
+     * @brief makeAllCategoryFullPath   获得所有的完整路径
+     * @return                          以list形式返回所有可选择的完整路径
+     */
+    QStringList makeAllCategoryFullPath(std::vector<std::string> cln){
+        QSet<QString> set;
+        for(std::string n:cln)
+            set.insert(makeCategoryFullPath(QString::fromStdString(n)));
+        return set.toList();
+    }
+
+    /**
      * @brief existNode 判断给定名称的node在当前的moduleLibrary、subsystemLibrary中是否存在
      * @param nn        模块名称
      * @return          返回是否存在
      */
     bool existNode(std::string nn){
         std::vector<std::string>::iterator it;
-        it = std::find(_currentUseNode.begin(),_currentUseNode.end(),nn);
-        if(it != _currentUseNode.end())
+        it = std::find(_currentLoadedNode.begin(),_currentLoadedNode.end(),nn);
+        if(it != _currentLoadedNode.end())
             return true;
         return false;
     }
@@ -190,8 +204,8 @@ private:
 
 private:
     QJsonObject _category;
-    QMap<int,QString> _categoryFullPath;
-    std::vector<std::string> _currentUseNode;
+    std::vector<std::string> _currentLoadedNode;
+    QStringList _currentUseCategoryFullPath;
 };
 
 

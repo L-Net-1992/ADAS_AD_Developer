@@ -31,7 +31,7 @@ public:
     const QJsonObject &category() const;
 
     /**
-     * @brief refreshCategoryDataModel  刷新分类数据，刷新分来数据后同时要刷新已加载的node数据
+     * @brief refreshCategoryDataModel  刷新分类数据，刷新分类数据后同时要刷新已加载的node数据
      * @param ml
      * @param sl
      */
@@ -40,7 +40,7 @@ public:
         _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
         _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
         QJsonObject json = recursionChildren(_category,0);
-//        qDebug() << "---------------category json:" << json;
+
         emit dataLoadCompleted(recursionChildren(_category,0));
     }
 
@@ -136,8 +136,6 @@ private:
     }
 
 
-    /// 递归所有子节点
-    /// sqlquery不能在递归中使用，此处将结果缓存到QVector<QMap<QString,QVariant>>中使用
     /**
      * @brief recursionChildren 递归所有子节点，最终以树形结构数据表达出来
      * @param node              当前json数据，作为父数据用于获得子分类数据
@@ -208,8 +206,8 @@ private:
 
 private:
     QJsonObject _category;
-    std::vector<std::string> _currentLoadedNode;
-    QStringList _currentUseCategoryFullPath;
+    std::vector<std::string> _currentLoadedNode;        //当前已经加载的所有node
+    QStringList _currentUseCategoryFullPath;            //当前使用的完整分类路径
 };
 
 

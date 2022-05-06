@@ -97,8 +97,6 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
             ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
             i++;
         }
-
-
     }
 }
 
@@ -152,34 +150,7 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
 
             recursionChildren(jnode,twi,id);
         }
-
-
     }
-
-//    for(const QString &key:json.keys()){
-//        QJsonObject jnode = json.value(key).toObject();
-//        int id = jnode.value("id").toInt();
-//        QString caption = jnode.value("caption").toString();
-//        QString iconName = jnode.value("icon_name").toString();
-//        int isNode = jnode.value("is_node").toInt();
-
-//        if(isNode==0 && id !=0){
-//            QTreeWidgetItem *twi = new QTreeWidgetItem(twp);
-//            twi->setText(0,caption);
-
-//            QIcon icon;
-//            icon.addPixmap(QPixmap(iconName));
-//            twi->setIcon(0,icon);
-
-//            QJsonObject jo;
-//            jo.insert("id",id);
-//            jo.insert("caption",caption);
-//            twi->setData(0,Qt::UserRole+1,QVariant::fromValue(jo));
-
-//            recursionChildren(jnode,twi,id);
-//        }
-
-//    }
 }
 
 ///初始化工具条上的功能

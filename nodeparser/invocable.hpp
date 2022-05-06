@@ -119,6 +119,7 @@ public:
 private:
     Type _type;
     std::string _name;
+    std::string _caption;
     std::string _header_file;
     std::string _package;
     std::string _subsystem_name;
@@ -152,6 +153,16 @@ public:
         _name = name;
     }
 
+    const std::string &caption() const
+    {
+        return _caption;
+    }
+
+    void setCaption(const std::string &newCaption)
+    {
+        _caption = newCaption;
+    }
+
     const std::string &getSubsystemName() const {
         return _subsystem_name;
     }
@@ -166,6 +177,8 @@ public:
     void setVarName(const std::string &name) {
         _var_name = name;
     }
+
+
     const std::string &getHeaderFile() const {
         return _header_file;
     }
@@ -238,3 +251,5 @@ public:
 
 };
 #endif //NODEDRIVING_INVOCABLE_HPP
+
+

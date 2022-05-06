@@ -22,4 +22,5 @@
 
  bool copyDirectory(const QString& srcPath, const QString& dstPath, bool coverFileIfExist);
  bool copyFile(QString srcPath, QString dstPath, bool coverFileIfExist);
+ QString getCaptionByName(QString name);
 #endif // UTILS_H

@@ -42,7 +42,13 @@ public:
 
     ~AICCStructTreeWidget(){}
 
-    ///初始化左侧功能树数据,主界面使用
+    /**
+     * @brief fillInitLeftTreeData  初始化左侧功能树数据,主界面使用
+     * @param module_library
+     * @param subsystem_library
+     * @param pname
+     * @param scene
+     */
     void fillInitLeftTreeData(QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library, const QString &pname,const FlowScene *scene){
 
         //        this->setDragDropMode(QAbstractItemView::DragOnly);
@@ -132,9 +138,12 @@ private:
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
             if(model->invocable().getType()==Invocable::Subsystem){
                 QString ncaption = node->nodeDataModel()->caption();
+                QString nname = node->nodeDataModel()->name();
                 QTreeWidgetItem *twi = new QTreeWidgetItem(ptwi);
                 twi->setText(0,ncaption);
                 twi->setIcon(0,icon);
+                //包名类名带入data，权限为UserRole
+                twi->setData(0,Qt::ItemDataRole::UserRole,QVariant(nname));
                 parseSubSystemNode(module_library,subsystem_library,twi,node);
             }
         }

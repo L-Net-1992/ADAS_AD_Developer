@@ -166,3 +166,18 @@ bool copyFile(QString srcPath, QString dstPath, bool coverFileIfExist)
     }
     return true;
 }
+
+/**
+ * @brief getCaptionByName  通过模块名称在数据库中查找caption信息
+ * @param name              模块名称
+ * @return                  返回caption信息
+ */
+QString getCaptionByName(QString name){
+    QString caption = name;
+    AICCSqlite sqlite;
+    const QString sql = QString("select caption from modelNode where class_name = '%0'").arg(name);
+    QSqlQuery query = sqlite.query(sql);
+    if(query.next())
+        caption = query.value("caption").toString();
+    return caption;
+}

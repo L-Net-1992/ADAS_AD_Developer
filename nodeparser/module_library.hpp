@@ -25,9 +25,16 @@
 #include <filesystem>
 #include "package_library.h"
 #include "subsystem_library.h"
+//#include "model/modelcategory.hpp"
+#include "utils.h"
 
 class ModuleLibrary : public QAbstractListModel {
 Q_OBJECT
+
+public:
+//    ModuleLibrary();
+//    ModuleLibrary(QSharedPointer<CategoryDataModel> cdm):_categoryDataModel(cdm){};
+
 public Q_SLOTS:
 
     void importFiles(const QStringList &files);
@@ -60,6 +67,7 @@ private:
 
 
 public:
+
     int rowCount(const QModelIndex &parent) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -85,14 +93,23 @@ public:
     std::shared_ptr<QtNodes::DataModelRegistry> test2() const{
         auto ret = std::make_shared<QtNodes::DataModelRegistry>();
         for (const auto &inv: _invocableList) {
-            auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
+            auto f = [inv]() {
+                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+                p->setCaption(getCaptionByName(p->name()));
+                return p;
+            };
+//            auto f = [inv]() {return std::move}
             ret->registerModel<InvocableDataModel>(f, "model");
 
         }
         if(ret->categories().empty())
             return ret;
         for (const auto &inv: _subsystemLibrary.getInvocableList()) {
-            auto f = [inv]() { return std::make_unique<InvocableDataModel>(inv); };
+            auto f = [inv]() {
+                std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+                p->setCaption(getCaptionByName(p->name()));
+                return p;
+            };
             ret->registerModel<InvocableDataModel>(f, "model");
         }
         return ret;

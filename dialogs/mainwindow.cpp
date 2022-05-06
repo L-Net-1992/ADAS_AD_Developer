@@ -83,7 +83,8 @@ void MainWindow::initTreeView()
 {
     //当双击树形菜单节点后打开子窗口
     connect(ui->tw_node,&AICCStructTreeWidget::treeNodeDoubleClicked,this,[&](QTreeWidgetItem *item){
-        QString pn = item->text(0);
+        //包名类名由data带入，权限为UserRole
+        QString pn = item->data(0,Qt::ItemDataRole::UserRole).toString();
         QStringList sl = pn.split("::");
         //当拆解出的字符串包含包名与类名打开子窗口
         if(sl.size()==2){
@@ -579,13 +580,18 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
     auto ret = std::make_shared<DataModelRegistry>();
 
+
     //注册系统默认模块
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
         QString nodeName = QString::fromStdString(inv.getName());
         QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
-        auto f = [inv,nodeName](){
+        //获得caption
+        QString caption = getCaptionByName(nodeName);
+
+        auto f = [inv,nodeName,caption](){
             std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
+            p->setCaption(caption);
             return p;
         };
         if(category!="")
@@ -598,10 +604,12 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     for (const auto &inv: _subsystemLibrary->getInvocableList()) {
         QString nodeName = QString::fromStdString(inv.getName());
         QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
+        //获得caption
+        QString caption = getCaptionByName(nodeName);
 
-        auto f = [inv]() {
+        auto f = [inv,caption]() {
             std::unique_ptr<InvocableDataModel> p = std::make_unique<InvocableDataModel>(inv);
-//            p->setCaption(p->name());
+            p->setCaption(caption);
             return p;
         };
         if(category!="")

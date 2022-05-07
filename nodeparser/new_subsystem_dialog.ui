@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>394</width>
-    <height>274</height>
+    <height>279</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="categoryLabel">
      <property name="text">
       <string>模块分类:</string>
      </property>
@@ -51,14 +51,14 @@
     <widget class="QLineEdit" name="nameEdit"/>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="captionLabel">
      <property name="text">
       <string>名称:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="captionLineEdit"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
     QApplication::addLibraryPath("./plugins");
     QApplication a(argc, argv);
 
+    //
+
     //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");
 //        QFile file(":/qss/lightblue.css");

@@ -104,11 +104,12 @@ public:
 
     QString
     caption() const override {
-        return QString::fromStdString(_invocable.getName());
+//        return QString::fromStdString(_invocable.getName());
+        return QString::fromStdString(_invocable.caption());
     }
 
     void setCaption(QString c) {
-        _caption = c;
+        _invocable.setCaption(c.toStdString());
     }
 
     QString
@@ -229,6 +230,4 @@ public:
         return _input;
     }
 
-private:
-    QString _caption;
 };

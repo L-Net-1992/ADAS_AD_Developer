@@ -18,10 +18,10 @@ NewSubsystemDialog::NewSubsystemDialog(QWidget *parent) :
     ui->nameEdit->setValidator(new QRegExpValidator(tokenRegex, ui->nameEdit));
 
     //暂时屏蔽
-    ui->captionLabel->setVisible(false);
-    ui->captionLineEdit->setVisible(false);
-    ui->categoryComboBox->setVisible(false);
-    ui->categoryLabel->setVisible(false);
+//    ui->captionLabel->setVisible(false);
+//    ui->captionLineEdit->setVisible(false);
+//    ui->categoryComboBox->setVisible(false);
+//    ui->categoryLabel->setVisible(false);
 
 //    connect(_categoryDataModel.get(),&CategoryDataModel::dataLoadCompleted,this,[](){
 //        auto f = [](QJson){

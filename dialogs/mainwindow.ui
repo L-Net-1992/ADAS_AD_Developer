@@ -550,7 +550,7 @@ gridline-color:#FFFFFF;
    <property name="minimumSize">
     <size>
      <width>1280</width>
-     <height>156</height>
+     <height>158</height>
     </size>
    </property>
    <property name="features">
@@ -609,7 +609,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1002,20 +1002,20 @@ gridline-color:#FFFFFF;
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="tb_code_compiler">
+             <widget class="QToolButton" name="tb_script_deploy">
               <property name="enabled">
                <bool>false</bool>
               </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
-                <width>90</width>
-                <height>55</height>
+                <width>80</width>
+                <height>0</height>
                </size>
               </property>
               <property name="font">
@@ -1027,11 +1027,11 @@ gridline-color:#FFFFFF;
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>     代码构建</string>
+               <string>    代码部署</string>
               </property>
               <property name="icon">
                <iconset resource="../image.qrc">
-                <normaloff>:/res/compiler.png</normaloff>:/res/compiler.png</iconset>
+                <normaloff>:/res/deploy.png</normaloff>:/res/deploy.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1042,58 +1042,9 @@ gridline-color:#FFFFFF;
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
               </property>
-              <property name="autoRaise">
-               <bool>false</bool>
-              </property>
-              <property name="arrowType">
-               <enum>Qt::NoArrow</enum>
-              </property>
              </widget>
             </item>
            </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="tb_script_deploy">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>代码部署</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../image.qrc">
-             <normaloff>:/res/deploy.png</normaloff>:/res/deploy.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
           </widget>
          </item>
          <item>
@@ -1179,6 +1130,55 @@ gridline-color:#FFFFFF;
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="tb_code_compiler">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>55</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>     代码构建</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../image.qrc">
+             <normaloff>:/res/compiler.png</normaloff>:/res/compiler.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>false</bool>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::NoArrow</enum>
            </property>
           </widget>
          </item>

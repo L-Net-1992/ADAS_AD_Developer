@@ -127,8 +127,8 @@ void MainWindow::initToolbar()
 {
     ui->tb_merge_module->setVisible(false);
     ui->tb_import->setVisible(false);
-//    ui->pb_script_generator->setVisible(false);             //代码生成
-//    ui->tb_code_compiler->setVisible(false);                //代码构建
+    ui->pb_script_generator->setVisible(false);             //代码生成
+    ui->tb_code_compiler->setVisible(false);                //代码构建
     ui->tb_edit_script->setVisible(false);                  //编写脚本
 
     //隐藏掉上方dock的标题栏

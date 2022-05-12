@@ -1,7 +1,9 @@
 ﻿#include "dialogs/mainwindow.h"
-
+#include "splashscreen/splashscreen.h"
 #include <QApplication>
 //#include <QtPlugin>
+
+#define SPLASHSCREEN 1
 
 MainWindow *mw = Q_NULLPTR;
 void myMessageOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
@@ -38,7 +40,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //
-
+#if SPLASHSCREEN
+    QPixmap pixmap(":/res/AADS4 .jpg");
+    SplashScreen splash(pixmap, 10000);
+#endif
     //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");
 //        QFile file(":/qss/lightblue.css");
@@ -55,7 +60,9 @@ int main(int argc, char *argv[])
 
     w.show();
 
-
+#if SPLASHSCREEN
+    splash.finish(&w);
+#endif
 
     return a.exec();
 }

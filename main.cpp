@@ -3,7 +3,7 @@
 #include <QApplication>
 //#include <QtPlugin>
 
-#define SPLASHSCREEN 1
+//#define SPLASHSCREEN 1
 
 MainWindow *mw = Q_NULLPTR;
 void myMessageOutput(QtMsgType type,const QMessageLogContext &context,const QString &msg){
@@ -39,17 +39,17 @@ int main(int argc, char *argv[])
     QApplication::addLibraryPath("./plugins");
     QApplication a(argc, argv);
 
-    //
-#if SPLASHSCREEN
-    QPixmap pixmap(":/res/AADS4 .jpg");
-    SplashScreen splash(pixmap, 10000);
-#endif
+    //开始界面
+    QPixmap pixmap(":/res/AADS4.jpg");
+    SplashScreen splash(pixmap);
+    splash.show();
+
     //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");
-//        QFile file(":/qss/lightblue.css");
-        QFile file(":/qss/lakeblue.css");
-//            QFile file(":/qss/blacksoft.css");
-//            QFile file(":/qss/flatgray.css");
+//    QFile file(":/qss/lightblue.css");
+    QFile file(":/qss/lakeblue.css");
+//    QFile file(":/qss/blacksoft.css");
+//    QFile file(":/qss/flatgray.css");
     file.open(QFile::ReadOnly);
     QString styleSheet = QString::fromLatin1(file.readAll());
     a.setStyleSheet(styleSheet);
@@ -58,11 +58,11 @@ int main(int argc, char *argv[])
     mw = &w;
     qInstallMessageHandler(myMessageOutput);
 
-    w.show();
-
-#if SPLASHSCREEN
-    splash.finish(&w);
-#endif
+    //资源加载完毕后显示主界面，关闭开始窗口
+    QObject::connect(&w,&MainWindow::scriptParserCompleted,&w,[&w,&splash](std::list<Invocable> parserResult){
+        w.show();
+        splash.finish(&w);
+    });
 
     return a.exec();
 }

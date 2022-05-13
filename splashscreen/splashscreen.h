@@ -2,6 +2,7 @@
 #define SPLASHSCREEN_H
 
 #include <QSplashScreen>
+#include <QMouseEvent>
 
 class SplashScreen : public QSplashScreen
 {
@@ -12,6 +13,7 @@ public:
 
 protected:
     virtual void drawContents(QPainter *painter);
+    virtual void mousePressEvent(QMouseEvent *event);
 
 public:
     void init();

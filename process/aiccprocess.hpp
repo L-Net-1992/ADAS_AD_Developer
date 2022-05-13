@@ -19,8 +19,14 @@ public:
     explicit AICCProcess(QVector<QWidget*> vw):_vwidgets(vw){
 
         connect(this,static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished),[this](int exitCode,QProcess::ExitStatus exitStatus){
-            qInfo() << "process finished:脚本执行完成";
             setAllEnabledWidget(true);
+            if(exitCode){
+                qInfo() << "process finished:脚本执行完成";
+            }else{
+                qInfo() << "process finished:脚本执行出错，终止任务。错误码:" << exitCode;
+                return;
+            }
+
             queueProcessStart();
         });
     }

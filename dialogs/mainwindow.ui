@@ -609,7 +609,7 @@ gridline-color:#FFFFFF;
         <string notr="true">/*background:rgb(240, 240, 240)*/</string>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>1</number>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -1146,7 +1146,7 @@ gridline-color:#FFFFFF;
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
+             <width>80</width>
              <height>55</height>
             </size>
            </property>
@@ -1172,7 +1172,7 @@ gridline-color:#FFFFFF;
             </size>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
            </property>
            <property name="autoRaise">
             <bool>false</bool>

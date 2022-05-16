@@ -96,5 +96,7 @@
         <file>res/nicon/node_none.png</file>
         <file>res/nicon/node_input.png</file>
         <file>qss/lakeblue.css</file>
+        <file>res/AADS4.jpg</file>
+        <file>res/AADS5.jpg</file>
     </qresource>
 </RCC>

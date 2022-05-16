@@ -50,6 +50,8 @@ set ( PROJECT_SOURCES
     monitor_files/monitor_chartview.h monitor_files/monitor_chartview.cpp
     monitor_files/monitor_signal.h  monitor_files/monitor_signal.cpp
 
+    splashscreen/splashscreen.h splashscreen/splashscreen.cpp
+
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp

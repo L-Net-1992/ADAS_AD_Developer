@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent):
     npmilDialog ( new NodeParametersMILDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
-    _process (QSharedPointer<AICCProcess>(new AICCProcess)),
+//    _process (QSharedPointer<AICCProcess>(new AICCProcess)),
     _currentProjectDataModel(QSharedPointer<ProjectDataModel>(new ProjectDataModel)),
     _recentProjectDataModel(QSharedPointer<RecentProjectDataModel>(new RecentProjectDataModel)),
     _categoryDataModel(QSharedPointer<CategoryDataModel>(new CategoryDataModel))
@@ -26,6 +26,14 @@ MainWindow::MainWindow(QWidget *parent):
     isDialog =new ImportScriptDialog(_currentProjectDataModel,parent);
     emDialog = new ExportModuleDialog(_currentProjectDataModel,parent);
     nodeTreeDialog = new NodeTreeDialog(_categoryDataModel,_currentProjectDataModel,parent);
+
+    QVector<QWidget*> vw;
+    vw.append(ui->cb_select_platform);
+    vw.append(ui->tb_script_deploy);
+    vw.append(ui->tb_run);
+    vw.append(ui->tb_stop);
+    _process = QSharedPointer<AICCProcess>(new AICCProcess(vw));
+
 
 
     //获得Process的标准输出
@@ -140,23 +148,25 @@ void MainWindow::initToolbar()
 
     //生成代码按钮
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&](){
-        //generate cpp code
-        AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+        generateCode();
 
-        //不放到项目路径中，放到平台执行目录中，否则编译时找不到
-        std::string generatePath = (QApplication::applicationDirPath()+"/App").toStdString();
-        std::filesystem::path dir(generatePath);
-        SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
+//        //generate cpp code
+//        AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
 
-        //generate shell script
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
-        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
+//        //不放到项目路径中，放到平台执行目录中，否则编译时找不到
+//        std::string generatePath = (QApplication::applicationDirPath()+"/App").toStdString();
+//        std::filesystem::path dir(generatePath);
+//        SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
 
-        generatePath.append("/generate.cpp");
-        eDialog->openTextFile(QString::fromStdString(generatePath));
-        eDialog->show();
+//        //generate shell script
+//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
+//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
+//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
+//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
+
+//        generatePath.append("/generate.cpp");
+//        eDialog->openTextFile(QString::fromStdString(generatePath));
+//        eDialog->show();
 
     },Qt::UniqueConnection);
 
@@ -233,13 +243,34 @@ void MainWindow::initToolbar()
     });
 
 
-    ///deploy
+    ///代码部署按钮deploy
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
-        QVector<QString> v;
-        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
-        if(ui->cb_select_platform->currentIndex()>0)
-            _process->processStart(v,ui->cb_select_platform->currentIndex());
+        //单独执行部署脚本代码
+//        QVector<QString> v;
+//        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
+//        if(ui->cb_select_platform->currentIndex()>0){
+//            _process->processStart(v,ui->cb_select_platform->currentIndex());
+//        }
+
+        //执行 生成代码、编译代码、部署代码
+        //1:生成代码
+        qInfo() << "执行生成代码";
+
+        generateCode();
+
+        //2：执行 编译代码、部署代码 多任务
+        QVector<QString> v_build,v_deploy,v;
+        v_build << "build_bst.sh" << "build_jetson.sh" << "build_mdc.sh" << "build_x86_64.sh";
+        v_deploy << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
+
+        v << v_build.at(ui->cb_select_platform->currentIndex()-1) << v_deploy.at(ui->cb_select_platform->currentIndex()-1);
+
+        _process->mulProcessStart(v);
+
     });
+
+
+
 
     ///run
     connect(ui->tb_run,&QToolButton::clicked,this,[&](){
@@ -294,6 +325,26 @@ void MainWindow::initToolbar()
     //        TestDialog *tdialog = new TestDialog(this);
     //        tdialog->show();
     //    });
+}
+
+void MainWindow::generateCode(){
+    //generate cpp code
+    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+
+    //不放到项目路径中，放到平台执行目录中，否则编译时找不到
+    std::string generatePath = (QApplication::applicationDirPath()+"/App").toStdString();
+    std::filesystem::path dir(generatePath);
+    SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
+
+    //generate shell script
+    SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
+    SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
+    SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
+    SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
+
+    generatePath.append("/generate.cpp");
+//    eDialog->openTextFile(QString::fromStdString(generatePath));
+//    eDialog->show();
 }
 
 ///初始化面包屑导航

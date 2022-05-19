@@ -14,15 +14,20 @@
 class SubsystemLibrary {
 public:
     void setPath(const std::filesystem::path & path);
+    void setSystemPath(const std::filesystem::path & path);
     bool hasSubsystem(const std::string & package, const std::string & name) const;
+    bool isSystemSubsystem(const std::string & package, const std::string & name) const;
     std::filesystem::path newSubsystem(const std::string & package, const std::string & name);
     std::filesystem::path getSubsystem(const std::string & package, const std::string & name) const;
     std::vector<Invocable> getInvocableList() const;
 private:
-    boost::json::object readScene(const std::filesystem::path & path) const;
-    void parsePorts(boost::json::object &scene, Invocable & invocable) const;
+    static boost::json::object readScene(const std::filesystem::path & path) ;
+    static void parsePorts(boost::json::object &scene, Invocable & invocable) ;
     std::filesystem::path subsystemPath(const std::string & package, const std::string & name) const;
+    std::filesystem::path systemSubsystemPath(const std::string & package, const std::string & name) const;
+    static Invocable invocableFromPath(const std::filesystem::path & path) ;
     std::filesystem::path path_;
+    std::filesystem::path systemPath_;
 
 
 

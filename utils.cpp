@@ -68,7 +68,12 @@ void recursionQJsonObjectLeft(QString parentName,QJsonObject jo,QTreeWidgetItem 
     }
 }
 
-//递归2及子节点并带入父分类信息
+/**
+ * @brief recursionQJsonObjectModuleBrowser 递归2级子节点并带入父分类信息
+ * @param parentName
+ * @param jo
+ * @param twi
+ */
 void recursionQJsonObjectModuleBrowser(QString parentName,QJsonObject jo,QTreeWidgetItem *twi){
     QStringList keys = jo.keys();
     for(int i=0;i<keys.size();i++){
@@ -111,7 +116,89 @@ void makeLeafNode(const QString path,QJsonArray ja,QTreeWidgetItem *twi){
     }
 }
 
-///拷贝文件夹
+/**
+ * @brief getParentidByPath     通过字符串形式的路径获得最下一层的parentid
+ * @param path                  字符串形式路径由|分隔每层路径
+ * @return                      返回最下一层路径的parentid
+ */
+int getParentidByPath(std::string path,const int pid){
+    int rpid = pid;
+    std::vector<std::string> v_split;
+    boost::split(v_split,path,boost::is_any_of("|"),boost::token_compress_on);
+    if(v_split.size()==0) return rpid;
+
+    std::string pname = v_split.at(0);
+//    qDebug() << "-----------------------pname:" << QString::fromStdString(pname);
+    AICCSqlite sqlite;
+    QString sql = QString("select id from modelNode where caption = '%0' and is_node = 0 and parentid = %1").arg(QString::fromStdString(pname)).arg(pid);
+    QSqlQuery squery = sqlite.query(sql);
+    if(squery.next()){
+        rpid = squery.value(0).toInt();
+        boost::erase_first(path,(pname.append("|")));
+        return getParentidByPath(path,rpid);
+    }else
+        return rpid;
+}
+
+/**
+ * @brief classNameIsExist      判断class_name在数据库中是否存在
+ * @param class_name
+ * @return
+ */
+bool classNameIsExist(std::string class_name){
+    AICCSqlite sqlite;
+    QString sql = QString("select count(*) from modelNode where class_name = '%0'").arg(QString::fromStdString(class_name));
+    QSqlQuery query = sqlite.query(sql);
+    if(query.next()){
+//        qDebug() << "query.value(0):" << query.value(0).toInt();
+        if(query.value(0).toInt()>0) return true;
+        else return false;
+    }
+    else{
+        return false;
+    }
+}
+
+/**
+ * @brief addSubsystem          增加一条新的node数据进去
+ * @param pid                   父id
+ * @param package               包名
+ * @param name                  类名
+ * @param caption               标题
+ * @return
+ */
+bool addSubsystem(const int pid,const std::string package,const std::string name,const std::string caption){
+    const std::string class_name = package+"::"+name;
+    if(!classNameIsExist(class_name)){
+        AICCSqlite sqlite;
+        QSqlQuery query = sqlite.sqlQuery();
+//        QString sql = QString("insert into modelNode ('parentid','class_name','caption','is_node') values (%0,'%1','%2',1)").arg(pid).arg(QString::fromStdString(class_name)).arg(QString::fromStdString(caption));
+        query.prepare("insert into modelNode (parentid,class_name,caption,is_node) values (?,?,?,?)");
+        query.addBindValue(pid);
+        query.addBindValue(QString::fromStdString(class_name));
+        query.addBindValue(QString::fromStdString(caption));
+        query.addBindValue(1);
+        bool ret = query.exec();
+        qDebug() << "------------------:" << ret << "  " << query.lastError();
+        return ret;
+    }
+    qDebug() << "-------------------class name exist:";
+    return false;
+
+//    return false;
+}
+
+
+
+
+
+/**
+ * @brief copyDirectory     拷贝文件夹
+ * @param srcPath
+ * @param dstPath
+ * @param coverFileIfExist
+ * @return
+ */
 bool copyDirectory(const QString& srcPath, const QString& dstPath, bool coverFileIfExist)
 {
     QDir srcDir(srcPath);
@@ -142,7 +229,13 @@ bool copyDirectory(const QString& srcPath, const QString& dstPath, bool coverFil
     return true;
 }
 
-///拷贝文件
+/**
+ * @brief copyFile          拷贝文件
+ * @param srcPath
+ * @param dstPath
+ * @param coverFileIfExist
+ * @return
+ */
 bool copyFile(QString srcPath, QString dstPath, bool coverFileIfExist)
 {
     srcPath.replace("\\", "/");

@@ -39,9 +39,11 @@ public:
 
         _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
         _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
+        ml->setCurrentUseCategoryFullPath(_currentUseCategoryFullPath);
         QJsonObject json = recursionChildren(_category,0);
 
-        emit dataLoadCompleted(recursionChildren(_category,0));
+        emit dataLoadCompleted(json);
+
     }
 
     /**
@@ -84,13 +86,18 @@ public:
 
     /**
      * @brief makeAllCategoryFullPath   获得所有的完整路径
+     * @param cln                       所有使用的节点
      * @return                          以list形式返回所有可选择的完整路径
      */
     QStringList makeAllCategoryFullPath(std::vector<std::string> cln){
         QSet<QString> set;
         for(std::string n:cln)
-            set.insert(makeCategoryFullPath(QString::fromStdString(n)));
-        return set.toList();
+                set.insert(makeCategoryFullPath(QString::fromStdString(n)));
+        QStringList slist = set.toList();
+        qSort(slist.begin(),slist.end(),[](const QString &s1,const QString &s2){
+            return s1.toLower() < s2.toLower();
+        });
+        return slist;
     }
 
     /**

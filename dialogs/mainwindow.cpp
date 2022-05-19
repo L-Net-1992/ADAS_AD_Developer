@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 
+
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -150,24 +151,6 @@ void MainWindow::initToolbar()
     connect(ui->pb_script_generator,&QPushButton::clicked,this,[&](){
         generateCode();
 
-//        //generate cpp code
-//        AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
-
-//        //不放到项目路径中，放到平台执行目录中，否则编译时找不到
-//        std::string generatePath = (QApplication::applicationDirPath()+"/App").toStdString();
-//        std::filesystem::path dir(generatePath);
-//        SourceGenerator::generateCMakeProject(dir,*scene,*_moduleLibrary);
-
-//        //generate shell script
-//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-jetson.json").toStdString(),"jetson",*scene,_moduleLibrary->packageLibrary());
-//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-bst.json").toStdString(),"bst",*scene,_moduleLibrary->packageLibrary());
-//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-mdc.json").toStdString(),"mdc",*scene,_moduleLibrary->packageLibrary());
-//        SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
-
-//        generatePath.append("/generate.cpp");
-//        eDialog->openTextFile(QString::fromStdString(generatePath));
-//        eDialog->show();
-
     },Qt::UniqueConnection);
 
     //导入脚本按钮
@@ -205,14 +188,14 @@ void MainWindow::initToolbar()
     //保存按钮响应动作，当前只保存一个NodeEditor的内容，子系统实现后需要保存多个NodeEditor内容
     connect(ui->pb_save,&QPushButton::clicked,this,&MainWindow::saveProjectAction);
 
-    ///点击显示数据检查器窗口
+    //点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&]{
         QJsonObject jo = getConfig();
         monitorDialog = new MonitorDialog(this);
         monitorDialog->show();
     });
 
-    ///平台选择下拉框
+    //平台选择下拉框
     connect(ui->cb_select_platform,&QComboBox::currentTextChanged,this,[&](const QString &text){
         //        if(text==QString::fromLocal8Bit("SelectPlatform") ){
         if(ui->cb_select_platform->currentIndex()==0){
@@ -385,7 +368,7 @@ void MainWindow::initStackedWidget(){
     ///双击node节点模块后弹出显示属性的窗口
     connect(ui->sw_flowscene,&AICCStackedWidget::nodeDoubleClicked,this,[&](NodeDataModel *nodeDataModel,const QString &pagePathName){
         //如果点击的是子窗口模块不进行处理
-        auto * invocableDataModel = static_cast<InvocableDataModel*>(nodeDataModel);
+        auto invocableDataModel = static_cast<InvocableDataModel*>(nodeDataModel);
         const auto & invocable = invocableDataModel->invocable();
         if(invocable.getType() == Invocable::Subsystem){
             _moduleLibrary->openSubsystem(this, invocable.getPackage(), invocable.getSubsystemName());
@@ -525,6 +508,7 @@ void MainWindow::initProjectDataModel(){
 void MainWindow::initNodeEditor(){
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
     _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
+//    _moduleLibrary->setCategoryDataModel(_categoryDataModel);
 
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/ICVOS/";
@@ -557,6 +541,7 @@ void MainWindow::initNodeEditor(){
     connect(_moduleLibrary.get(),&ModuleLibrary::importCompleted,this,[&](){
         //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
+        _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
     });
 
     //6:当主界面内容加载完成，连接节点的创建、删除信号
@@ -627,8 +612,11 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     rProjectDialog->show();
 }
 
-/// 只负责注册右键菜单，并返回右键菜单的数据模型,注册的数据包括普通模块、子系统模块
-/// 该函数在项目打开完毕后执行，每次打开项目都要重新注册一次,或每次增加了新的子系统都要重新注册一次
+/**
+ * @brief MainWindow::registerDataModels    只负责注册右键菜单，并返回右键菜单的数据模型,注册的数据包括普通模块、子系统模块
+ *                                          该函数在项目打开完毕后执行，每次打开项目都要重新注册一次,或每次增加了新的子系统都要重新注册一次
+ * @return
+ */
 std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
 
     std::list<Invocable> parserResult = _moduleLibrary->getParseResult();

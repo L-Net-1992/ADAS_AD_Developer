@@ -11,6 +11,8 @@
 #include <nodes/Node>
 #include "module_library.hpp"
 #include <filesystem>
+#include <QFileDialog>
+#include "utils.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubsystemWindow; }
@@ -21,9 +23,9 @@ Q_OBJECT
 
 public:
     explicit SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent = nullptr);
-
     ~SubsystemWindow() override;
     QtNodes::FlowScene & scene();
+    void setBusinessData(const std::map<std::string,std::string> & subsystemDataModel);
 
 Q_SIGNALS:
     void subsystemCreatedOrDeleted();
@@ -34,6 +36,7 @@ private:
     ModuleLibrary *module_library_;
     QWidget *parent_;
     std::filesystem::path subsystem_path_;
+    std::map<std::string,std::string> subsystem_data_model_;
     void save();
     void sceneLoadFromMemoryCompletedAction(bool isCompleted);
 

@@ -25,8 +25,9 @@
 #include <filesystem>
 #include "package_library.h"
 #include "subsystem_library.h"
-//#include "model/modelcategory.hpp"
+#include <QSharedPointer>
 #include "utils.h"
+
 
 class ModuleLibrary : public QAbstractListModel {
 Q_OBJECT
@@ -45,6 +46,7 @@ public Q_SLOTS:
 
     void openSubsystem(QWidget *parent, const std::string &package, const std::string &name);
 
+    void openSubsystem(QWidget *parent, const std::map<std::string,std::string> &subsystemDataModel);
 
 Q_SIGNALS:
 
@@ -62,9 +64,11 @@ private:
 
     void setInvocables(const std::list<Invocable> &list);
 
+
     PackageLibrary _packageLibrary;
     SubsystemLibrary _subsystemLibrary;
 
+    QStringList _currentUseCategoryFullPath;   //当前使用的所有分类路径
 
 public:
 
@@ -119,6 +123,9 @@ public:
 public:
     static void updateVarName(QtNodes::FlowScene & scene, QtNodes::Node & node, QWidget * parent);
     static void generateVarNameIfEmpty(QtNodes::FlowScene & scene, QtNodes::Node & node);
+
+    void setCurrentUseCategoryFullPath(const QStringList &newCurrentUseCategoryFullPath);
+
 private:
     static QString generateVarName(QtNodes::FlowScene & scene);
     static bool varNameExists(QtNodes::FlowScene & scene, const QString & var_name);

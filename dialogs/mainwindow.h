@@ -85,7 +85,7 @@ Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
 
 private:
-
+    void initProcess();
     void initMenu();
     void initTreeView();
 

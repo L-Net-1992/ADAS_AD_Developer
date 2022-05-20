@@ -18,6 +18,7 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
     connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
+
     //子系统窗口中先不在创建、删除节点时发送信号，只在保存操作的时候发送信号
 //    connect(&scene_, &QtNodes::FlowScene::sceneLoadFromMemoryCompleted,this,&SubsystemWindow::sceneLoadFromMemoryCompletedAction);
     scene_.setRegistry(module_library->test2());
@@ -39,8 +40,19 @@ SubsystemWindow::~SubsystemWindow() {
     delete ui;
 }
 
-/// 主场景加载完成后初始化连接node的创建、删除信号
-/// 该函数暂未使用，在保存操作时发送更新结构树操作
+/**
+ * @brief setBusinessData       创建完新子窗口后,可使用该函数为其他的业务数据赋值
+ * @param subsystemDataModel
+ */
+void SubsystemWindow::setBusinessData(const std::map<std::string,std::string> & subsystemDataModel){
+    subsystem_data_model_ = subsystemDataModel;
+}
+
+
+/**
+ * @brief SubsystemWindow::sceneLoadFromMemoryCompletedAction   主场景加载完成后初始化连接node的创建、删除信号。该函数暂未使用，在保存操作时发送更新结构树操作
+ * @param isCompleted
+ */
 void SubsystemWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
 //    qDebug() << "subsystem window scene load from memory completed action";
     if(isCompleted){
@@ -72,11 +84,11 @@ QtNodes::FlowScene &SubsystemWindow::scene() {
 }
 
 void SubsystemWindow::nodeDoubleClicked(QtNodes::Node & node) {
-    auto * nodeDataModel = static_cast<InvocableDataModel*>(node.nodeDataModel());
-    const auto & invocable = nodeDataModel->invocable();
-    if(invocable.getType() == Invocable::Subsystem)
+    auto nodeDataModel = static_cast<InvocableDataModel*>(node.nodeDataModel());
+    const auto invocable = nodeDataModel->invocable();
+    if(invocable.getType() == Invocable::Subsystem){
         module_library_->openSubsystem(parent_, invocable.getPackage(), invocable.getSubsystemName());
-
+    }
 }
 
 void SubsystemWindow::updateRegistry() {
@@ -85,14 +97,31 @@ void SubsystemWindow::updateRegistry() {
 }
 
 void SubsystemWindow::save() {
+    //数据保存到flow文件中成功
     auto buffer = scene_.saveToMemory();
     std::ofstream file(subsystem_path_, std::ios::binary);
     file.write(buffer.data(), buffer.size());
     file.close();
+
+    //TODO:子系统信息保存至数据库,保存时需要判断当前是否有subsystem_data_model_数据，如果没有从数据库中取
+    std::string category_path = subsystem_data_model_.at("category");
+    int pid = getParentidByPath(category_path,0);
+    const std::string name = subsystem_data_model_.at("name");
+    const std::string package = subsystem_data_model_.at("package");
+    const std::string caption = subsystem_data_model_.at("caption");
+    const std::string class_name = package+"::"+name;
+
+    if(addSubsystem(pid,package,name,caption)){
+        qInfo() << QString::fromStdString(class_name) << "业务信息写入成功";
+    }else{
+        qInfo() << QString::fromStdString(class_name) << "业务信息写入失败";
+    }
+
     emit module_library_->importCompleted();
     emit subsystemCreatedOrDeleted();
 
 }
+
 
 void SubsystemWindow::generateVarName(QtNodes::Node &node) {
     ModuleLibrary::generateVarNameIfEmpty(scene_, node);

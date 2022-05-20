@@ -25,6 +25,7 @@ private:
     QString architecture_;
     QString release_date_;
 
+
 };
 
 #endif // SPLASHSCREEN_H

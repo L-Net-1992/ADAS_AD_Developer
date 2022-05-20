@@ -17,17 +17,12 @@ NewSubsystemDialog::NewSubsystemDialog(QWidget *parent) :
     ui->packageEdit->setValidator(new QRegExpValidator(tokenRegex, ui->packageEdit));
     ui->nameEdit->setValidator(new QRegExpValidator(tokenRegex, ui->nameEdit));
 
-    //暂时屏蔽
-    ui->captionLabel->setVisible(false);
-    ui->captionLineEdit->setVisible(false);
-    ui->categoryComboBox->setVisible(false);
-    ui->categoryLabel->setVisible(false);
+    //是否屏蔽
+//    ui->captionLabel->setVisible(false);
+//    ui->captionLineEdit->setVisible(false);
+//    ui->categoryComboBox->setVisible(false);
+//    ui->categoryLabel->setVisible(false);
 
-//    connect(_categoryDataModel.get(),&CategoryDataModel::dataLoadCompleted,this,[](){
-//        auto f = [](QJson){
-
-//        };
-//    });
 }
 
 NewSubsystemDialog::~NewSubsystemDialog() {
@@ -36,9 +31,52 @@ NewSubsystemDialog::~NewSubsystemDialog() {
 
 NewSubsystemDialog::SubsystemNameType NewSubsystemDialog::getSubsystemName() {
     return {ui->packageEdit->text().toStdString(), ui->nameEdit->text().toStdString()};
-
 }
 
-//NewSubsystemDialog::setCategoryComboBox(QMap<QString,QSet<QString>> map){
+NewSubsystemDialog::SubsystemDataModel NewSubsystemDialog::getSubsystemDataModel(){
+    SubsystemDataModel dataModel;
+    dataModel.insert(make_pair("category",ui->categoryComboBox->currentText().toStdString()));
+    dataModel.insert(make_pair("package",ui->packageEdit->text().toStdString()));
+    dataModel.insert(make_pair("name",ui->nameEdit->text().toStdString()));
+    dataModel.insert(make_pair("caption",ui->captionEdit->text().toStdString()));
+    return dataModel;
+}
 
-//}
+
+void NewSubsystemDialog::setCategoryComboBox(QStringList categoryDataModel){
+    qDebug() << "set category combobox:" << categoryDataModel.size();
+    QStringList::iterator it;
+    for(it=categoryDataModel.begin();it!=categoryDataModel.end();it++){
+        std::string s = it->toStdString();
+        if(s=="") continue;
+        ui->categoryComboBox->addItem(QString::fromStdString(it->toStdString()));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

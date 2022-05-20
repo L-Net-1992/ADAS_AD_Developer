@@ -523,7 +523,9 @@ void MainWindow::initProjectDataModel(){
 //初始化时初始化主Scene的右键菜单，和NodeTreeDialog的node分类数据
 //TODO:
 void MainWindow::initNodeEditor(){
+    std::string systemSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
+    _moduleLibrary->setSystemSubsystemPath(systemSubsystemPath);
     _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
 //    _moduleLibrary->setCategoryDataModel(_categoryDataModel);
 

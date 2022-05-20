@@ -138,7 +138,7 @@ private:
     CalibrationDialog *cDialog;
     ExportModuleDialog *emDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+    //QSharedPointer<SubsystemLibrary> _subsystemLibrary;
     QSharedPointer<AICCProcess> _process;
 
     //nodeeditor部分

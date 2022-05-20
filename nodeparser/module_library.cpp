@@ -115,10 +115,12 @@ void ModuleLibrary::openSubsystem(QWidget *parent, const std::map<std::string,st
     subsystemWindow->setBusinessData(subsystemDataModel);
 }
 
+void ModuleLibrary::setSystemSubsystemPath(const std::filesystem::path &path) {
+    _subsystemLibrary.setSystemPath(path);
+}
 void ModuleLibrary::setSubsystemPath(const std::filesystem::path &path) {
     _subsystemLibrary.setPath(path);
     emit importCompleted();
-
 }
 
 void ModuleLibrary::updateVarName(QtNodes::FlowScene &scene, QtNodes::Node &node, QWidget *parent) {
@@ -183,4 +185,5 @@ void ModuleLibrary::addPackage(const std::filesystem::path &path) {
     }
     emit fileParserCompleted(1, 0);
 }
+
 

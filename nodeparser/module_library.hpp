@@ -40,6 +40,8 @@ public Q_SLOTS:
 
     void importFiles(const QStringList &files);
 
+    void setSystemSubsystemPath(const std::filesystem::path &path);
+
     void setSubsystemPath(const std::filesystem::path &path);
 
     void newSubsystem(QWidget *parent);

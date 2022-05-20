@@ -465,11 +465,11 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     if(!dirSubsystem.exists(psubsystem)) dirSubsystem.mkpath(psubsystem);
     std::string sp = _currentProjectDataModel->projectSubSystemPath().toStdString();
     _moduleLibrary->setSubsystemPath(sp);
-    _subsystemLibrary->setPath(sp);
+
 
     //设置项目的subsystem目录与系统级的subsystem
-    std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
-    _subsystemLibrary->setSystemPath(otherSubsystemPath);
+//    std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
+//    _moduleLibrary->subsystemLibrary()->setSystemPath(otherSubsystemPath);
 
     //2:注册所有的功能模块到右键上
     std::shared_ptr<DataModelRegistry> dmr = registerDataModels();
@@ -487,13 +487,13 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     scene->loadFromMemory(wholeFile);
 
     //3.5加载左侧结构树内容
-    ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),scene);
+    ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),scene);
 
     //4:将当前打开的项目排序到第一位
     _recentProjectDataModel->sortProjectFirst(_currentProjectDataModel->projectName(),_currentProjectDataModel);
 
     //5:打开新项目后分类数据要刷新
-    _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
+    _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);
 
 }
 
@@ -526,8 +526,6 @@ void MainWindow::initNodeEditor(){
     std::string systemSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
     _moduleLibrary->setSystemSubsystemPath(systemSubsystemPath);
-    _subsystemLibrary = QSharedPointer<SubsystemLibrary>(new SubsystemLibrary);
-//    _moduleLibrary->setCategoryDataModel(_categoryDataModel);
 
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/ICVOS/";
@@ -560,7 +558,7 @@ void MainWindow::initNodeEditor(){
     connect(_moduleLibrary.get(),&ModuleLibrary::importCompleted,this,[&](){
         //        ui->pte_output->appendPlainText("模型数据加载完毕");
         ui->sw_flowscene->getCurrentView()->scene()->setRegistry(this->registerDataModels());
-        _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
+        _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);
     });
 
     //6:当主界面内容加载完成，连接节点的创建、删除信号
@@ -568,7 +566,7 @@ void MainWindow::initNodeEditor(){
 
     //7:子系统节点创建或删除时刷新左侧节点
     connect(_moduleLibrary.get(),&ModuleLibrary::subsystemCreatedOrDeleted,this,[&](){
-        ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+        ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
     });
 
     //8:响应文件解析进度
@@ -588,7 +586,7 @@ void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
             const auto & invocable = model->invocable();
             if(invocable.getType()==Invocable::Subsystem){
                 qDebug() << "create";
-                ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+                ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
             }
         });
 
@@ -600,7 +598,7 @@ void MainWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
         connect(scene,&AICCFlowScene::afterNodeDeleted,this,[&](){
             //判断当前记录的invocableType类型为Subsysem才执行刷新操作
             if(invocableType==Invocable::Subsystem)
-                ui->tw_node->fillInitLeftTreeData(_moduleLibrary,_subsystemLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+                ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
         });
     }
 }
@@ -614,7 +612,7 @@ void MainWindow::importCompletedAction(){
 void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 
     //1:生成NodeTreeDialog的菜单结构
-    _categoryDataModel->refreshCategoryDataModel(_moduleLibrary,_subsystemLibrary);
+    _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);
     //2:初始化模块变量相关操作
     FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
@@ -662,7 +660,7 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     }
 
     //注册所有的子系统
-    for (const auto &inv: _subsystemLibrary->getInvocableList()) {
+    for (const auto &inv: _moduleLibrary->subsystemLibrary().getInvocableList()) {
         QString nodeName = QString::fromStdString(inv.getName());
         QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
         //获得caption

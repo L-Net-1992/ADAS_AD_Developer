@@ -49,7 +49,7 @@ public:
      * @param pname
      * @param scene
      */
-    void fillInitLeftTreeData(QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library, const QString &pname,const FlowScene *scene){
+    void fillInitLeftTreeData(ModuleLibrary &module_library, const QString &pname,const FlowScene *scene){
 
         //        this->setDragDropMode(QAbstractItemView::DragOnly);
         //        this->setDragEnabled(true);
@@ -62,8 +62,8 @@ public:
 
         std::vector<Node*> v_nodes = scene->allNodes();
         //在刷新左侧菜单之前，第一次从test2中获得所有的DataModelRegistry数据，后面每次遍历的时候使用缓存即可
-        dmr = module_library->test2();
-        makeTreeWidgetItem(v_nodes,module_library,subsystem_library,twi_root);
+        dmr = module_library.test2();
+        makeTreeWidgetItem(v_nodes,module_library,twi_root);
 
         this->expandAll();
     }
@@ -116,11 +116,11 @@ private:
     }
 
     ///解析所有子系统的节点
-    void parseSubSystemNode(QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library,QTreeWidgetItem *ptwi,const Node* node) {
+    void parseSubSystemNode(ModuleLibrary &module_library,QTreeWidgetItem *ptwi,const Node* node) {
 
         const auto *model = static_cast<InvocableDataModel*>(node->nodeDataModel());
         const auto & invocable = model->invocable();
-        std::filesystem::path subsystem_path = subsystem_library->getSubsystem(invocable.getPackage(),invocable.getSubsystemName());
+        std::filesystem::path subsystem_path = module_library.subsystemLibrary().getSubsystem(invocable.getPackage(),invocable.getSubsystemName());
         //将子系统的flow文件加载到scene中
         FlowScene scene;
         scene.setRegistry(dmr);
@@ -128,11 +128,11 @@ private:
 
         //获得scene中的所有node对象
         std::vector<Node*> v_nodes = scene.allNodes();
-        makeTreeWidgetItem(v_nodes,module_library,subsystem_library,ptwi);
+        makeTreeWidgetItem(v_nodes,module_library,ptwi);
     }
 
     ///生成子系统控件的节点
-    void makeTreeWidgetItem(std::vector<Node*> v_nodes,QSharedPointer<ModuleLibrary> module_library,QSharedPointer<SubsystemLibrary> subsystem_library,QTreeWidgetItem *ptwi){
+    void makeTreeWidgetItem(std::vector<Node*> v_nodes,ModuleLibrary &module_library,QTreeWidgetItem *ptwi){
 
         for(const Node* node:v_nodes){
             const auto *model = static_cast<const InvocableDataModel*>(node->nodeDataModel());
@@ -144,7 +144,7 @@ private:
                 twi->setIcon(0,icon);
                 //包名类名带入data，权限为UserRole
                 twi->setData(0,Qt::ItemDataRole::UserRole,QVariant(nname));
-                parseSubSystemNode(module_library,subsystem_library,twi,node);
+                parseSubSystemNode(module_library,twi,node);
             }
         }
     }

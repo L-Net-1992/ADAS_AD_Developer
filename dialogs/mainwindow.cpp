@@ -467,7 +467,7 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
 
-    //设置额外得系统级别的子系统模块
+    //设置项目的subsystem目录与系统级的subsystem
     std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
     _subsystemLibrary->setSystemPath(otherSubsystemPath);
 

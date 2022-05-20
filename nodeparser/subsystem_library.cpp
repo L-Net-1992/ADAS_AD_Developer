@@ -27,6 +27,9 @@ bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::strin
 bool SubsystemLibrary::isSystemSubsystem(const std::string &package, const std::string &name) const {
     return std::filesystem::exists(systemSubsystemPath(package, name));
 }
+bool SubsystemLibrary::isProjectSubsystem(const std::string &package, const std::string &name) const {
+    return std::filesystem::exists(subsystemPath(package, name));
+}
 
 std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package, const std::string &name) {
     auto ret = subsystemPath(package, name);
@@ -41,11 +44,10 @@ std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package,
 
 std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) const {
     if(hasSubsystem(package, name)) {
-        if(isSystemSubsystem(package, name))
-            return systemSubsystemPath(package, name);
-        else
+        if(isProjectSubsystem(package, name))
             return subsystemPath(package, name);
-
+        else
+            return systemSubsystemPath(package, name);
     } else {
         return subsystemPath(package, name);
     }
@@ -136,6 +138,7 @@ Invocable SubsystemLibrary::invocableFromPath(const std::filesystem::path &path)
     parsePorts(scene, invocable);
     return invocable;
 }
+
 
 
 

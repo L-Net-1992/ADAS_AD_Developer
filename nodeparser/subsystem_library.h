@@ -17,6 +17,7 @@ public:
     void setSystemPath(const std::filesystem::path & path);
     bool hasSubsystem(const std::string & package, const std::string & name) const;
     bool isSystemSubsystem(const std::string & package, const std::string & name) const;
+    bool isProjectSubsystem(const std::string & package, const std::string & name) const;
     std::filesystem::path newSubsystem(const std::string & package, const std::string & name);
     std::filesystem::path getSubsystem(const std::string & package, const std::string & name) const;
     std::vector<Invocable> getInvocableList() const;

@@ -11,7 +11,7 @@
 #include <QByteArray>
 #include "models.hpp"
 SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent) :
-        QMainWindow(parent), ui(new Ui::SubsystemWindow), module_library_(module_library), parent_(parent), subsystem_path_(subsystem_path) {
+    QMainWindow(parent), ui(new Ui::SubsystemWindow), module_library_(module_library), parent_(parent), subsystem_path_(subsystem_path) {
     this->setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
     connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
@@ -20,7 +20,7 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
 
     //子系统窗口中先不在创建、删除节点时发送信号，只在保存操作的时候发送信号
-//    connect(&scene_, &QtNodes::FlowScene::sceneLoadFromMemoryCompleted,this,&SubsystemWindow::sceneLoadFromMemoryCompletedAction);
+    //    connect(&scene_, &QtNodes::FlowScene::sceneLoadFromMemoryCompleted,this,&SubsystemWindow::sceneLoadFromMemoryCompletedAction);
     scene_.setRegistry(module_library->test2());
     int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
     QByteArray buffer(file_size, 0);
@@ -54,7 +54,7 @@ void SubsystemWindow::setBusinessData(const std::map<std::string,std::string> & 
  * @param isCompleted
  */
 void SubsystemWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
-//    qDebug() << "subsystem window scene load from memory completed action";
+    //    qDebug() << "subsystem window scene load from memory completed action";
     if(isCompleted){
 
         connect(&scene_,&QtNodes::FlowScene::nodeCreated,this,[&](QtNodes::Node &node){
@@ -103,20 +103,21 @@ void SubsystemWindow::save() {
     file.write(buffer.data(), buffer.size());
     file.close();
 
-    //TODO:子系统信息保存至数据库,保存时需要判断当前是否有subsystem_data_model_数据，如果没有从数据库中取
-    std::string category_path = subsystem_data_model_.at("category");
-    int pid = getParentidByPath(category_path,0);
-    const std::string name = subsystem_data_model_.at("name");
-    const std::string package = subsystem_data_model_.at("package");
-    const std::string caption = subsystem_data_model_.at("caption");
-    const std::string class_name = package+"::"+name;
+    if(subsystem_data_model_.size()>0){
+        std::string category_path = subsystem_data_model_.at("category");
+        int pid = getParentidByPath(category_path,0);
+        const std::string name = subsystem_data_model_.at("name");
+        const std::string package = subsystem_data_model_.at("package");
+        const std::string caption = subsystem_data_model_.at("caption");
+        const std::string class_name = package+"::"+name;
 
-    if(addSubsystem(pid,package,name,caption)){
-        qInfo() << QString::fromStdString(class_name) << "业务信息写入成功";
-    }else{
-        qInfo() << QString::fromStdString(class_name) << "业务信息写入失败";
+        if(addSubsystem(pid,package,name,caption)){
+            qInfo() << QString::fromStdString(class_name) << "业务信息写入成功";
+        }else{
+            qInfo() << QString::fromStdString(class_name) << "业务信息写入失败";
+        }
+
     }
-
     emit module_library_->importCompleted();
     emit subsystemCreatedOrDeleted();
 
@@ -130,6 +131,5 @@ void SubsystemWindow::generateVarName(QtNodes::Node &node) {
 
 void SubsystemWindow::updateVarName(QtNodes::Node &node, const QPointF & pos) {
     ModuleLibrary::updateVarName(scene_, node, this);
-
 }
 

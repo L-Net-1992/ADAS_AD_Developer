@@ -37,12 +37,7 @@ MainWindow::MainWindow(QWidget *parent):
 
 
 
-    //获得Process的标准输出
-    connect(_process.get(),&QProcess::readyRead,this,[&](){
-        ui->pte_output->appendPlainText(_process->readAll());
-    });
-
-
+    this->initProcess();
     this->initMenu();
     this->initTreeView();
     this->setAcceptDrops(true);
@@ -72,6 +67,24 @@ MainWindow::~MainWindow()
 ///用于处理consoel内容重定向
 void MainWindow::showMsg(QString msg){
     ui->pte_output->appendPlainText(msg);
+}
+
+/**
+ * @brief MainWindow::initProcess   初始化process
+ */
+void MainWindow::initProcess(){
+    //获得Process的标准输出
+    connect(_process.get(),&QProcess::readyRead,this,[&](){
+        ui->pte_output->appendPlainText(_process->readAll());
+    });
+
+    //process执行完成
+    connect(_process.get(),&AICCProcess::tasksCompleted,this,[&](const bool success,const QString msg){
+//        ui->tb_script_deploy->setEnabled(true);
+//        ui->tb_run->setEnabled(true);
+//        ui->tb_stop->setEnabled(true);
+    });
+
 }
 
 ///初始化菜单
@@ -453,6 +466,10 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     std::string sp = _currentProjectDataModel->projectSubSystemPath().toStdString();
     _moduleLibrary->setSubsystemPath(sp);
     _subsystemLibrary->setPath(sp);
+
+    //设置额外得系统级别的子系统模块
+    std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
+    _subsystemLibrary->setSystemPath(otherSubsystemPath);
 
     //2:注册所有的功能模块到右键上
     std::shared_ptr<DataModelRegistry> dmr = registerDataModels();

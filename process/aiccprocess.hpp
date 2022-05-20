@@ -24,6 +24,7 @@ public:
                 qInfo() << "process finished:脚本执行完成";
             }else{
                 qInfo() << "process finished:脚本执行出错，终止任务。错误码:" << exitCode;
+                emit tasksCompleted(false,QString(exitCode));
                 return;
             }
 
@@ -66,11 +67,19 @@ public:
         _vwidgets = newVwidgets;
     }
 
+Q_SIGNALS:
+    void tasksCompleted(const bool success,const QString msg = "");
+
+
+
 
 private:
     void queueProcessStart(){
         if(_taskQueue.size()==0){
-            qInfo() << "队列任务为空";
+            const QString msg = "队列任务为空,全部任务完成";
+            qInfo() << msg;
+            setAllEnabledWidget(true);
+            emit tasksCompleted(true,msg);
             return;
         }
 
@@ -82,8 +91,6 @@ private:
         bash.append(QApplication::applicationDirPath()).append("/App/").append(taskScript);
         AICCProcess::terminate();
         AICCProcess::start(bash);
-
-
 
     }
 

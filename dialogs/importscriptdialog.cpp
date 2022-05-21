@@ -8,6 +8,7 @@ ImportScriptDialog::ImportScriptDialog(QSharedPointer<ProjectDataModel>pdm,QWidg
 {
     ui->setupUi(this);
     this->initButton();
+    this->setAttribute(Qt::WA_QuitOnClose, false);
 }
 
 ImportScriptDialog::~ImportScriptDialog()

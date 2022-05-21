@@ -8,6 +8,7 @@ RecentProjectDialog::RecentProjectDialog(QSharedPointer<RecentProjectDataModel>r
     _recent_project_data_model(rpdm)
 {
     ui->setupUi(this);
+        this->setAttribute(Qt::WA_QuitOnClose, false);
     this->setModal(true);
     initStyle();
     setDoubleClickAction();

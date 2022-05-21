@@ -6,7 +6,7 @@ TestDialog::TestDialog(QWidget *parent) :
     ui(new Ui::TestDialog)
 {
     ui->setupUi(this);
-
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     initEvent();
 
 

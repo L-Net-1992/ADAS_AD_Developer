@@ -6,6 +6,7 @@ NodeParametersMILDialog::NodeParametersMILDialog(QWidget *parent) :
     ui(new Ui::NodeParametersMILDialog)
 {
     ui->setupUi(this);
+        this->setAttribute(Qt::WA_QuitOnClose, false);
     initToolButton();
 }
 

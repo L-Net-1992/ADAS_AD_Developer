@@ -44,7 +44,7 @@ NewSubsystemDialog::SubsystemDataModel NewSubsystemDialog::getSubsystemDataModel
 
 
 void NewSubsystemDialog::setCategoryComboBox(QStringList categoryDataModel){
-    qDebug() << "set category combobox:" << categoryDataModel.size();
+//    qDebug() << "set category combobox:" << categoryDataModel.size();
     QStringList::iterator it;
     for(it=categoryDataModel.begin();it!=categoryDataModel.end();it++){
         std::string s = it->toStdString();

@@ -574,6 +574,15 @@ void MainWindow::initNodeEditor(){
         //        qDebug() << " ==================================================processing:" << index << "/" << count;
     });
 
+    //9:scene放置或删除node时判断该node是否为subsystem,如果未subsystem则刷新左侧结构树
+    auto refreshSubsystemTree = [&](Node &n){
+        const auto *model = static_cast<const InvocableDataModel*>(n.nodeDataModel());
+        if(model->invocable().getType()==Invocable::Subsystem)
+            ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+    };
+    connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::nodeCreated,this,refreshSubsystemTree);
+    connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::nodeDeleted,this,refreshSubsystemTree);
+
 }
 
 static Invocable::Type invocableType = Invocable::Class;
@@ -686,7 +695,12 @@ void MainWindow::initImportScriptDialog(){
     connect(isDialog,&ImportScriptDialog::packageSelected,this,[&](const QString packFile){
 
         //        QtConcurrent::run([&](){
-        _moduleLibrary->addPackage(QString(packFile).toStdString());
+        //导入c++模块
+//        _moduleLibrary->addPackage(QString(packFile).toStdString());
+
+        //导入子系统flow文件
+        _moduleLibrary->subsystemLibrary().getInvocableList();
+        emit _moduleLibrary->importCompleted();
         //        });
 
         //          _moduleLibrary->addPackage(QString(packFile).toStdString());

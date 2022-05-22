@@ -35,7 +35,7 @@ void SplashScreen::drawContents(QPainter *painter)
     painter->drawText(QPointF(20, 70), release_date_);
 
     QString copyright;
-    copyright = "Copyright © 2022 The Aicc Company, All Rights Reserved.";
+    copyright = "Copyright © 2022 The AICC, All Rights Reserved.";
     painter->setFont(QFont("SimSun", 8));
     painter->setPen(QColor(213, 218, 220));
     QFontMetrics fm(painter->font());

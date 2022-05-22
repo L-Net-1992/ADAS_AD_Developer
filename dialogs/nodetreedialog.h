@@ -41,9 +41,7 @@ using QtNodes::DataModelRegistry;
 
 //AICCToolButton * createToolButton( QString name);
 
-namespace Ui {
-class NodeTreeDialog;
-}
+namespace Ui {class NodeTreeDialog;}
 
 class NodeTreeDialog : public QDialog
 {

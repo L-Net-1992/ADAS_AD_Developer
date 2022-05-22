@@ -162,6 +162,7 @@ void EditorWindow::openTextFile(const QString pathName){
 }
 
 void EditorWindow::initEditor(QWidget *parent){
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     //定义QsciScintilla编辑器
     _editor = new QsciScintilla(parent);
 

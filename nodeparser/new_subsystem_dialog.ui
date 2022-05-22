@@ -58,7 +58,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="captionLineEdit"/>
+    <widget class="QLineEdit" name="captionEdit"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

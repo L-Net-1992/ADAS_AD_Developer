@@ -10,7 +10,6 @@
 #include <QtDebug>
 #include <QMessageBox>
 #include "var_name_dialog.h"
-#include <QMessageBox>
 
 namespace fs = std::filesystem;
 
@@ -62,8 +61,15 @@ void ModuleLibrary::setInvocables(const std::list<Invocable> &list) {
 
 }
 
+void ModuleLibrary::setCurrentUseCategoryFullPath(const QStringList &newCurrentUseCategoryFullPath)
+{
+    _currentUseCategoryFullPath = newCurrentUseCategoryFullPath;
+}
+
+
 void ModuleLibrary::newSubsystem(QWidget *parent) {
     NewSubsystemDialog dialog(parent);
+    dialog.setCategoryComboBox(_currentUseCategoryFullPath);
     NewSubsystemDialog::SubsystemNameType subsystem_name;
     for (;;) {
         if (!dialog.exec())
@@ -81,25 +87,40 @@ void ModuleLibrary::newSubsystem(QWidget *parent) {
     }
     _subsystemLibrary.newSubsystem(subsystem_name.first, subsystem_name.second);
     emit importCompleted();
-    openSubsystem(parent, subsystem_name.first, subsystem_name.second);
+
+//    openSubsystem(parent, subsystem_name.first, subsystem_name.second);
+    openSubsystem(parent,dialog.getSubsystemDataModel());
 
 }
 
 void ModuleLibrary::openSubsystem(QWidget *parent, const std::string &package, const std::string &name) {
-    auto *subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
+    auto subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
     //当子系统有node创建或删除时，将信号继续传送到外部
     connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
-//        qDebug() << "module_library subsystem created or deleted";
         emit subsystemCreatedOrDeleted();
     });
     subsystemWindow->show();
 
 }
 
+void ModuleLibrary::openSubsystem(QWidget *parent, const std::map<std::string,std::string> &subsystemDataModel){
+    const std::string package = subsystemDataModel.at("package");
+    const std::string name = subsystemDataModel.at("name");
+    auto subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
+    //当子系统有node创建或删除时，将信号继续传送到外部
+    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+        emit subsystemCreatedOrDeleted();
+    });
+    subsystemWindow->show();
+    subsystemWindow->setBusinessData(subsystemDataModel);
+}
+
+void ModuleLibrary::setSystemSubsystemPath(const std::filesystem::path &path) {
+    _subsystemLibrary.setSystemPath(path);
+}
 void ModuleLibrary::setSubsystemPath(const std::filesystem::path &path) {
     _subsystemLibrary.setPath(path);
     emit importCompleted();
-
 }
 
 void ModuleLibrary::updateVarName(QtNodes::FlowScene &scene, QtNodes::Node &node, QWidget *parent) {
@@ -164,4 +185,5 @@ void ModuleLibrary::addPackage(const std::filesystem::path &path) {
     }
     emit fileParserCompleted(1, 0);
 }
+
 

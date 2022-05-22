@@ -85,7 +85,7 @@ Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
 
 private:
-
+    void initProcess();
     void initMenu();
     void initTreeView();
 
@@ -138,7 +138,7 @@ private:
     CalibrationDialog *cDialog;
     ExportModuleDialog *emDialog;
     QSharedPointer<ModuleLibrary> _moduleLibrary;                                                            //脚本导入node的模型数据
-    QSharedPointer<SubsystemLibrary> _subsystemLibrary;
+    //QSharedPointer<SubsystemLibrary> _subsystemLibrary;
     QSharedPointer<AICCProcess> _process;
 
     //nodeeditor部分

@@ -35,13 +35,15 @@ public:
      * @param ml
      * @param sl
      */
-    void refreshCategoryDataModel(QSharedPointer<ModuleLibrary> ml,QSharedPointer<SubsystemLibrary> sl){
+    void refreshCategoryDataModel(ModuleLibrary &ml){
 
-        _currentLoadedNode = makeCurrentLoadedNode(ml,sl);
+        _currentLoadedNode = makeCurrentLoadedNode(ml);
         _currentUseCategoryFullPath = makeAllCategoryFullPath(_currentLoadedNode);
+        ml.setCurrentUseCategoryFullPath(_currentUseCategoryFullPath);
         QJsonObject json = recursionChildren(_category,0);
 
-        emit dataLoadCompleted(recursionChildren(_category,0));
+        emit dataLoadCompleted(json);
+
     }
 
     /**
@@ -84,13 +86,18 @@ public:
 
     /**
      * @brief makeAllCategoryFullPath   获得所有的完整路径
+     * @param cln                       所有使用的节点
      * @return                          以list形式返回所有可选择的完整路径
      */
     QStringList makeAllCategoryFullPath(std::vector<std::string> cln){
         QSet<QString> set;
         for(std::string n:cln)
-            set.insert(makeCategoryFullPath(QString::fromStdString(n)));
-        return set.toList();
+                set.insert(makeCategoryFullPath(QString::fromStdString(n)));
+        QStringList slist = set.toList();
+        qSort(slist.begin(),slist.end(),[](const QString &s1,const QString &s2){
+            return s1.toLower() < s2.toLower();
+        });
+        return slist;
     }
 
     /**
@@ -188,10 +195,10 @@ private:
      * @param sl                    子系统库参数
      * @return                      返回
      */
-    std::vector<std::string> makeCurrentLoadedNode(QSharedPointer<ModuleLibrary> ml,QSharedPointer<SubsystemLibrary> sl){
-        std::list<Invocable> l_result = ml->getParseResult();
+    std::vector<std::string> makeCurrentLoadedNode(ModuleLibrary &ml){
+        std::list<Invocable> l_result = ml.getParseResult();
         std::list<Invocable>::iterator it_module_inv;
-        std::vector<Invocable> l_subsystem_result = sl->getInvocableList();
+        std::vector<Invocable> l_subsystem_result = ml.subsystemLibrary().getInvocableList();
         std::vector<Invocable>::iterator it_subsystem_inv;
         std::vector<std::string> l_result_cname;
         for(it_module_inv = l_result.begin();it_module_inv != l_result.end();++it_module_inv)

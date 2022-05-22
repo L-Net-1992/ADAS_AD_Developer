@@ -20,6 +20,7 @@ DataInspectorDialog::~DataInspectorDialog()
 
 ///
 void DataInspectorDialog::initTableWidget(){
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     ui->tw_output->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->tw_output->setColumnWidth(0,23);
     ui->tw_output->setColumnWidth(1,110);

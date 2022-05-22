@@ -6,6 +6,7 @@ NodeParametersDialog::NodeParametersDialog(QWidget *parent) :
     ui(new Ui::NodeParametersDialog)
 {
     ui->setupUi(this);
+        this->setAttribute(Qt::WA_QuitOnClose, false);
     ui->tw_node_parameters->verticalHeader()->setHidden(true);
 
     //设置第一列为只读

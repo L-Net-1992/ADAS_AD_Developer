@@ -64,7 +64,6 @@ public:
         }catch(const std::exception &e){
             qDebug() << "exception:" << e.what();
         }
-
         return vector;
 
     }
@@ -74,6 +73,11 @@ public:
         if(_database.isOpen())
             _database.close();
     }
+
+    QSqlQuery &sqlQuery(){return _sqlQuery;};
+
+
+
 private:
     QSqlDatabase _database;
     QSqlQuery _sqlQuery;

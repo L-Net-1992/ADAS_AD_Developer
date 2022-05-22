@@ -8,7 +8,7 @@ NodeTreeDialog::NodeTreeDialog(QSharedPointer<CategoryDataModel> cdm,QSharedPoin
     _projectDataModel(pdm)
 {
     ui->setupUi(this);
-
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     this->initTreeWidget();
     this->initToolBar();
     this->initNodeButtonTable();

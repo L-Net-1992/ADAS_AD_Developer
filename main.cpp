@@ -42,7 +42,11 @@ int main(int argc, char *argv[])
     //开始界面
     QPixmap pixmap(":/res/AADS3.jpg");
     SplashScreen splash(pixmap);
+
     splash.show();
+    a.processEvents();
+
+
 
     //加载不同应用的皮肤
 //    QFile file(":/qss/pagefold.qss");

@@ -8,6 +8,7 @@ ExportModuleDialog::ExportModuleDialog(QSharedPointer<ProjectDataModel>pdm,QWidg
 {
     ui->setupUi(this);
     initConnect();
+    this->setAttribute(Qt::WA_QuitOnClose, false);
 
 }
 

@@ -8,6 +8,7 @@ ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer
     rProjectDataModel(rpdm)
 {
     ui->setupUi(this);
+        this->setAttribute(Qt::WA_QuitOnClose, false);
     initButton();
     initOpenPath();
     initStackedFirst();

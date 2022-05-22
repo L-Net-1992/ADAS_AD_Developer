@@ -8,15 +8,27 @@
 #include <algorithm>
 #include <nodes/FlowScene>
 #include <iostream>
+#include <set>
 
 void SubsystemLibrary::setPath(const std::filesystem::path &path) {
     path_ = path;
 
 }
 
-bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) const{
-    return std::filesystem::exists(subsystemPath(package, name));
+void SubsystemLibrary::setSystemPath(const std::filesystem::path &path) {
+    systemPath_ = path;
 
+}
+
+bool SubsystemLibrary::hasSubsystem(const std::string &package, const std::string &name) const{
+    return std::filesystem::exists(subsystemPath(package, name)) || std::filesystem::exists(systemSubsystemPath(package, name));
+}
+
+bool SubsystemLibrary::isSystemSubsystem(const std::string &package, const std::string &name) const {
+    return std::filesystem::exists(systemSubsystemPath(package, name));
+}
+bool SubsystemLibrary::isProjectSubsystem(const std::string &package, const std::string &name) const {
+    return std::filesystem::exists(subsystemPath(package, name));
 }
 
 std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package, const std::string &name) {
@@ -31,43 +43,60 @@ std::filesystem::path SubsystemLibrary::newSubsystem(const std::string &package,
 }
 
 std::filesystem::path SubsystemLibrary::getSubsystem(const std::string &package, const std::string &name) const {
-    return subsystemPath(package, name);
+    if(hasSubsystem(package, name)) {
+        if(isProjectSubsystem(package, name))
+            return subsystemPath(package, name);
+        else
+            return systemSubsystemPath(package, name);
+    } else {
+        return subsystemPath(package, name);
+    }
 }
 
 std::filesystem::path SubsystemLibrary::subsystemPath(const std::string &package, const std::string &name) const {
     return  path_ / package / (name + ".flow");
 }
 
+std::filesystem::path SubsystemLibrary::systemSubsystemPath(const std::string &package, const std::string &name) const {
+    return  systemPath_ / package / (name + ".flow");
+}
+
 std::vector<Invocable> SubsystemLibrary::getInvocableList() const {
     std::vector<Invocable> ret;
+    std::set<std::string> names;
     if(path_.empty())
         return ret;
     for(const auto & dir_entry: std::filesystem::recursive_directory_iterator(path_)) {
         const auto & p = dir_entry.path();
         if(std::filesystem::is_regular_file(p) && p.has_extension() && p.extension() == ".flow") {
-            Invocable invocable;
-            invocable.setType(Invocable::Subsystem);
-            invocable.setPackage(p.parent_path().filename().string());
-            invocable.setSubsystemName(p.stem().string());
-            invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
-            invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
-//            std::cout << "subsystem header: " << invocable.getHeaderFile() << std::endl;
-            boost::json::object scene = readScene(p);
-            parsePorts(scene, invocable);
+            Invocable invocable = invocableFromPath(p);
             ret.push_back(invocable);
+            names.insert(invocable.getName());
         }
+    }
+    if(!systemPath_.empty()) {
+        for(const auto & dir_entry: std::filesystem::recursive_directory_iterator(systemPath_)) {
+            const auto & p = dir_entry.path();
+            if(std::filesystem::is_regular_file(p) && p.has_extension() && p.extension() == ".flow") {
+                Invocable invocable = invocableFromPath(p);
+                if(names.find(invocable.getName()) != names.end())
+                    continue;
+                ret.push_back(invocable);
+            }
+        }
+
     }
     return ret;
 }
 
 
-boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) const {
+boost::json::object SubsystemLibrary::readScene(const std::filesystem::path & path) {
     std::ifstream json_file{path};
     std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
     return boost::json::parse(json_text).as_object();
 }
 
-void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) const {
+void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocable) {
     std::vector<Port> ports;
     boost::json::value & nodes_value = scene["nodes"];
     if(!nodes_value.is_array())
@@ -97,4 +126,21 @@ void SubsystemLibrary::parsePorts(boost::json::object &scene, Invocable &invocab
     });
     invocable.setPortList(ports);
 }
+
+Invocable SubsystemLibrary::invocableFromPath(const std::filesystem::path &path) {
+    Invocable invocable;
+    invocable.setType(Invocable::Subsystem);
+    invocable.setPackage(path.parent_path().filename().string());
+    invocable.setSubsystemName(path.stem().string());
+    invocable.setName(invocable.getPackage() + "::" + invocable.getSubsystemName());
+    invocable.setHeaderFile(invocable.getPackage() + "/" + invocable.getSubsystemName() + ".hpp");
+    boost::json::object scene = readScene(path);
+    parsePorts(scene, invocable);
+    return invocable;
+}
+
+
+
+
+
 

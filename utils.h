@@ -7,6 +7,8 @@
 #include <QTreeWidgetItem>
 #include <QJsonArray>
 #include "sqlite/aiccsqlite.hpp"
+#include "boost/algorithm/string.hpp"
+//#include "boost/algorithm/string/find.hpp"
 
  QStringList getFileList(const QString &path);
  QStringList getADASPackagesFileList(const QString &path);
@@ -23,4 +25,7 @@
  bool copyDirectory(const QString& srcPath, const QString& dstPath, bool coverFileIfExist);
  bool copyFile(QString srcPath, QString dstPath, bool coverFileIfExist);
  QString getCaptionByName(QString name);
+ int getParentidByPath(std::string path,const int pid);
+ bool classNameIsExist(std::string class_name);
+ bool addSubsystem(const int pid,const std::string package,const std::string name,const std::string caption);
 #endif // UTILS_H

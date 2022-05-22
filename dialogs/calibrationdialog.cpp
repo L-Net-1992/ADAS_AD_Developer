@@ -29,6 +29,7 @@ CalibrationDialog::~CalibrationDialog()
 
 ///初始化界面内容
 void CalibrationDialog::init(){
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     //表格列宽自适应
     ui->tw_params->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 

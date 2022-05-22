@@ -4,11 +4,11 @@
 #include <QThread>
 #include <QTimer>
 #include <QDebug>
+#include <QTimer>
 SplashScreen::SplashScreen(const QPixmap &pixmap) : QSplashScreen(pixmap)
 {
     init();
 //    this->showMessage(QStringLiteral("正在加载资源文件，请稍后……"), Qt::AlignHCenter|Qt::AlignBottom, Qt::white);
-
 }
 
 SplashScreen::SplashScreen(const QPixmap &pixmap, const unsigned long ms) : QSplashScreen(pixmap)

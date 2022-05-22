@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSubsystem">
@@ -56,6 +56,11 @@
   <action name="actionSave">
    <property name="text">
     <string>保存</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>另存为</string>
    </property>
   </action>
  </widget>

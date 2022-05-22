@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //开始界面
-    QPixmap pixmap(":/res/AADS4.jpg");
+    QPixmap pixmap(":/res/AADS3.jpg");
     SplashScreen splash(pixmap);
     splash.show();
 
@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     //资源加载完毕后显示主界面，关闭开始窗口
     QObject::connect(&w,&MainWindow::scriptParserCompleted,&w,[&w,&splash](std::list<Invocable> parserResult){
         w.show();
+        splash.stop_timer();
         splash.finish(&w);
     });
 

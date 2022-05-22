@@ -3,6 +3,7 @@
 
 #include <QSplashScreen>
 #include <QMouseEvent>
+#include <QTimer>
 
 class SplashScreen : public QSplashScreen
 {
@@ -20,11 +21,17 @@ public:
     void set_version(QString &s);
     void set_architecture();
     void set_release_date(QString &s);
+
+public slots:
+    void stop_timer();
+    void wait_display(void);
 private:
     QString version_;
     QString architecture_;
     QString release_date_;
 
+    QString wait_;
+    QTimer *timer_;
 };
 
 #endif // SPLASHSCREEN_H

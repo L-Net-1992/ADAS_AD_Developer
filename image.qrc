@@ -98,5 +98,6 @@
         <file>qss/lakeblue.css</file>
         <file>res/AADS4.jpg</file>
         <file>res/AADS5.jpg</file>
+        <file>res/AADS3.jpg</file>
     </qresource>
 </RCC>

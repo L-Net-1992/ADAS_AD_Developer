@@ -21,7 +21,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     this->setAttribute(Qt::WA_QuitOnClose, false);
     // 设在窗口属性
     setWindowTitle(tr("信号监测&回放"));
-    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
+//    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
 
     // 禁止按键功能
     ui->btn_add_chart->setVisible(false);

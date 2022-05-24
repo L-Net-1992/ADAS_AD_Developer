@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>SubsystemWindow</class>
  <widget class="QMainWindow" name="SubsystemWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,7 +34,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QtNodes::FlowView" name="flowView"/>
+     <widget class="AICCFlowView" name="flowView"/>
     </item>
    </layout>
   </widget>
@@ -66,9 +69,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtNodes::FlowView</class>
+   <class>AICCFlowView</class>
    <extends>QGraphicsView</extends>
-   <header>nodes/FlowView</header>
+   <header>controllers/aiccflowview.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

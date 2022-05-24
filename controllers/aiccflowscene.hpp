@@ -35,25 +35,31 @@ public:
         this->addText("(0,0)");
         this->addEllipse(0,0,1,1);
 
-//        this->addEllipse(72,1,1,1);
-//        this->addEllipse(72,94,1,1);
+        //        this->addEllipse(72,1,1,1);
+        //        this->addEllipse(72,94,1,1);
         //当场景文件加载完成后，连接节点创建信号与节点删除信号
-//        connect(this,&FlowScene::sceneLoadFromMemoryCompleted,this,[&](bool isCompleted){
-//            if(isCompleted){
-//                initConnect();
-//            }
-//        });
+        //        connect(this,&FlowScene::sceneLoadFromMemoryCompleted,this,[&](bool isCompleted){
+        //            if(isCompleted){
+        //                initConnect();
+        //            }
+        //        });
     }
     ~AICCFlowScene(){}
 
     ///在FlowScene中创建node
     void dropCreateNode(const QString  &name,const QString &caption,const QPointF posView)
     {
-        auto type = this->registry().create(name);
-        if(type){
-            QtNodes::Node &node = this->createNode(std::move(type));
-            node.nodeGraphicsObject().setPos(posView);
-            this->nodePlaced(node);
+        std::cout << "aicc flow scene:" << name.toStdString() << " " << caption.toStdString() << "   categoryies size:" << this->registry().categories().size();
+        try{
+            auto type = this->registry().create(name);
+
+            if(type){
+                QtNodes::Node &node = this->createNode(std::move(type));
+                node.nodeGraphicsObject().setPos(posView);
+                this->nodePlaced(node);
+            }
+        }catch(const std::exception &e){
+            std::cout << "DataModelRegistry:" << e.what();
         }
     }
 

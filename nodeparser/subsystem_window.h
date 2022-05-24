@@ -7,11 +7,11 @@
 
 #include <QMainWindow>
 #include "ui_subsystem_window.h"
-#include <nodes/FlowScene>
 #include <nodes/Node>
 #include "module_library.hpp"
 #include <filesystem>
 #include <QFileDialog>
+#include "controllers/aiccflowscene.hpp"
 #include "utils.h"
 
 QT_BEGIN_NAMESPACE
@@ -24,7 +24,8 @@ Q_OBJECT
 public:
     explicit SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent = nullptr);
     ~SubsystemWindow() override;
-    QtNodes::FlowScene & scene();
+//    QtNodes::FlowScene & scene();
+    AICCFlowScene & scene();
     void setBusinessData(const std::map<std::string,std::string> & subsystemDataModel);
 
 Q_SIGNALS:
@@ -32,7 +33,8 @@ Q_SIGNALS:
 
 private:
     Ui::SubsystemWindow *ui;
-    QtNodes::FlowScene scene_;
+//    QtNodes::FlowScene scene_;
+    AICCFlowScene scene_;
     ModuleLibrary *module_library_;
     QWidget *parent_;
     std::filesystem::path subsystem_path_;

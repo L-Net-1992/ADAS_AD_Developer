@@ -30,6 +30,8 @@ public:
     AICCFlowView(AICCFlowScene *scene,QWidget *parent):FlowView(scene,parent)
     {
         _scene = scene;
+        this->setAcceptDrops(true);
+        this->setDragMode(QGraphicsView::DragMode::NoDrag);
 //        connect(_scene,&FlowScene::selectionChanged,this,[&]()
 //        {
 //            auto selectedCount = _scene->selectedNodes().size();
@@ -60,21 +62,20 @@ protected:
     };
     void dropEvent(QDropEvent *e) {
         QStringList formats = e->mimeData()->formats();
-//                qDebug() << "flow view drop" << formats;
-        qDebug() << e->mimeData();
+        qDebug() << "e->mimeData()" << e->mimeData();
         if(e->mimeData()->hasFormat("Data/name"))
         {
             QByteArray itemData = e->mimeData()->data("Data/name");
             QDataStream dataStream(&itemData,QIODevice::ReadOnly);
             QString name;
             dataStream >> name;
-            qDebug() << "name:"<<name;
 
             QByteArray itemCaptionData = e->mimeData()->data("Data/caption");
             QDataStream dataCaptionStream(&itemCaptionData,QIODevice::ReadOnly);
             QString caption;
             dataCaptionStream >> caption;
-            qDebug() << "caption:" << caption;
+
+            qInfo() << "info:" << name << " " << caption;
 
             //如果当前节点为子系统,通知上层AICCStackedWidget判断是否有重名,是否可创建新的page
             emit checkSubSystemName(name,caption,e->pos(),this);

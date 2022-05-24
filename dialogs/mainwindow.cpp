@@ -35,8 +35,6 @@ MainWindow::MainWindow(QWidget *parent):
     vw.append(ui->tb_stop);
     _process = QSharedPointer<AICCProcess>(new AICCProcess(vw));
 
-
-
     this->initProcess();
     this->initMenu();
     this->initTreeView();

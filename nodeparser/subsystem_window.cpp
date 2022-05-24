@@ -12,15 +12,14 @@
 #include "models.hpp"
 SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent) :
     QMainWindow(parent), ui(new Ui::SubsystemWindow), module_library_(module_library), parent_(parent), subsystem_path_(subsystem_path) {
-    this->setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
+    this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setWindowFlag(Qt::WindowStaysOnTopHint);
     connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
     connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
 
-    //子系统窗口中先不在创建、删除节点时发送信号，只在保存操作的时候发送信号
-    //    connect(&scene_, &QtNodes::FlowScene::sceneLoadFromMemoryCompleted,this,&SubsystemWindow::sceneLoadFromMemoryCompletedAction);
     scene_.setRegistry(module_library->test2());
     int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
     QByteArray buffer(file_size, 0);
@@ -33,6 +32,12 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     connect(module_library, &ModuleLibrary::importCompleted, this, &SubsystemWindow::updateRegistry);
     ui->flowView->setScene(&scene_);
     std::cout << "new SubsystemWindow" << std::endl;
+
+    //接受view的node创建完成消息增加新的page
+    connect(ui->flowView,&AICCFlowView::checkSubSystemName,this,[&](const QString &name,const QString &caption,const QPoint pos,const AICCFlowView *cview){
+        QPointF posView = ui->flowView->mapToScene(pos);
+        scene_.dropCreateNode(name,caption,posView);
+    });
 }
 
 SubsystemWindow::~SubsystemWindow() {
@@ -76,10 +81,13 @@ void SubsystemWindow::sceneLoadFromMemoryCompletedAction(bool isCompleted){
             if(invocableType==Invocable::Subsystem)
                 emit subsystemCreatedOrDeleted();
         });
+
+
     }
 }
 
-QtNodes::FlowScene &SubsystemWindow::scene() {
+//QtNodes::FlowScene &SubsystemWindow::scene() {
+AICCFlowScene &SubsystemWindow::scene() {
     return scene_;
 }
 

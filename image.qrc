@@ -99,5 +99,7 @@
         <file>res/AADS4.jpg</file>
         <file>res/AADS5.jpg</file>
         <file>res/AADS3.jpg</file>
+        <file>res/Record.png</file>
+        <file>res/Save1.png</file>
     </qresource>
 </RCC>

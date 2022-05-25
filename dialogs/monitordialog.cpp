@@ -21,7 +21,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     this->setAttribute(Qt::WA_QuitOnClose, false);
     // 设在窗口属性
     setWindowTitle(tr("信号监测&回放"));
-    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
+//    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
 
     // 禁止按键功能
     ui->btn_add_chart->setVisible(false);
@@ -363,7 +363,22 @@ void MonitorDialog::on_btn_device_connect_clicked()
                 auto x = static_cast<double>(timer_measure_.elapsed())/1000;
                 QPointF data(x,value);
                 QString str = name;
-                monitor_.SendSignalData(str, data);
+
+                // test start
+                if(tmp_data_.contains(str)) {
+                    qDebug() << "tmp_data_[str].y()=" << tmp_data_[str].y() << "  value=" << value;
+                    if(tmp_data_[str].y() != value) {
+                        tmp_data_[str] = data;
+                        monitor_.SendSignalData(str, data);
+                    }
+                }
+                else {
+                    tmp_data_[str] = data;
+                    monitor_.SendSignalData(str, data);
+                }
+                // test end
+
+//                monitor_.SendSignalData(str, data);
             }
         });
 

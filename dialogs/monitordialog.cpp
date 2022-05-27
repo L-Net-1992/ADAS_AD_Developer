@@ -132,6 +132,7 @@ void MonitorDialog::ReplayTabCreatNewChart(QString name)
         series->attachAxis(chart->axisY());
         replay_series_[name] = series;
         series->setVisible(false);
+        series->setUseOpenGL(true);
     });
     connect(&replay_, &Replay::SignalDataEvent, this, [=](QString name, QPointF data){
         replay_series_.value(name)->append(data.x(),data.y());
@@ -181,9 +182,18 @@ void MonitorDialog::MonitorTabCreatNewChart(QString name)
         series->attachAxis(chart->axisY());
         monitor_series_[name] = series;
         series->setVisible(false);
+        series->setUseOpenGL(true);
     });
     connect(&monitor_, &Monitor::SignalDataEvent, this, [=](QString name, QPointF data){
         monitor_series_.value(name)->append(data.x(),data.y());
+    });
+    connect(&monitor_, &Monitor::SignalDataGroupEvent, this, [=](QVector<QMap<QString,QPointF>> datas){
+        qDebug() << "size: " << datas.size();
+        for(auto it=datas.begin(); it!=datas.end(); ++it) {
+            QString name = it->begin().key();
+            QPointF data = it->begin().value();
+            monitor_series_.value(name)->append(data.x(),data.y());
+        }
     });
 }
 
@@ -261,6 +271,17 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
                 set_state[signal] = false;
                 inspector_->setVarWatchState(set_state);
             }
+        }
+    });
+    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
+        qDebug() << ui->checkBox->checkState();
+        if(ui->checkBox->checkState() == Qt::Checked) {
+            ckb->setCheckState(Qt::Checked);
+            emit ckb->clicked(1);
+        }
+        else {
+            ckb->setCheckState(Qt::Unchecked);
+            emit ckb->clicked(0);
         }
     });
 }
@@ -364,21 +385,23 @@ void MonitorDialog::on_btn_device_connect_clicked()
                 QPointF data(x,value);
                 QString str = name;
 
-                // test start
-                if(tmp_data_.contains(str)) {
-                    qDebug() << "tmp_data_[str].y()=" << tmp_data_[str].y() << "  value=" << value;
-                    if(tmp_data_[str].y() != value) {
-                        tmp_data_[str] = data;
-                        monitor_.SendSignalData(str, data);
-                    }
+                // 复位延时定时器
+                if(!tmp_delay_.isValid()) {
+                    tmp_delay_.restart();
                 }
-                else {
-                    tmp_data_[str] = data;
-                    monitor_.SendSignalData(str, data);
-                }
-                // test end
 
-//                monitor_.SendSignalData(str, data);
+                // 缓存信号值到缓冲区
+                QMap<QString,QPointF> tmp;
+                tmp[str] = data;
+                tmp_values_.push_back(tmp);
+
+                // 延时50ms或者缓冲区数据大于100个，则发送信号给chart显示
+                if((tmp_delay_.elapsed()>=50) || (tmp_values_.size()>=100)) {
+                    qDebug() << "elapsed: " << tmp_delay_.elapsed() << " | " << tmp_values_.size();
+                    monitor_.SendSignalDataGroup(tmp_values_);
+                    tmp_values_.clear();
+                    tmp_delay_.invalidate();
+                }
             }
         });
 
@@ -400,9 +423,12 @@ void MonitorDialog::on_btn_device_connect_clicked()
            ui->lineEdit->setEnabled(false);
            // 使能按键功能 tab1
            ui->btn_monitor_start->setEnabled(true);
-       } else
+        }
+        else{
            qDebug() << "inspector woring";
-    } else {
+        }
+    }
+    else {
         ui->btn_device_connect->setText(tr("连接"));
 
         auto tmp = monitor_.GetSignalName();
@@ -596,6 +622,8 @@ void MonitorDialog::on_btn_monitor_start_clicked()
     monitor_timer_->start();
     timer_measure_.restart();
     monitor_axis_x_ = 0;
+    tmp_values_.clear();
+    tmp_delay_.invalidate();
     monitor_running_=true;
     qDebug() << "monitor start";
 }
@@ -696,7 +724,7 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
     qDebug() << "monitor stop";
 }
 
-// 记录停止开始
+// 记录开始
 void MonitorDialog::on_btn_monitor_record_clicked()
 {
     if((monitor_running_ == 1) && (!record_running_)) {

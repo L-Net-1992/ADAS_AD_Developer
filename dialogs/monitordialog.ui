@@ -199,6 +199,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="text">
+             <string>全选</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="Line" name="line">
             <property name="font">
              <font>

@@ -65,6 +65,7 @@ public:
     void Clear();
     void AddSignalList(QString name, QColor color);
     void SendSignalData(QString name, QPointF data);
+    void SendSignalDataGroup(QVector<QMap<QString,QPointF>> datas);
     QVector<QString> GetSignalName();
     void SetSignalCheckboxState(QString signal, Qt::CheckState state);
     Qt::CheckState GetSignalCheckboxState(QString signal);
@@ -72,6 +73,7 @@ public:
 signals:
     void SignalListEvent(const QString name, QColor color);
     void SignalDataEvent(const QString name, QPointF data);
+    void SignalDataGroupEvent(const QVector<QMap<QString,QPointF>> datas);
 
 private:
     QVector<QString> signal_name_;

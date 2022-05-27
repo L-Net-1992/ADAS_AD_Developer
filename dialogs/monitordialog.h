@@ -76,6 +76,9 @@ private:
     double monitor_axis_x_{0};
     bool monitor_running_{false};
     QMap<QString,QPointF> tmp_data_; // 保存临时数据，测试用
+    QVector<QMap<QString,QPointF>> tmp_values_; // 测试用
+    QElapsedTimer tmp_delay_;
+    bool tmp_select_all_=0;
 
     // Record参数定义
     QMap<QString, QVector<QPointF>> record_data_;

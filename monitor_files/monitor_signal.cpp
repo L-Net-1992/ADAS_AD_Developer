@@ -138,7 +138,12 @@ void Monitor::AddSignalList(QString name, QColor color)
 void Monitor::SendSignalData(QString name, QPointF data)
 {
     emit SignalDataEvent(name, data);
-//    qDebug() << name << " " << data;
+    //    qDebug() << name << " " << data;
+}
+
+void Monitor::SendSignalDataGroup(QVector<QMap<QString, QPointF> > datas)
+{
+    emit SignalDataGroupEvent(datas);
 }
 
 QVector<QString> Monitor::GetSignalName()

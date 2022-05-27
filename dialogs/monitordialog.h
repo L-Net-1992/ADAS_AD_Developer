@@ -42,6 +42,7 @@ private slots:
     void timeoutSlotTimer2();
     void timeoutSlotTimer3();
     void SaveSignalData(QString name, QPointF data);
+    void SaveSignalDataGroup(QVector<QMap<QString,QPointF>> datas);
 
 //protected:
 //    virtual void closeEvent(QCloseEvent *e) override;

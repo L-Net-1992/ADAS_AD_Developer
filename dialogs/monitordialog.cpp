@@ -43,6 +43,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     monitor_timer_->setInterval(MONITOR_TIMER_MS);
     connect(monitor_timer_, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer3);
     connect(&monitor_, &Monitor::SignalDataEvent, this, &MonitorDialog::SaveSignalData);
+    connect(&monitor_, &Monitor::SignalDataGroupEvent, this, &MonitorDialog::SaveSignalDataGroup);
 
     // 回放tab设置
     ReplayTabCreatNewChart("replay_chart");
@@ -184,9 +185,13 @@ void MonitorDialog::MonitorTabCreatNewChart(QString name)
         series->setVisible(false);
         series->setUseOpenGL(true);
     });
+
+    // 信号包含一个数据
     connect(&monitor_, &Monitor::SignalDataEvent, this, [=](QString name, QPointF data){
         monitor_series_.value(name)->append(data.x(),data.y());
     });
+
+    // 信号包含一组数据
     connect(&monitor_, &Monitor::SignalDataGroupEvent, this, [=](QVector<QMap<QString,QPointF>> datas){
         qDebug() << "size: " << datas.size();
         for(auto it=datas.begin(); it!=datas.end(); ++it) {
@@ -322,6 +327,18 @@ void MonitorDialog::SaveSignalData(QString name, QPointF data)
     if(record_running_ == true) {
         QPointF tmp(data.x()-record_start_,data.y());
         record_data_[name].push_back(tmp);
+    }
+}
+
+void MonitorDialog::SaveSignalDataGroup(QVector<QMap<QString, QPointF> > datas)
+{
+    if(record_running_ == true) {
+        for(auto it=datas.begin();it!=datas.end();++it) {
+            QString name = it->begin().key();
+            QPointF data = it->begin().value();
+            QPointF tmp(data.x()-record_start_+0.05,data.y());
+            record_data_[name].push_back(tmp);
+        }
     }
 }
 

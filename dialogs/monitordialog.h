@@ -44,8 +44,8 @@ private slots:
     void SaveSignalData(QString name, QPointF data);
     void SaveSignalDataGroup(QVector<QMap<QString,QPointF>> datas);
 
-//protected:
-//    virtual void closeEvent(QCloseEvent *e) override;
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
 
 private slots:
     void on_lineEdit_returnPressed();
@@ -60,7 +60,10 @@ private slots:
 signals:
     void replay_signal(bool state);
 private:
-    void replay_parameter_clear();
+    void monitorStateReset();
+    void recordStateReset();
+    void replayStateReset();
+    void replaySignalTimerRelease();
 private:
     Ui::MonitorDialog *ui;
 
@@ -71,12 +74,12 @@ private:
     // Monitor参数定义
     Monitor monitor_;
     QTimer *monitor_timer_;
-    MonitorChartView *m_chartview;
+    MonitorChartView *m_chartview_;
     QMap<QString, QLineSeries*> monitor_series_;
     QMap<QString, QChart*> monitor_chart_;
     double monitor_axis_x_{0};
     bool monitor_running_{false};
-    QMap<QString,QPointF> tmp_data_; // 保存临时数据，测试用
+//    QMap<QString,QPointF> tmp_data_; // 保存临时数据，测试用
     QVector<QMap<QString,QPointF>> tmp_values_; // 测试用
     QElapsedTimer tmp_delay_;
     bool tmp_select_all_=0;

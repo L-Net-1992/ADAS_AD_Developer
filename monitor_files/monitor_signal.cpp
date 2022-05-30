@@ -135,6 +135,11 @@ void Monitor::AddSignalList(QString name, QColor color)
     emit SignalListEvent(name, color);
 }
 
+void Monitor::ClearSignalList()
+{
+    signal_name_.clear();
+}
+
 void Monitor::SendSignalData(QString name, QPointF data)
 {
     emit SignalDataEvent(name, data);
@@ -151,14 +156,24 @@ QVector<QString> Monitor::GetSignalName()
     return signal_name_;
 }
 
-void Monitor::SetSignalCheckboxState(QString signal, Qt::CheckState state)
+void Monitor::AddSignalCheckboxState(QString signal, Qt::CheckState state)
 {
     signal_checkbox_state_[signal] = state;
+}
+
+void Monitor::ClearSignalCheckboxState()
+{
+    signal_checkbox_state_.clear();
 }
 
 Qt::CheckState Monitor::GetSignalCheckboxState(QString signal)
 {
     return signal_checkbox_state_.value(signal);
+}
+
+QMap<QString, Qt::CheckState> Monitor::GetSignalCheckbox()
+{
+    return signal_checkbox_state_;
 }
 
 SignalTimer::SignalTimer(QString name, QVector<QPointF> data, QObject *parent)

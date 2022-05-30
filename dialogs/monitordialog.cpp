@@ -18,7 +18,9 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     , ui(new Ui::MonitorDialog)
 {
     ui->setupUi(this);
-    this->setAttribute(Qt::WA_QuitOnClose, false);
+//    this->setAttribute(Qt::WA_QuitOnClose, false);
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     // 设在窗口属性
     setWindowTitle(tr("信号监测&回放"));
 //    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
@@ -73,8 +75,9 @@ MonitorDialog::~MonitorDialog()
         inspector_ = nullptr;
     }
 
-    replay_parameter_clear();
+    replaySignalTimerRelease();
 
+    qDebug() << "~MonitorDialog()";
 }
 
 void MonitorDialog::InitTableHeader(QTableWidget *tableWidget)
@@ -144,9 +147,9 @@ void MonitorDialog::MonitorTabCreatNewChart(QString name)
 {
     QChart *chart = new QChart();
     chart->setParent(this);
-    m_chartview = new MonitorChartView(this);
-    m_chartview->setRenderHint(QPainter::Antialiasing);
-    m_chartview->setChart(chart);
+    m_chartview_ = new MonitorChartView(this);
+    m_chartview_->setRenderHint(QPainter::Antialiasing);
+    m_chartview_->setChart(chart);
 
 //    chart->setTheme(QChart::ChartThemeBrownSand);   // 主题颜色
     chart->layout()->setContentsMargins(2,2,2,2);   // 外边距
@@ -170,8 +173,8 @@ void MonitorDialog::MonitorTabCreatNewChart(QString name)
     axisY->setTitleText("[Value]");
     chart->setAnimationOptions(QChart::NoAnimation);
 
-    m_chartview->setObjectName(name);
-    ui->verticalLayout_5->addWidget(m_chartview);
+    m_chartview_->setObjectName(name);
+    ui->verticalLayout_5->addWidget(m_chartview_);
     monitor_chart_.insert(name, chart);
 
     connect(&monitor_, &Monitor::SignalListEvent, this, [=](QString name, QColor color){
@@ -263,7 +266,7 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
 
     connect(ckb, &QCheckBox::clicked, this, [=](){
         qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
-        monitor_.SetSignalCheckboxState(signal,ckb->checkState());
+        monitor_.AddSignalCheckboxState(signal,ckb->checkState());
 
         monitor_series_.value(signal)->setVisible(ckb->checkState());
         //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
@@ -278,6 +281,7 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
             }
         }
     });
+<<<<<<< HEAD
 //    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
 //        qDebug() << ui->checkBox->checkState();
 //        if(ui->checkBox->checkState() == Qt::Checked) {
@@ -289,6 +293,21 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
 //            emit ckb->clicked(0);
 //        }
 //    });
+=======
+
+    // 全选按键
+    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
+        qDebug() << ui->checkBox->checkState();
+        if(ui->checkBox->checkState() == Qt::Checked) {
+            ckb->setCheckState(Qt::Checked);
+            emit ckb->clicked(1);
+        }
+        else {
+            ckb->setCheckState(Qt::Unchecked);
+            emit ckb->clicked(0);
+        }
+    });
+>>>>>>> f1b48e3b993fb0c6fb941c2eec4f0e14b205f597
 }
 
 // 回放坐标轴移动定时器
@@ -312,7 +331,7 @@ void MonitorDialog::timeoutSlotTimer3()
     monitor_axis_x_++;
     double second = monitor_axis_x_/10;
 
-    QValueAxis *axisX = static_cast<QValueAxis*>(m_chartview->chart()->axisX());
+    QValueAxis *axisX = static_cast<QValueAxis*>(m_chartview_->chart()->axisX());
     const double xMin = axisX->min();
     const double xMax = axisX->max();
 
@@ -336,44 +355,20 @@ void MonitorDialog::SaveSignalDataGroup(QVector<QMap<QString, QPointF> > datas)
         for(auto it=datas.begin();it!=datas.end();++it) {
             QString name = it->begin().key();
             QPointF data = it->begin().value();
-            QPointF tmp(data.x()-record_start_+0.05,data.y());
+            QPointF tmp(data.x()-record_start_+0.1,data.y()); // 增加0.1秒偏移，防止出现负值
             record_data_[name].push_back(tmp);
         }
     }
 }
 
 // 窗口关闭按钮事件
-//void MonitorDialog::closeEvent(QCloseEvent *e)
-//{
-//    if((replay_running_==1) || (monitor_running==1)) {
-//        QMessageBox::information(this, "提示", "停止运行按键", QMessageBox::Close, QMessageBox::Close);
-//        e->ignore();
-//        return;
-//    }
-//   auto button =  QMessageBox::information(this, "关闭窗口", "确定退出监测窗口", QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-//   if(button==QMessageBox::No)
-//    {
-//       e->ignore(); // 忽略退出信号，程序继续进行
-//    }
-//    else if(button==QMessageBox::Yes)
-//    {
-//       // clear model
-//       data_model_->clearModel();
-//       while(ui->tableWidget->rowCount()) {
-//           ui->tableWidget->removeRow(0);
-//       }
-//       for(auto it=chart_list_.begin();it!=chart_list_.end();it++) {
-//           it.value()->removeAllSeries();
-//       }
-//       series_group_.clear();
-//       x_index_=0;
-//       signal_num_=0;
-//       replay_running_=0;
-//       monitor_running = 0;
-//       replay_loadfile = 0;
-//       e->accept(); // 接受退出信号，程序退出
-//    }
-//}
+void MonitorDialog::closeEvent(QCloseEvent *e)
+{
+    if(ui->btn_device_connect->text() == "断开") {
+        emit this->ui->btn_device_connect->clicked();
+    }
+    e->accept();
+}
 
 
 
@@ -387,11 +382,20 @@ void MonitorDialog::on_btn_device_connect_clicked()
 {
     if(ui->btn_device_connect->text() == "连接")
     {
+        // 创建设备连接
         QString deviceip = ui->lineEdit->text();
         try {
-            inspector_ = new Inspector(deviceip);
-        }  catch (...) {
-            qDebug() << "Inspector wrong";
+            if(inspector_ == nullptr) {
+                inspector_ = new Inspector(deviceip);
+                qDebug() << "New inspector " << inspector_;
+            }
+            else {
+                qDebug() << "inspector not empty!!!";
+                return;
+            }
+        }
+        catch (...) {
+            qDebug() << "Inspector connect wrong";
             return;
         }
 
@@ -422,9 +426,10 @@ void MonitorDialog::on_btn_device_connect_clicked()
             }
         });
 
+        // 获取监测信号状态
         auto var_state = inspector_->getVarWatchState();
         if(var_state.size()) {
-            // 更新table
+            // 1.清除Table和chart信息
             while(ui->monitortableWidget->rowCount()) {
                 ui->monitortableWidget->removeRow(0);
             }
@@ -432,40 +437,62 @@ void MonitorDialog::on_btn_device_connect_clicked()
                 it.value()->removeAllSeries();
             }
 
+            // 2.更新新inspector连接监测信号
+            monitor_.ClearSignalList();
+            monitor_.ClearSignalCheckboxState();
             for(auto it=var_state.begin();it!=var_state.end();++it) {
                 QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
                 monitor_.AddSignalList(it.key(), qc);
+                monitor_.AddSignalCheckboxState(it.key(),Qt::Unchecked);
             }
-           ui->btn_device_connect->setText(tr("断开"));
-           ui->lineEdit->setEnabled(false);
-           // 使能按键功能 tab1
-           ui->btn_monitor_start->setEnabled(true);
+
+            // 3.更新按键状态
+            ui->btn_device_connect->setText(tr("断开"));
+            ui->lineEdit->setEnabled(false);
+            ui->btn_monitor_start->setEnabled(true);
+            this->ui->checkBox->setCheckState(Qt::Unchecked);
         }
         else{
            qDebug() << "inspector woring";
         }
     }
     else {
-        ui->btn_device_connect->setText(tr("连接"));
-
-        auto tmp = monitor_.GetSignalName();
-        for(int i=0;i<tmp.size();i++) {
-            if(monitor_.GetSignalCheckboxState(tmp.at(i)) == Qt::Checked) {
-                QMap<QString, bool> set_state;
-                set_state[tmp.at(i)] = false;
-                inspector_->setVarWatchState(set_state);
+        // 1. 停止设备信号发送，移除设备连接
+        if(inspector_) {
+            auto tmp = monitor_.GetSignalName();
+            for(int i=0;i<tmp.size();i++) {
+                if(monitor_.GetSignalCheckboxState(tmp.at(i)) == Qt::Checked) {
+                    QMap<QString, bool> set_state;
+                    set_state[tmp.at(i)] = false;
+                    inspector_->setVarWatchState(set_state);
+                }
             }
+            delete inspector_;
+            inspector_ = nullptr;
         }
-        delete inspector_;
-        inspector_ = nullptr;
 
+        //2. 复位监测或者记录状态
+        if(monitor_running_ || record_running_) {
+            // 停止计数器，清监测标志位；清临时缓冲区
+            this->monitorStateReset();
+            this->recordStateReset();
+        }
+
+        //3. 复位回放状态
+        if(record_running_){
+            // TODO
+        }
+
+        //4. 设置按键功能
+        ui->btn_device_connect->setText(tr("连接"));
         ui->lineEdit->setEnabled(true);
-        // 禁止按键功能
-        ui->btn_add_chart->setEnabled(false);
         ui->btn_monitor_record->setEnabled(false);
         ui->btn_monitor_record_stop->setEnabled(false);
         ui->btn_monitor_start->setEnabled(false);
         ui->btn_monitor_stop->setEnabled(false);
+
+        //tesst
+        disconnect(this->ui->checkBox,0,0,0);
     }
 }
 
@@ -523,7 +550,7 @@ void MonitorDialog::on_btn_replay_open_clicked()
     Hdf5Handle file;
     hid_t ret = file.open(filename.toStdString());
     if(ret) {
-        // clear buffer
+        // 清除显示信息，回放变量复位
         replay_.Clear();
         while(ui->replaytableWidget->rowCount()) {
             ui->replaytableWidget->removeRow(0);
@@ -539,15 +566,15 @@ void MonitorDialog::on_btn_replay_open_clicked()
         replay_data_.clear();
 
         // 清除上个文件指针
-        replay_parameter_clear();
+        replaySignalTimerRelease();
 
-        // save signal list to model
+        // 保存文件信号清单
         auto signalname = file.get_list("/Signal");
         for(size_t i=0;i<signalname.size();i++) {
             QColor qc = QColor::fromHsl(rand()%360,rand()%256,rand()%200);
             replay_.AddSignalList(QString::fromStdString(signalname.at(i)), qc);
         }
-        // save data
+        // 保存信号数据
         for(size_t i=0; i<signalname.size();i++) {
             typedef struct {
                 double x;
@@ -617,32 +644,39 @@ void MonitorDialog::on_btn_replay_open_clicked()
 // 监测开始按键
 void MonitorDialog::on_btn_monitor_start_clicked()
 {
+    // 1.检查是否有信号勾选,没有则退出
     auto tmp = monitor_.GetSignalName();
     int count=0;
     for(int i=0;i<tmp.size();i++) {
-        if(monitor_.GetSignalCheckboxState(tmp.at(i)) == Qt::Checked)
+        if(monitor_.GetSignalCheckboxState(tmp.at(i)) == Qt::Checked) {
             count++;
+            break;
+        }
     }
     if(0 == count) return;
 
+    // 2.设置按键状态
     ui->btn_monitor_start->setEnabled(false); ui->btn_monitor_start->setCheckable(false);
     ui->btn_monitor_stop->setEnabled(true);
     ui->btn_monitor_record->setEnabled(true);
 
-    m_chartview->chart()->axisX()->setRange(0,CHART_AXIS_X_RANGE);
-    for(int it=0;it<m_chartview->chart()->series().count();++it)
+    // 3.复位chart
+    m_chartview_->chart()->axisX()->setRange(0,CHART_AXIS_X_RANGE);
+    for(int it=0;it<m_chartview_->chart()->series().count();++it)
     {
-        auto tmp = static_cast<QLineSeries*>(m_chartview->chart()->series().at(it));
+        auto tmp = static_cast<QLineSeries*>(m_chartview_->chart()->series().at(it));
         tmp->clear();
     }
 
-    monitor_timer_->start();
-    timer_measure_.restart();
+    // 4.启动相关定时器，复位标志位
     monitor_axis_x_ = 0;
+    monitor_running_=true;
     tmp_values_.clear();
     tmp_delay_.invalidate();
-    monitor_running_=true;
-    qDebug() << "monitor start";
+    monitor_timer_->start();
+    timer_measure_.restart();
+
+    qDebug() << "------------------monitor start";
 }
 
 // 监测停止按键
@@ -650,7 +684,12 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
 {
     if(!monitor_running_) return;
 
+    // 1.清除监测标志位，停止计数器
+    monitor_running_=false;
     monitor_timer_->stop();
+    timer_measure_.invalidate();
+    tmp_delay_.invalidate();
+
     ui->btn_monitor_start->setEnabled(true);
     ui->btn_monitor_stop->setEnabled(false);
     ui->btn_monitor_record->setEnabled(false);
@@ -735,18 +774,20 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
 
         // clear record buffer
         record_data_.clear();
-
+        qDebug() << "------------------record stop";
     }
-    monitor_running_=false;
-    qDebug() << "monitor stop";
+
+    qDebug() << "------------------monitor stop";
 }
 
-// 记录开始
+// 记录停止开始
 void MonitorDialog::on_btn_monitor_record_clicked()
 {
     if((monitor_running_ == 1) && (!record_running_)) {
         ui->btn_monitor_record->setEnabled(false);
         ui->btn_monitor_record_stop->setEnabled(true);
+
+        record_data_.clear();
 
         QDateTime datetime;
         QString timestr = datetime.currentDateTime().toString("yyyy_MM_dd_HH_mm_ss");
@@ -755,6 +796,8 @@ void MonitorDialog::on_btn_monitor_record_clicked()
         start_time_ = datetime.currentMSecsSinceEpoch();
         record_start_ =  static_cast<double>(timer_measure_.elapsed())/1000;
         record_running_ = true;
+
+        qDebug() << "------------------record start";
     }
 }
 
@@ -838,13 +881,46 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
         qDebug() << "file name is empty";
     }
 
-
     // clear record buffer
     record_data_.clear();
-
+    qDebug() << "------------------record stop";
 }
 
-void MonitorDialog::replay_parameter_clear()
+void MonitorDialog::monitorStateReset()
+{
+    // 1. 状态标志位和计数器复位
+    monitor_running_ = false;
+    monitor_axis_x_ = 0;
+    monitor_timer_->stop();
+    timer_measure_.invalidate();
+    tmp_delay_.invalidate();
+
+    // 2. 清变量缓冲区
+    tmp_values_.clear();
+    monitor_series_.clear();
+}
+
+void MonitorDialog::recordStateReset()
+{
+    record_running_ = false;
+    start_time_ = 0;
+    end_time_ = 0;
+    record_start_ = 0;
+    record_file_name_.clear();
+    record_data_.clear();
+}
+
+void MonitorDialog::replayStateReset()
+{
+    replay_running_ = false;
+    replay_axis_x_ = 0;
+    max_sig_size = 0;
+    replay_timer_->stop();
+
+    replay_data_.clear();
+}
+
+void MonitorDialog::replaySignalTimerRelease()
 {
     // 释放回放信号指针
     max_sig_size = 0;

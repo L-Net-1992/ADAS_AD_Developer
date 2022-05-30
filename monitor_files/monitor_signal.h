@@ -64,11 +64,14 @@ public:
     ~Monitor();
     void Clear();
     void AddSignalList(QString name, QColor color);
+    void ClearSignalList();
     void SendSignalData(QString name, QPointF data);
     void SendSignalDataGroup(QVector<QMap<QString,QPointF>> datas);
     QVector<QString> GetSignalName();
-    void SetSignalCheckboxState(QString signal, Qt::CheckState state);
+    void AddSignalCheckboxState(QString signal, Qt::CheckState state);
+    void ClearSignalCheckboxState();
     Qt::CheckState GetSignalCheckboxState(QString signal);
+    QMap<QString,Qt::CheckState> GetSignalCheckbox();
 
 signals:
     void SignalListEvent(const QString name, QColor color);

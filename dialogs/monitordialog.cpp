@@ -278,17 +278,17 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
             }
         }
     });
-    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
-        qDebug() << ui->checkBox->checkState();
-        if(ui->checkBox->checkState() == Qt::Checked) {
-            ckb->setCheckState(Qt::Checked);
-            emit ckb->clicked(1);
-        }
-        else {
-            ckb->setCheckState(Qt::Unchecked);
-            emit ckb->clicked(0);
-        }
-    });
+//    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
+//        qDebug() << ui->checkBox->checkState();
+//        if(ui->checkBox->checkState() == Qt::Checked) {
+//            ckb->setCheckState(Qt::Checked);
+//            emit ckb->clicked(1);
+//        }
+//        else {
+//            ckb->setCheckState(Qt::Unchecked);
+//            emit ckb->clicked(0);
+//        }
+//    });
 }
 
 // 回放坐标轴移动定时器

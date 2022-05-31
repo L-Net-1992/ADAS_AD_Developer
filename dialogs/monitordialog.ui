@@ -21,7 +21,7 @@
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
@@ -83,7 +83,7 @@
           <item>
            <widget class="QToolButton" name="btn_monitor_start">
             <property name="toolTip">
-             <string>开始</string>
+             <string>开始监测</string>
             </property>
             <property name="text">
              <string>run</string>
@@ -109,7 +109,7 @@
           <item>
            <widget class="QToolButton" name="btn_monitor_stop">
             <property name="toolTip">
-             <string>停止</string>
+             <string>停止监测</string>
             </property>
             <property name="text">
              <string>on</string>
@@ -149,7 +149,7 @@
           <item>
            <widget class="QToolButton" name="btn_monitor_record">
             <property name="toolTip">
-             <string>保存</string>
+             <string>开始录制</string>
             </property>
             <property name="statusTip">
              <string/>
@@ -165,7 +165,7 @@
             </property>
             <property name="icon">
              <iconset resource="../image.qrc">
-              <normaloff>:/res/Rec.png</normaloff>:/res/Rec.png</iconset>
+              <normaloff>:/res/Record.png</normaloff>:/res/Record.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -181,20 +181,27 @@
           <item>
            <widget class="QToolButton" name="btn_monitor_record_stop">
             <property name="toolTip">
-             <string>停止</string>
+             <string>停止录制并保存</string>
             </property>
             <property name="text">
              <string>stop</string>
             </property>
             <property name="icon">
              <iconset resource="../image.qrc">
-              <normaloff>:/res/Stop1.png</normaloff>:/res/Stop1.png</iconset>
+              <normaloff>:/res/Save1.png</normaloff>:/res/Save1.png</iconset>
             </property>
             <property name="iconSize">
              <size>
               <width>40</width>
               <height>40</height>
              </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="text">
+             <string>全选</string>
             </property>
            </widget>
           </item>

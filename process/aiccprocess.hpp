@@ -20,9 +20,9 @@ public:
 
         connect(this,static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished),[this](int exitCode,QProcess::ExitStatus exitStatus){
             setAllEnabledWidget(true);
-            if(exitCode){
+            if(exitCode==QProcess::ExitStatus::NormalExit){
                 qInfo() << "process finished:脚本执行完成";
-            }else{
+            }else if(exitCode==QProcess::ExitStatus::CrashExit){
                 qInfo() << "process finished:脚本执行出错，终止任务。错误码:" << exitCode;
                 emit tasksCompleted(false,QString(exitCode));
                 return;

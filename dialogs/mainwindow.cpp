@@ -138,7 +138,8 @@ void MainWindow::initTableWidget()
 void MainWindow::initToolbar()
 {
     ui->tb_merge_module->setVisible(false);
-    ui->tb_import->setVisible(false);
+    ui->pb_print->setVisible(false);
+//    ui->tb_import_code->setVisible(false);
     ui->pb_script_generator->setVisible(false);             //代码生成
     ui->tb_code_compiler->setVisible(false);                //代码构建
     ui->tb_edit_script->setVisible(false);                  //编写脚本
@@ -149,6 +150,7 @@ void MainWindow::initToolbar()
     ui->dw_toolbar->setTitleBarWidget(nullTitleBarWidget);
     delete titleBarWidget;
     ui->tw_toolbar->setCurrentIndex(0);
+    ui->tw_bottom->setCurrentIndex(0);
 
     //设置New按钮显示项目子窗口
     connect(ui->tb_new,&QToolButton::clicked,projectDialog,&ProjectDialog::show);
@@ -164,17 +166,35 @@ void MainWindow::initToolbar()
 
     },Qt::UniqueConnection);
 
-    //导入脚本按钮
-    connect(ui->tb_import,&QPushButton::clicked,this,[&]{
-        isDialog->show();
-    });
-
     //导出子系统模块按钮
     connect(ui->tb_export_module,&QToolButton::clicked,this,[&]{
         emDialog->show();
     });
-    //导入子系统模块按钮
-    //导入一个flow文件成为自定义模块
+
+    //导入脚本按钮
+    connect(ui->tb_import_code,&QPushButton::clicked,this,[&]{
+        //此处代码为显示单独得窗口来进行导入
+//        isDialog->show();
+
+        //该代码为点击导入按钮后直接进行导入
+        QString path = QFileDialog::getExistingDirectory(this,"请选择功能模块包",QApplication::applicationDirPath());
+        if(!path.isEmpty()){
+            //0:
+
+
+            //1:拷贝文件夹到ICVOS/Custom目录下
+
+
+            //2:addPackage增加
+            _moduleLibrary->addPackage(QString(path).toStdString());
+            //3：些入json文件
+            emit _moduleLibrary->importCompleted();
+        }
+    });
+
+
+    ///导入子系统模块按钮
+    ///导入一个flow文件成为自定义模块
     connect(ui->tb_import_module,&QToolButton::clicked,this,[&]{
         QString importModuleName = QFileDialog::getOpenFileName(this,tr("请选择要导入的自定义模块文件"),QApplication::applicationDirPath(),tr("自定义模块flow文件 (*.flow)"),Q_NULLPTR,QFileDialog::ReadOnly);
         QFileInfo imFileInfo(importModuleName);
@@ -183,30 +203,36 @@ void MainWindow::initToolbar()
         qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
         QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
 
-        //在项目的subsystem path目录下创建模块包
+        //0：在项目的subsystem path目录下创建模块包
         QDir packageDir(_currentProjectDataModel->projectSubSystemPath()+"/"+imPackage);
         if (!packageDir.exists()) {
             if (!packageDir.mkdir(packageDir.absolutePath()))
                 return false;
         }
-        copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true);
+        //1：拷贝模块包到指定路径，如果拷贝成功则进行_moduleLibrary->importCompleted()导入
+        if(copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true))
+            emit _moduleLibrary->importCompleted();
+
+        //TODO
+        //2：加入信息到数据库中
+
         return true;
     });
 
-    //打开按钮响应动作
+    ///打开按钮响应动作
     connect(ui->pb_open,&QPushButton::clicked,this,&MainWindow::openProjectAction);
 
-    //保存按钮响应动作，当前只保存一个NodeEditor的内容，子系统实现后需要保存多个NodeEditor内容
+    ///保存按钮响应动作，当前只保存一个NodeEditor的内容，子系统实现后需要保存多个NodeEditor内容
     connect(ui->pb_save,&QPushButton::clicked,this,&MainWindow::saveProjectAction);
 
-    //点击显示数据检查器窗口
+    ///点击显示数据检查器窗口
     connect(ui->pb_dataInspector,&QPushButton::clicked,this,[&]{
         QJsonObject jo = getConfig();
         monitorDialog = new MonitorDialog(this);
         monitorDialog->show();
     });
 
-    //平台选择下拉框
+    ///平台选择下拉框
     connect(ui->cb_select_platform,&QComboBox::currentTextChanged,this,[&](const QString &text){
         //        if(text==QString::fromLocal8Bit("SelectPlatform") ){
         if(ui->cb_select_platform->currentIndex()==0){
@@ -502,6 +528,7 @@ void MainWindow::initRecentProjectDialog(){
     });
     connect(rProjectDialog,&RecentProjectDialog::recentProjectDialogClosed,this,[&]{
         qDebug() <<" close ";
+        forceClose = true;
         this->close();
 
     });
@@ -529,7 +556,7 @@ void MainWindow::initNodeEditor(){
     const QString path = QApplication::applicationDirPath()+"/ICVOS/";
     QStringList files = getADASPackagesFileList(path);
 
-    //2:执行加载前的准备动作
+    //2:执行加载前的准备动作emit _moduleLibrary->importCompleted();
     ui->statusbar->showMessage("正在加载节点模块数据");
     ui->tw_toolbar->setEnabled(false);
     ui->tw_node->setEnabled(false);
@@ -687,6 +714,25 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     return ret;
 }
 
+/**
+ * @brief MainWindow::closeEvent    窗口关闭确认
+ * @param e
+ */
+void MainWindow::closeEvent(QCloseEvent *e){
+    //如果强制关闭标识位为ture直接关闭窗口，不弹出提示窗口
+    if(this->forceClose) {
+        e->accept();
+        return;
+    }
+
+    if(0 == QMessageBox::warning(this,QStringLiteral("退出"),QStringLiteral("请确认项目已保存再退出"),QStringLiteral("确定"),QStringLiteral("取消")))
+    {
+        e->accept();
+    }else{
+        e->ignore();
+    }
+}
+
 ///初始化导入脚本对话框的内容
 void MainWindow::initImportScriptDialog(){
     //选择文本后响应函数
@@ -697,8 +743,8 @@ void MainWindow::initImportScriptDialog(){
 //        _moduleLibrary->addPackage(QString(packFile).toStdString());
 
         //导入子系统flow文件
-        _moduleLibrary->subsystemLibrary().getInvocableList();
-        emit _moduleLibrary->importCompleted();
+//        _moduleLibrary->subsystemLibrary().getInvocableList();
+//        emit _moduleLibrary->importCompleted();
         //        });
 
         //          _moduleLibrary->addPackage(QString(packFile).toStdString());

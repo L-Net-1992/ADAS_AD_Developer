@@ -38,6 +38,11 @@ int main(int argc, char *argv[])
     //此处引入plugins文件夹中的库文件，当前用来支持Sqlite
     QApplication::addLibraryPath("./plugins");
     QApplication a(argc, argv);
+    //设置全局字体大小
+    QFont font = a.font();
+    font.setPointSize(11);
+    a.setFont(font);
+
 
     //开始界面
     QPixmap pixmap(":/res/AADS4.jpg");

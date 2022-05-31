@@ -111,8 +111,6 @@ public:
         //设置nodeeditor的scene与view
         auto scene = new AICCFlowScene();
         auto view = new AICCFlowView(scene,this);
-        view->setAcceptDrops(true);
-        view->setDragMode(QGraphicsView::DragMode::NoDrag);
         _allViews.push_front(view);
 
         //接受view的node创建完成消息增加新的page

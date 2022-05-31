@@ -56,6 +56,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
 
     // 保存记录
 
+
 }
 
 MonitorDialog::~MonitorDialog()

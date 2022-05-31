@@ -14,6 +14,8 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_FLAGS "-no-pie")
+
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
@@ -101,7 +103,7 @@ add_executable(ADAS_AD_Developer
     ${PROJECT_SOURCES}
     )
 
-target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti)
+target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti )
 target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
@@ -110,6 +112,8 @@ target_include_directories(ADAS_AD_Developer
     nodes
     )
 find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
+
+target_link_options(ADAS_AD_Developer PRIVATE -no-pie)
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets

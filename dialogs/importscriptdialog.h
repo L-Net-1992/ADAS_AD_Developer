@@ -27,7 +27,7 @@ public:
 
 Q_SIGNALS:
     void filesSelected(const QStringList files);
-    void packageSelected(const QString packFile);
+    void packageSelected(const QString packPath);
 
 private:
     void initButton();

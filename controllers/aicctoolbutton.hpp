@@ -70,12 +70,12 @@ protected:
     }
     void mouseReleaseEvent(QMouseEvent *e)
     {
-        qDebug() << "mouse release event";
+//        qDebug() << "mouse release event";
         e->accept();
     };
     void mouseMoveEvent(QMouseEvent *e)
     {
-        qDebug() << "mouse move event";
+//        qDebug() << "mouse move event";
         e->accept();
     };
 

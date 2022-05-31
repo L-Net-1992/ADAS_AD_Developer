@@ -81,6 +81,7 @@ public:
 
 protected:
     void registrySceneGenerateNodeMenu(std::list<Invocable> parserResult);
+    void closeEvent(QCloseEvent *e);
 Q_SIGNALS:
     void scriptParserCompleted(std::list<Invocable> parserResult);
 
@@ -150,6 +151,8 @@ private:
     QSharedPointer<ProjectDataModel> _currentProjectDataModel;
     QSharedPointer<RecentProjectDataModel> _recentProjectDataModel;
     QSharedPointer<CategoryDataModel> _categoryDataModel;
+
+    bool forceClose = false;
 };
 
 

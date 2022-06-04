@@ -14,7 +14,6 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_CXX_FLAGS "-no-pie")
 
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
@@ -135,3 +134,45 @@ target_link_libraries(ADAS_AD_Developer
 
 
 add_subdirectory(nodeeditor)
+
+#installer部分
+#install(TARGETS ADAS_AD_Developer DESTINATION "/home/fc/share/installer/deploy/")
+#install(FILES "~/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/"
+#    DESTINATION "~/share/installer/deploy/"
+#    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

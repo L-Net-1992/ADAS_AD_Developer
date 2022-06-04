@@ -125,7 +125,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>130</height>
+          <height>150</height>
          </size>
         </property>
         <property name="font">
@@ -140,7 +140,7 @@
          <enum>QTabWidget::North</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_output">
          <property name="sizePolicy">
@@ -1771,9 +1771,7 @@ gridline-color:#FFFFFF;
     <string>退出</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionAbout">
@@ -1781,9 +1779,7 @@ gridline-color:#FFFFFF;
     <string>关于</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionSave">
@@ -1791,9 +1787,7 @@ gridline-color:#FFFFFF;
     <string>保存</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionEdit_Item">
@@ -1815,9 +1809,7 @@ gridline-color:#FFFFFF;
     <string>节点窗口</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionPropertyWindow">
@@ -1831,9 +1823,7 @@ gridline-color:#FFFFFF;
     <string>属性窗口</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionOpen">
@@ -1841,9 +1831,7 @@ gridline-color:#FFFFFF;
     <string>打开</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionCreateSubSystem">

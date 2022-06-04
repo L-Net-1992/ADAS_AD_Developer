@@ -92,6 +92,9 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
         QString caption = m.value("caption").toString();
         QString iconName = m.value("icon_name").toString();
 
+//        if(className=="ppp2::ccc1")
+//            qDebug() << "ppp2::ccc1";
+
         if(_categoryDataModel->existNode(className.toStdString())){
             tb = createToolButton(id,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);

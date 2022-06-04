@@ -285,15 +285,18 @@ public:
 
 };
 
-class InvocableParser {
+class InvocableParser :public QObject{
+    Q_OBJECT
 private:
     std::filesystem::path _includePaths;
 
     bool parse(const PackageNode &node, const std::string &package,
                const std::vector<std::filesystem::path> &include_directories, std::list<Invocable> &result,
                std::string &error_message) {
-        std::cout << "parse: " << package << std::endl;
-        std::cout << "include_directories: " << std::endl;
+//        std::cout << "parse: " << package << std::endl;
+        std::cout << "parse: " << package;
+//        std::cout << "include_directories: " << std::endl;
+        std::cout << "include_directories: ";
         for(const auto &inc: include_directories)
             std::cout << inc << std::endl;
         const auto &file = node.header_file_path();
@@ -350,6 +353,9 @@ private:
         }
         return true;
     }
+public:
+Q_SIGNALS:
+    void parsingStep(std::string package_name);
 
 
 public:
@@ -363,6 +369,7 @@ public:
                 if (!parse(n, package_name, package_library.package_include_directories(package_name), result,
                            error_message))
                     return false;
+                emit parsingStep(package_name);
             }
         }
         return true;

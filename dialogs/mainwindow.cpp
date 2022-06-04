@@ -168,6 +168,7 @@ void MainWindow::initToolbar()
 
     //导出子系统模块按钮
     connect(ui->tb_export_module,&QToolButton::clicked,this,[&]{
+
         emDialog->show();
     });
 
@@ -177,21 +178,95 @@ void MainWindow::initToolbar()
 //        isDialog->show();
 
         //该代码为点击导入按钮后直接进行导入
-        QString path = QFileDialog::getExistingDirectory(this,"请选择功能模块包",QApplication::applicationDirPath());
-        if(!path.isEmpty()){
-            //0:
+        QString srcPath = QFileDialog::getExistingDirectory(this,"请选择功能模块包",QApplication::applicationDirPath());
+        if(!srcPath.isEmpty()){
+            QStringList pathList = srcPath.split("/");                              //拆分目录
+            const QString lastDirectory = pathList.at(pathList.size()-1);                 //最后的目录为导入的模块包名
+            const QString prefix_path = "Custom/"+lastDirectory;
+            const QString &dstPath = QApplication::applicationDirPath()+"/ICVOS/Custom/"+lastDirectory+"/";
 
+            //0:此处可检查导入得包格式结构是否正确
+            qInfo() << "检查导入包格式是否正确";
+            QDir srcDir(srcPath);
+            QFileInfoList srcFileInfoList = srcDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs);
+            if(srcFileInfoList.size()!=3){
+                qWarning() << "导入目录结构数量不正确:" << srcFileInfoList.size() << " " << srcPath;
+                return;
+            }
+            foreach(auto srcFileInfo,srcFileInfoList){
+                if(srcFileInfo.baseName()!="include" && srcFileInfo.baseName()!="lib" && srcFileInfo.baseName()!="share"){
+                    qWarning() << "导入目录内容名称不正确:" << srcFileInfo.baseName();
+                    return;
+                }
+            }
 
-            //1:拷贝文件夹到ICVOS/Custom目录下
+            //0.5:判断QApplication::applicationDirPath()+"/ICVOS/Custom/" 是否存在，如不存在创建该目录
+            const QString customPath = QApplication::applicationDirPath()+"/ICVOS/Custom";
+            QDir customDir(customPath);
+            if(!customDir.exists()){
+                customDir.mkdir(customPath);
+            }
 
+            //1:判断目录是否存在，如目录存在不允许拷贝
+            qInfo() << "检查导入位置是否存在相同包";
+            QDir dstDir(dstPath);
+            if(dstDir.exists()){
+                qWarning() << "导入失败,导入代码模块已存在：" << lastDirectory ;
+                return;
+            }
 
-            //2:addPackage增加
-            _moduleLibrary->addPackage(QString(path).toStdString());
-            //3：些入json文件
-            emit _moduleLibrary->importCompleted();
+            //2:拷贝文件夹到ICVOS/Custom目录下
+            qInfo() << "拷贝模块包到目标路径";
+            copyDirectory(srcPath,dstPath,false);
+
+            //3:addPackage增加，在addPackage完成后得事件中完成4、5两步
+            qInfo() << "导入新增模块包到系统";
+            this->setEnabled(false);
+            try{
+                _moduleLibrary->addPackage(QString(dstPath).toStdString());
+            } catch (const std::exception &e ){
+                qCritical() << "module library exception:" << e.what();
+            }
+
+            this->setEnabled(true);
+
+            //4:监测重新导入的内容，如发现有未导入的模块则写到数据库中
+            qInfo() << "模块包数据写入数据库";
+            QVector<QString> importClassName = importWithoutModuleSubsystem(_moduleLibrary->getInvocableList());
+
+            //5:将导入得包写入adas-packages.json中
+            QString adas_packages_file = QApplication::applicationDirPath()+"/ICVOS/adas-packages.json";
+            QFile file(adas_packages_file);
+            if(file.open(QIODevice::ReadWrite)){
+                QByteArray data = file.readAll();
+                QJsonDocument adas_packages_doc = QJsonDocument::fromJson(data);
+                if(!adas_packages_doc.isObject()){
+                    qWarning() << adas_packages_file << " 读取失败,文件不是json格式" << endl;
+                    return;
+                }
+                QJsonObject adas_packages_json = adas_packages_doc.object();
+                QJsonArray prefix_paths = adas_packages_json["prefix_paths"].toArray();
+                if(prefix_paths.contains(QJsonValue::fromVariant(prefix_path))){
+                    qWarning() << "配置文件adas_package.json中已包含" << prefix_path << " 无需再次导入";
+                    return;
+                }else{
+                    prefix_paths.append(prefix_path);
+                    adas_packages_json["prefix_paths"] = prefix_paths;
+                    adas_packages_doc.setObject(adas_packages_json);
+                    file.close();
+                    file.open(QIODevice::WriteOnly | QIODevice::Text | QFile::Truncate);
+                    file.write(adas_packages_doc.toJson(QJsonDocument::Indented));
+                    file.close();
+                    qInfo() << "导入" << prefix_path << "完成";
+                }
+
+            }else{
+                qWarning() << "打开ICVOX/adas-package.json文件失败" << endl;
+
+            }
+
         }
     });
-
 
     ///导入子系统模块按钮
     ///导入一个flow文件成为自定义模块
@@ -200,21 +275,35 @@ void MainWindow::initToolbar()
         QFileInfo imFileInfo(importModuleName);
         QString imPath =  imFileInfo.absolutePath();
         imPath.replace("\\", "/");
-        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
+//        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
         QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
 
-        //0：在项目的subsystem path目录下创建模块包
-        QDir packageDir(_currentProjectDataModel->projectSubSystemPath()+"/"+imPackage);
+        //0：在ICVOS/Function/Component下创建模块包
+        QDir packageDir(QApplication::applicationDirPath()+"/ICVOS/Function/Component/"+imPackage);
         if (!packageDir.exists()) {
-            if (!packageDir.mkdir(packageDir.absolutePath()))
+            if (!packageDir.mkdir(packageDir.absolutePath())){
+                qWarning() << "创建路径失败:" << packageDir.absolutePath();
                 return false;
+            }
+        }else{
+            qWarning() << "导入失败,导入组合模块已存在：" << imPackage;
+            return false;
         }
-        //1：拷贝模块包到指定路径，如果拷贝成功则进行_moduleLibrary->importCompleted()导入
-        if(copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true))
-            emit _moduleLibrary->importCompleted();
 
-        //TODO
-        //2：加入信息到数据库中
+        //1：拷贝模块包到指定路径，如果拷贝成功则进行_moduleLibrary->importCompleted()导入
+        if(copyFile(importModuleName,packageDir.path()+"/"+imFileInfo.fileName(),true)){
+            //更新主Scene的注册数据
+            ui->sw_flowscene->getCurrentView()->scene()->setRegistry(_moduleLibrary->test2());
+            //更新分类数据中的注册数据
+            _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);;
+            //2：加入信息到数据库中,导入的子系统模块全部放倒自定义模块下，自定义模块的pid为3
+            importWithoutModuleSubsystem(_moduleLibrary->subsystemLibrary().getInvocableList());
+
+            qInfo() << "导入组合模块完成";
+        }else{
+            qWarning() << "组合模块：" << importModuleName << " 不能拷贝到指定位置：" << packageDir.path()+"/"+imFileInfo.fileName();
+            return false;
+        }
 
         return true;
     });
@@ -552,6 +641,26 @@ void MainWindow::initNodeEditor(){
     _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary);
     _moduleLibrary->setSystemSubsystemPath(systemSubsystemPath);
 
+    //消息发送位置ModuleLibrary::addPackage函数
+    connect(_moduleLibrary.get(),&ModuleLibrary::parsingStep,this,[&](std::string package_name){
+        qInfo() << "正在载入包:" << QString::fromStdString(package_name) ;
+        QApplication::processEvents(QEventLoop::AllEvents, 33);
+    });
+
+    //接收解析文件发生错误的信号
+    connect(_moduleLibrary.get(),&ModuleLibrary::errorOccured,this,[&](const QString &error_message){
+        qCritical() << "模块加载错误:" << error_message;
+        QMessageBox mb(this);
+        mb.setWindowTitle("模块加载错误");
+        mb.setText(error_message);
+        mb.move((QApplication::desktop()->width()-mb.widthMM())/2,(QApplication::desktop()->height()-mb.heightMM())/2);
+        mb.exec();
+//        mb.critical(this,"加载错误",error_message);
+
+        this->forceClose = true;
+        this->close();
+    });
+
     //1:解析pakage文件
     const QString path = QApplication::applicationDirPath()+"/ICVOS/";
     QStringList files = getADASPackagesFileList(path);
@@ -565,14 +674,15 @@ void MainWindow::initNodeEditor(){
     //    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
-        try{
+//        try{
             _moduleLibrary->importFiles(files);
-            std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
-            emit scriptParserCompleted(parserResult);
-        }catch(const std::exception &e){
-            qDebug() << "module library exception:" << e.what();
-        }
+//        }catch(const std::exception &e){
+//            QMessageBox::critical(this,"加载模块错误","系统加载ICVOS资源出错，请检查./ICVOS/adas-packages.json内容是否正确");
+//            qCritical() << "module library exception:" << e.what();
+//        }
 
+        std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
+        emit scriptParserCompleted(parserResult);
     });
     qRegisterMetaType<std::list<Invocable>>("std::list<Invocable>");
 
@@ -594,10 +704,11 @@ void MainWindow::initNodeEditor(){
         ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
     });
 
-    //8:响应文件解析进度
+    //8:addPackage响应函数，addPackage完成后可在此执行后续操作
     connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
-        //        qDebug() << " ==================================================processing:" << index << "/" << count;
+
     });
+
 
     //9:scene放置或删除node时判断该node是否为subsystem,如果未subsystem则刷新左侧结构树
     auto refreshSubsystemTree = [&](Node &n){
@@ -661,6 +772,7 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     ui->tw_node->setEnabled(true);
     ui->menubar->setEnabled(true);
     rProjectDialog->show();
+
 }
 
 /**
@@ -763,9 +875,9 @@ void MainWindow::initImportScriptDialog(){
         //        });
     });
 
-    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
-        qDebug() << "index:" <<index << "   count:" << count;
-    });
+//    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+//        qDebug() << "index:" <<index << "   count:" << count;
+//    });
 
 
     //文件解析百分比

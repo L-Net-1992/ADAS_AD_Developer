@@ -32,18 +32,18 @@ void PackageLibrary::add_prefix_path(const std::filesystem::path &path) {
 }
 
 void PackageLibrary::load_package(const std::filesystem::path &config) {
-//    std::cout << "load package: " << config << std::endl;
-    qInfo() << "load package: " << QString::fromStdString(config) << endl;
+    //    std::cout << "load package: " << config << std::endl;
+    qInfo() << "load package: " << QString::fromStdString(config) ;
     std::ifstream json_file{config.c_str()};
     std::string json_text{std::istreambuf_iterator<char>(json_file), std::istreambuf_iterator<char>()};
     boost::json::value json = boost::json::parse(json_text);
     Package package;
     package.name = config.parent_path().filename().string();
-//    std::cout << "package.name: " << package.name << std::endl;
-    qInfo() << "package.name: " << QString::fromStdString(package.name) << endl;
+    //    std::cout << "package.name: " << package.name << std::endl;
+    qInfo() << "package.name: " << QString::fromStdString(package.name) ;
     package.prefix_path = config.parent_path().parent_path().parent_path();
     std::cout << "package.prefix: " << package.prefix_path << std::endl;
-//    qInfo() << "package.prefix: " << QString::fromStdString(package.prefix_path) << endl;
+    //    qInfo() << "package.prefix: " << QString::fromStdString(package.prefix_path) << endl;
     if(!json.is_object()) {
         throw std::runtime_error(config.string() + " not a json object");
     }
@@ -151,14 +151,16 @@ void PackageLibrary::load_prefix_paths_from_config_file(const std::filesystem::p
         throw std::runtime_error(config.string() + " not a json object");
     }
     auto prefix = json.as_object()["prefix_paths"].as_array();
-    for(const auto & elem: prefix) {
-        std::filesystem::path prefix_path(elem.as_string().c_str());
-        if(prefix_path.is_relative())
-            prefix_path = config_dir / prefix_path;
-        add_prefix_path(prefix_path);
+    try{
+        for(const auto & elem: prefix) {
+            std::filesystem::path prefix_path(elem.as_string().c_str());
+            if(prefix_path.is_relative())
+                prefix_path = config_dir / prefix_path;
+            add_prefix_path(prefix_path);
+        }
+    }catch(std::exception &e){
+        throw e;
     }
-
-
 }
 
 std::vector<std::filesystem::path> PackageLibrary::package_include_directories(const std::string &package) const {
@@ -170,7 +172,7 @@ std::vector<std::filesystem::path> PackageLibrary::package_include_directories(c
 
 
 void PackageLibrary::package_include_directories(const std::string &package, std::vector<std::filesystem::path> &result,
-                                            std::set<std::string> used) const {
+                                                 std::set<std::string> used) const {
     if(used.find(package) != used.end())
         return;
     const auto & p = packages_.at(package);
@@ -184,4 +186,4 @@ void PackageLibrary::package_include_directories(const std::string &package, std
 }
 
 PackageNode::PackageNode(const std::filesystem::path &includeDirectory, const std::filesystem::path &headerFile)
-        : include_directory(includeDirectory), header_file(headerFile) {}
+    : include_directory(includeDirectory), header_file(headerFile) {}

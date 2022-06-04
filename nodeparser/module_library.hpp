@@ -27,6 +27,7 @@
 #include "subsystem_library.h"
 #include <QSharedPointer>
 #include "utils.h"
+#include "invocable_parser.hpp"
 
 
 class ModuleLibrary : public QAbstractListModel {
@@ -60,10 +61,10 @@ Q_SIGNALS:
 
     void subsystemCreatedOrDeleted();
 
+    void parsingStep(std::string package_name);
 private:
     std::vector<Invocable> _invocableList;
     std::list<Invocable> _parseResult;
-
     void setInvocables(const std::list<Invocable> &list);
 
 
@@ -122,6 +123,7 @@ public:
     }
 
     std::list<Invocable> getParseResult() { return _parseResult; }
+    std::vector<Invocable> getInvocableList() const {return _invocableList;}
 public:
     static void updateVarName(QtNodes::FlowScene & scene, QtNodes::Node & node, QWidget * parent);
     static void generateVarNameIfEmpty(QtNodes::FlowScene & scene, QtNodes::Node & node);

@@ -6,9 +6,9 @@
 #include <QApplication>
 #include <QTreeWidgetItem>
 #include <QJsonArray>
+#include <nodeparser/invocable.hpp>
 #include "sqlite/aiccsqlite.hpp"
 #include "boost/algorithm/string.hpp"
-//#include "boost/algorithm/string/find.hpp"
 
  QStringList getFileList(const QString &path);
  QStringList getADASPackagesFileList(const QString &path);
@@ -27,5 +27,6 @@
  QString getCaptionByName(QString name);
  int getParentidByPath(std::string path,const int pid);
  bool classNameIsExist(std::string class_name);
- bool addSubsystem(const int pid,const std::string package,const std::string name,const std::string caption);
+ bool addSubsystem2DB(const int pid,const std::string package,const std::string name,const std::string caption);
+ QVector<QString> importWithoutModuleSubsystem(std::vector<Invocable> invocableVector);
 #endif // UTILS_H

@@ -3,7 +3,6 @@
 //
 
 #include "module_library.hpp"
-#include "invocable_parser.hpp"
 #include "new_subsystem_dialog.h"
 #include "subsystem_window.h"
 #include <algorithm>
@@ -14,20 +13,27 @@
 namespace fs = std::filesystem;
 
 void ModuleLibrary::importFiles(const QStringList &files) {
-//    std::list<Invocable> parse_result;
+    //    std::list<Invocable> parse_result;
     InvocableParser parser;
     _packageLibrary.clear();
     _parseResult.clear();
-//    for(const auto & file: files) {
+
     for (int i = 0; i < files.count(); i++) {
         const auto &file = files[i];
         fs::path p = file.toStdString();
-        _packageLibrary.load_prefix_paths_from_config_file(p);
+        try{
+            _packageLibrary.load_prefix_paths_from_config_file(p);
+        } catch(std::exception &e){
+            emit errorOccured(QString("解析加载模块库发生错误，请检查ICVOS/adas-packages.json文件内容 异常信息: %1").arg(QString::fromStdString(e.what())));
+            //发生错误时中断程序
+            throw e;
+        }
+
         std::string error_message;
         if (!parser.parse(_packageLibrary, _parseResult, error_message)) {
             emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(file, QString::fromStdString(error_message)));
         } else {
-//            qDebug() << "result size: " << _parseResult.size();
+            //            qDebug() << "result size: " << _parseResult.size();
             setInvocables(_parseResult);
         }
         emit fileParserCompleted(files.count(), i);
@@ -88,7 +94,7 @@ void ModuleLibrary::newSubsystem(QWidget *parent) {
     _subsystemLibrary.newSubsystem(subsystem_name.first, subsystem_name.second);
     emit importCompleted();
 
-//    openSubsystem(parent, subsystem_name.first, subsystem_name.second);
+    //    openSubsystem(parent, subsystem_name.first, subsystem_name.second);
     openSubsystem(parent,dialog.getSubsystemDataModel());
 
 }
@@ -161,7 +167,6 @@ QString ModuleLibrary::generateVarName(QtNodes::FlowScene &scene) {
         QString var_name = fmt.arg(i);
         if (!varNameExists(scene, var_name))
             return var_name;
-
     }
 }
 
@@ -173,14 +178,22 @@ void ModuleLibrary::generateVarNameIfEmpty(QtNodes::FlowScene &scene, QtNodes::N
 
 void ModuleLibrary::addPackage(const std::filesystem::path &path) {
     _packageLibrary.add_prefix_path(path);
-    InvocableParser parser;
+    std::shared_ptr<InvocableParser> parser = std::shared_ptr<InvocableParser>(new InvocableParser);
+
+    //传递parser解析每个node的响应信号，用于响应系统事件防止界面卡死
+    //信号发送位置InvocableParser::parse函数
+    connect(parser.get(),&InvocableParser::parsingStep,this,[&](std::string package_name){
+        emit parsingStep(package_name);
+    });
+
+
     std::string error_message;
     _parseResult.clear();
-    if (!parser.parse(_packageLibrary, _parseResult, error_message)) {
+    if (!parser->parse(_packageLibrary, _parseResult, error_message)) {
         emit errorOccured(QString("解析文件 '%1' 时发生错误: %2").arg(QString::fromStdString(path.string()),
                                                              QString::fromStdString(error_message)));
     } else {
-//        qDebug() << "result size: " << _parseResult.size();
+        //        qDebug() << "result size: " << _parseResult.size();
         setInvocables(_parseResult);
     }
     emit fileParserCompleted(1, 0);

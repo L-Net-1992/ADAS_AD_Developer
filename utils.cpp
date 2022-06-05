@@ -163,7 +163,7 @@ bool classNameIsExist(std::string class_name){
  * @brief addSubsystem          增加一条新的node数据进去
  * @param pid                   父id
  * @param package               包名
- * @param class_name                  类名
+ * @param class_name            包名+类名
  * @param caption               标题
  * @return
  */

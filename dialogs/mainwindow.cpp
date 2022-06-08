@@ -10,13 +10,13 @@ MainWindow::MainWindow(QWidget *parent):
     npmilDialog ( new NodeParametersMILDialog(parent)),
     diDialog ( new DataInspectorDialog(parent)),
     eDialog ( new EditorWindow(parent)),
-//    _process (QSharedPointer<AICCProcess>(new AICCProcess)),
+    //    _process (QSharedPointer<AICCProcess>(new AICCProcess)),
     _currentProjectDataModel(QSharedPointer<ProjectDataModel>(new ProjectDataModel)),
     _recentProjectDataModel(QSharedPointer<RecentProjectDataModel>(new RecentProjectDataModel)),
     _categoryDataModel(QSharedPointer<CategoryDataModel>(new CategoryDataModel))
 
 {
-//    sqlite.initDatabaseConnection();
+    //    sqlite.initDatabaseConnection();
     //    _moduleLibrary = QSharedPointer<ModuleLibrary>(new ModuleLibrary());
     ui->setupUi(this);
 
@@ -49,16 +49,16 @@ MainWindow::MainWindow(QWidget *parent):
     this->initRecentProjectDialog();
     this->initProjectDataModel();
 
-//    std::cout << "std::cout";
-//    printf("printf");
-//    qDebug() << "qDebug";
+    //    std::cout << "std::cout";
+    //    printf("printf");
+    //    qDebug() << "qDebug";
 
 
 }
 
 MainWindow::~MainWindow()
 {
-//    sqlite.closeConnection();
+    //    sqlite.closeConnection();
     delete ui;
 }
 
@@ -78,9 +78,9 @@ void MainWindow::initProcess(){
 
     //process执行完成
     connect(_process.get(),&AICCProcess::tasksCompleted,this,[&](const bool success,const QString msg){
-//        ui->tb_script_deploy->setEnabled(true);
-//        ui->tb_run->setEnabled(true);
-//        ui->tb_stop->setEnabled(true);
+        //        ui->tb_script_deploy->setEnabled(true);
+        //        ui->tb_run->setEnabled(true);
+        //        ui->tb_stop->setEnabled(true);
     });
 
 }
@@ -139,7 +139,7 @@ void MainWindow::initToolbar()
 {
     ui->tb_merge_module->setVisible(false);
     ui->pb_print->setVisible(false);
-//    ui->tb_import_code->setVisible(false);
+    //    ui->tb_import_code->setVisible(false);
     ui->pb_script_generator->setVisible(false);             //代码生成
     ui->tb_code_compiler->setVisible(false);                //代码构建
     ui->tb_edit_script->setVisible(false);                  //编写脚本
@@ -175,7 +175,7 @@ void MainWindow::initToolbar()
     //导入脚本按钮
     connect(ui->tb_import_code,&QPushButton::clicked,this,[&]{
         //此处代码为显示单独得窗口来进行导入
-//        isDialog->show();
+        //        isDialog->show();
 
         //该代码为点击导入按钮后直接进行导入
         QString srcPath = QFileDialog::getExistingDirectory(this,"请选择功能模块包",QApplication::applicationDirPath());
@@ -275,19 +275,24 @@ void MainWindow::initToolbar()
         QFileInfo imFileInfo(importModuleName);
         QString imPath =  imFileInfo.absolutePath();
         imPath.replace("\\", "/");
-//        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
+        //        qDebug() << "imPath: " << imPath.split("/").at(imPath.split("/").count()-1);
         QString imPackage = imPath.split("/").at(imPath.split("/").count()-1);
 
         //0：在ICVOS/Function/Component下创建模块包
-        QDir packageDir(QApplication::applicationDirPath()+"/ICVOS/Function/Component/"+imPackage);
+        //        QDir packageDir(QApplication::applicationDirPath()+"/ICVOS/Function/Component/"+imPackage);
+        QDir packageDir(this->_currentProjectDataModel->projectSubSystemPath()+"/"+imPackage);
         if (!packageDir.exists()) {
             if (!packageDir.mkdir(packageDir.absolutePath())){
                 qWarning() << "创建路径失败:" << packageDir.absolutePath();
                 return false;
             }
         }else{
-            qWarning() << "导入失败,导入组合模块已存在：" << imPackage;
-            return false;
+            //如果文件存在则不允许导入
+            QFileInfo objectFileInfo(packageDir.path()+"/"+imFileInfo.fileName());
+            if(objectFileInfo.exists()){
+                qWarning() << "导入失败,导入组合模块已存在：" << imPackage+"/"+imFileInfo.fileName();
+                return false;
+            }
         }
 
         //1：拷贝模块包到指定路径，如果拷贝成功则进行_moduleLibrary->importCompleted()导入
@@ -355,11 +360,11 @@ void MainWindow::initToolbar()
     ///代码部署按钮deploy
     connect(ui->tb_script_deploy,&QToolButton::clicked,this,[&](){
         //单独执行部署脚本代码
-//        QVector<QString> v;
-//        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
-//        if(ui->cb_select_platform->currentIndex()>0){
-//            _process->processStart(v,ui->cb_select_platform->currentIndex());
-//        }
+        //        QVector<QString> v;
+        //        v << "deploy_bst.sh" << "deploy_jetson.sh" << "deploy_mdc.sh" << "deploy_x86_64.sh";
+        //        if(ui->cb_select_platform->currentIndex()>0){
+        //            _process->processStart(v,ui->cb_select_platform->currentIndex());
+        //        }
 
         //执行 生成代码、编译代码、部署代码
         //1:生成代码
@@ -452,8 +457,8 @@ void MainWindow::generateCode(){
     SourceGenerator::generateScript(dir,QApplication::applicationDirPath().append("/ICVOS/adas-target-x86_64.json").toStdString(),"x86_64",*scene,_moduleLibrary->packageLibrary());
 
     generatePath.append("/generate.cpp");
-//    eDialog->openTextFile(QString::fromStdString(generatePath));
-//    eDialog->show();
+    //    eDialog->openTextFile(QString::fromStdString(generatePath));
+    //    eDialog->show();
 }
 
 ///初始化面包屑导航
@@ -581,8 +586,8 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
 
 
     //设置项目的subsystem目录与系统级的subsystem
-//    std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
-//    _moduleLibrary->subsystemLibrary()->setSystemPath(otherSubsystemPath);
+    //    std::string otherSubsystemPath = QString(QApplication::applicationDirPath()+"/ICVOS/Function/Component").toStdString();
+    //    _moduleLibrary->subsystemLibrary()->setSystemPath(otherSubsystemPath);
 
     //2:注册所有的功能模块到右键上
     std::shared_ptr<DataModelRegistry> dmr = registerDataModels();
@@ -655,7 +660,7 @@ void MainWindow::initNodeEditor(){
         mb.setText(error_message);
         mb.move((QApplication::desktop()->width()-mb.widthMM())/2,(QApplication::desktop()->height()-mb.heightMM())/2);
         mb.exec();
-//        mb.critical(this,"加载错误",error_message);
+        //        mb.critical(this,"加载错误",error_message);
 
         this->forceClose = true;
         this->close();
@@ -674,12 +679,12 @@ void MainWindow::initNodeEditor(){
     //    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
     QtConcurrent::run([&,files](){
-//        try{
-            _moduleLibrary->importFiles(files);
-//        }catch(const std::exception &e){
-//            QMessageBox::critical(this,"加载模块错误","系统加载ICVOS资源出错，请检查./ICVOS/adas-packages.json内容是否正确");
-//            qCritical() << "module library exception:" << e.what();
-//        }
+        //        try{
+        _moduleLibrary->importFiles(files);
+        //        }catch(const std::exception &e){
+        //            QMessageBox::critical(this,"加载模块错误","系统加载ICVOS资源出错，请检查./ICVOS/adas-packages.json内容是否正确");
+        //            qCritical() << "module library exception:" << e.what();
+        //        }
 
         std::list<Invocable> parserResult = _moduleLibrary->getParseResult();
         emit scriptParserCompleted(parserResult);
@@ -852,11 +857,11 @@ void MainWindow::initImportScriptDialog(){
 
         //        QtConcurrent::run([&](){
         //导入c++模块
-//        _moduleLibrary->addPackage(QString(packFile).toStdString());
+        //        _moduleLibrary->addPackage(QString(packFile).toStdString());
 
         //导入子系统flow文件
-//        _moduleLibrary->subsystemLibrary().getInvocableList();
-//        emit _moduleLibrary->importCompleted();
+        //        _moduleLibrary->subsystemLibrary().getInvocableList();
+        //        emit _moduleLibrary->importCompleted();
         //        });
 
         //          _moduleLibrary->addPackage(QString(packFile).toStdString());
@@ -875,9 +880,9 @@ void MainWindow::initImportScriptDialog(){
         //        });
     });
 
-//    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
-//        qDebug() << "index:" <<index << "   count:" << count;
-//    });
+    //    connect(_moduleLibrary.get(),&ModuleLibrary::fileParserCompleted,this,[&](int count, int index){
+    //        qDebug() << "index:" <<index << "   count:" << count;
+    //    });
 
 
     //文件解析百分比

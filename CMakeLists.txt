@@ -135,13 +135,6 @@ target_link_libraries(ADAS_AD_Developer
 
 add_subdirectory(nodeeditor)
 
-#installer部分
-#install(TARGETS ADAS_AD_Developer DESTINATION "../../${CMAKE_CURRENT_BINARY_DIR}/deploy/")
-#install(FILES "~/clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04/"
-#    DESTINATION "~/share/installer/deploy/"
-#    )
-
-
 
 
 

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AADeveloper
+Exec=/home/aicc/works/AADeveloper/AppRun %F
+Icon=default
+Comment=Edit this default file
+Terminal=true
+Categories=Application

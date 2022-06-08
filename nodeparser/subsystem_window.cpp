@@ -119,7 +119,7 @@ void SubsystemWindow::save() {
         const std::string caption = subsystem_data_model_.at("caption");
         const std::string class_name = package+"::"+name;
 
-        if(addSubsystem(pid,package,name,caption)){
+        if(addSubsystem2DB(pid,package,class_name,caption)){
             qInfo() << QString::fromStdString(class_name) << "业务信息写入成功";
         }else{
             qInfo() << QString::fromStdString(class_name) << "业务信息写入失败";

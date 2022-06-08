@@ -1,5 +1,6 @@
 #include "utils.h"
 
+
 QStringList getFileList(const QString &path){
     QDir dir(path);
     QStringList nameFilters;
@@ -150,7 +151,6 @@ bool classNameIsExist(std::string class_name){
     QString sql = QString("select count(*) from modelNode where class_name = '%0'").arg(QString::fromStdString(class_name));
     QSqlQuery query = sqlite.query(sql);
     if(query.next()){
-//        qDebug() << "query.value(0):" << query.value(0).toInt();
         if(query.value(0).toInt()>0) return true;
         else return false;
     }
@@ -163,12 +163,11 @@ bool classNameIsExist(std::string class_name){
  * @brief addSubsystem          增加一条新的node数据进去
  * @param pid                   父id
  * @param package               包名
- * @param name                  类名
+ * @param class_name            包名+类名
  * @param caption               标题
  * @return
  */
-bool addSubsystem(const int pid,const std::string package,const std::string name,const std::string caption){
-    const std::string class_name = package+"::"+name;
+bool addSubsystem2DB(const int pid,const std::string package,const std::string class_name,const std::string caption){
     if(!classNameIsExist(class_name)){
         AICCSqlite sqlite;
         QSqlQuery query = sqlite.sqlQuery();
@@ -179,16 +178,48 @@ bool addSubsystem(const int pid,const std::string package,const std::string name
         query.addBindValue(QString::fromStdString(caption));
         query.addBindValue(1);
         bool ret = query.exec();
-        qDebug() << "------------------:" << ret << "  " << query.lastError();
         return ret;
     }
-    qDebug() << "-------------------class name exist:";
     return false;
-
-//    return false;
 }
 
+/**
+ * @brief importWithoutModuleSubsystem  检查所有得invocable，如果不存在数据库中添加
+ * @param invocableVector               当前系统中导入得所有invocable
+ * @return                              返回导入invocable
+ */
+QVector<QString> importWithoutModuleSubsystem(std::vector<Invocable> invocableVector){
+    QVector<QString> importClassName;
 
+    QString sql = "select count(*) as c from modelNode where class_name = ?";
+    for(int i=0;i<invocableVector.size();i++){
+        Invocable invocable = invocableVector.at(i);
+        std::string package = invocable.getPackage();
+        std::string className = invocable.getName();
+//                qDebug() << "------------------package:" << QString::fromStdString(package) << " | name:" << QString::fromStdString(name);
+//        QString className = QString::fromStdString(name);
+        AICCSqlite sqlite;
+        QSqlQuery query = sqlite.sqlQuery();
+        query.prepare(sql);
+        query.addBindValue(QString::fromStdString(className));
+        if(query.exec() && query.next()){
+            if(query.value("c").toInt()>=1) {
+
+                continue;
+            }
+            else{
+                qInfo() << "className:" << QString::fromStdString(className) << "是新模块,增加到数据库中";
+                //pid固定设置为3，分类是自定义模块
+                if(addSubsystem2DB(3,package,className,className)){
+                    importClassName.append(QString::fromStdString(className));
+                }
+            }
+        }
+
+    }
+
+    return importClassName;
+}
 
 
 

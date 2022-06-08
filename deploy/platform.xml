@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<platform>
+    <projects>
+        <project path="/home/aicc/works/ADAS-AD/project5" name="project5"/>
+        <project path="/home/aicc/works/ADAS-AD/sNGP" name="sNGP"/>
+        <project path="/home/aicc/works/ADAS-AD/project6" name="project6"/>
+        <project path="/home/aicc/works/ADAS-AD/Inspector" name="Inspector"/>
+        <project path="/home/aicc/works/ADAS-AD/Application/ACC" name="ACC"/>
+        <project path="/home/aicc/works/ADAS-AD/project2" name="project2"/>
+    </projects>
+</platform>

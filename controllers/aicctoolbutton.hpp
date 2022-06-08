@@ -18,9 +18,9 @@ public:
         QString pbt_style = "background-color:white;text-align:bottom;background-repeat:repeat-no-repeat;background-position:top;background-origin:content;";
         this->setStyleSheet(pbt_style);
 //        this->setStyleSheet(this->styleSheet()+"background-image:url(:/res/nodeIcon/math_add.png);");
-        QSize qsize(50,50);
+        QSize qsize(45,45);
         this->setIconSize(qsize);
-        this->setMinimumSize(135,75);
+        this->setMinimumSize(135,90);
         QSizePolicy sp = this->sizePolicy();
         sp.setHorizontalPolicy(QSizePolicy::Preferred);
         this->setSizePolicy(sp);

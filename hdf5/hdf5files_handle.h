@@ -108,10 +108,13 @@ public:
         H5Gget_info(group_id, &grp_info);
 
         // get signal name
-        char name[32];
-        for(int i=0; i<grp_info.nlinks;i++) {
-            H5Lget_name_by_idx(group_id, ".", H5_INDEX_NAME, H5_ITER_NATIVE,(hsize_t)i, name,32,H5P_DEFAULT);
+        char *name;
+        for(hsize_t i=0; i<grp_info.nlinks;i++) {
+            auto size = 1 + H5Lget_name_by_idx(group_id, ".", H5_INDEX_NAME, H5_ITER_INC, i, NULL,0,H5P_DEFAULT);
+            name = (char*)malloc(size);
+            H5Lget_name_by_idx(group_id, ".", H5_INDEX_NAME, H5_ITER_INC, i, name, (size_t)size, H5P_DEFAULT);
             list.push_back(name);
+            free(name);
         }
 
         close_h5group(group_id);

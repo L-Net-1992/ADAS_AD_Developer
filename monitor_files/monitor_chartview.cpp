@@ -21,7 +21,7 @@ void MonitorChartView::Init()
     btn_close_->setToolTip("关闭");
     btn_close_->setStyleSheet("color:black;border-radius：10px");
     connect(btn_close_, &QToolButton::clicked, this, [=](){
-        qDebug() << this;
+//        qDebug() << this;
         emit sendObjectAddr(size_t(this));
         this->close();
     });
@@ -33,7 +33,7 @@ void MonitorChartView::Init()
 
 MonitorChartView::~MonitorChartView()
 {
-    qDebug("MonitorChartView----");
+//    qDebug("MonitorChartView----");
 }
 
 void MonitorChartView::mousePressEvent(QMouseEvent *event)
@@ -123,7 +123,7 @@ void MonitorChartView::wheelEvent(QWheelEvent *event)
 {
     const QPoint curPos = event->pos();
     QPointF curVal = this->chart()->mapToValue(QPointF(curPos));
-qDebug() << "curPos: " << curPos << " curVal: " << curVal;
+//qDebug() << "curPos: " << curPos << " curVal: " << curVal;
     const double factor = 1.5;
     if(ctrl_key_) {
         QValueAxis *axisY = static_cast<QValueAxis*>(this->chart()->axisY());
@@ -166,7 +166,7 @@ qDebug() << "curPos: " << curPos << " curVal: " << curVal;
 void MonitorChartView::focusInEvent(QFocusEvent *event)
 {
     if(QEvent::FocusIn == event->type()) {
-        qDebug() << "focus in";
+//        qDebug() << "focus in";
         QPalette p=QPalette();
         p.setColor(QPalette::Window, Qt::green);
         setPalette(p);
@@ -176,7 +176,7 @@ void MonitorChartView::focusInEvent(QFocusEvent *event)
 void MonitorChartView::focusOutEvent(QFocusEvent *event)
 {
     if(QEvent::FocusOut == event->type()) {
-        qDebug() << "focus out";
+//        qDebug() << "focus out";
         QPalette p=QPalette();
         p.setColor(QPalette::Window, Qt::white);
         setPalette(p);

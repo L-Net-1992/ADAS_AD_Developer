@@ -39,7 +39,6 @@ public:
 private slots:
     void ReplayTabTableSignalUpdate(QString signal, QColor color);
     void MonitorTabTableSignalUpdate(QString signal, QColor color);
-    void timeoutSlotTimer2();
     void timeoutSlotTimer3();
     void SaveSignalData(QString name, QPointF data);
     void SaveSignalDataGroup(QVector<QMap<QString,QPointF>> datas);
@@ -48,7 +47,6 @@ protected:
     virtual void closeEvent(QCloseEvent *e) override;
 
 private slots:
-    void on_lineEdit_returnPressed();
     void on_btn_device_connect_clicked();
     void on_btn_replay_start_clicked();
     void on_btn_replay_open_clicked();
@@ -62,14 +60,13 @@ signals:
 private:
     void monitorStateReset();
     void recordStateReset();
-    void replayStateReset();
-    void replaySignalTimerRelease();
+    void ReplayParaReset();
 private:
     Ui::MonitorDialog *ui;
 
 private:
     Inspector *inspector_{nullptr};
-    QElapsedTimer timer_measure_;
+    QElapsedTimer timer_measure_;  // 用于产生收到数据时的时刻值
 
     // Monitor参数定义
     Monitor monitor_;
@@ -79,31 +76,22 @@ private:
     QMap<QString, QChart*> monitor_chart_;
     double monitor_axis_x_{0};
     bool monitor_running_{false};
-//    QMap<QString,QPointF> tmp_data_; // 保存临时数据，测试用
-    QVector<QMap<QString,QPointF>> tmp_values_; // 测试用
-    QElapsedTimer tmp_delay_;
-    bool tmp_select_all_=0;
+    QVector<QMap<QString,QPointF>> tmp_values_; // 用于接收数据缓存用
+    QElapsedTimer tmp_delay_;  // 用于接收数据缓存的50ms计时
 
     // Record参数定义
+    Record record_;
     QMap<QString, QVector<QPointF>> record_data_;
     bool record_running_{false};
-    unsigned long start_time_{0};
-    unsigned long end_time_{0};
-    std::string record_file_name_;
     double record_start_{0};
 
     // Replay参数定义
     Replay replay_;
-    QTimer *replay_timer_;
     MonitorChartView *r_chartview;
-    bool replay_running_{0};
-    double replay_axis_x_{0};
-
-    int max_sig_size{0};
-    QVector<SignalTimer*> replay_signal_timer_;
-    QMap<QString, QLineSeries*> replay_series_;
     QMap<QString, QChart*> replay_chart_;
-    QMap<QString, QVector<QPointF>> replay_data_;
+    bool replay_running_{0};
+    QMap<QString, QLineSeries*> replay_series_;
+
 
 };
 #endif // MONITORDIALOG_H

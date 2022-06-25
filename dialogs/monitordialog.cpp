@@ -18,12 +18,10 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     , ui(new Ui::MonitorDialog)
 {
     ui->setupUi(this);
-//    this->setAttribute(Qt::WA_QuitOnClose, false);
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     // 设在窗口属性
     setWindowTitle(tr("信号监测&回放"));
-//    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 30px; width: 120px; }");
 
     // 禁止按键功能
     ui->btn_add_chart->setVisible(false);
@@ -32,7 +30,7 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     ui->btn_monitor_record_stop->setEnabled(false);
     ui->btn_monitor_start->setEnabled(false);
     ui->btn_monitor_stop->setEnabled(false);
-    ui->lineEdit->setText("127.0.0.1");
+    ui->lineEdit->setText("192.168.30.42");
 
     // 设置表头
     InitTableHeader(ui->monitortableWidget);
@@ -44,18 +42,14 @@ MonitorDialog::MonitorDialog(QWidget *parent)
     monitor_timer_ = new QTimer(this);
     monitor_timer_->setInterval(MONITOR_TIMER_MS);
     connect(monitor_timer_, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer3);
-    connect(&monitor_, &Monitor::SignalDataEvent, this, &MonitorDialog::SaveSignalData);
     connect(&monitor_, &Monitor::SignalDataGroupEvent, this, &MonitorDialog::SaveSignalDataGroup);
 
     // 回放tab设置
     ReplayTabCreatNewChart("replay_chart");
     connect(&replay_, &Replay::SignalListEvent, this, &MonitorDialog::ReplayTabTableSignalUpdate);
-    replay_timer_ = new QTimer(this);
-    replay_timer_->setInterval(REPLAY_TIMER_MS);
-    connect(replay_timer_, &QTimer::timeout, this, &MonitorDialog::timeoutSlotTimer2);
 
-    // 保存记录
-
+    // 全选禁止
+    ui->checkBox->setVisible(false);
 
 }
 
@@ -76,9 +70,7 @@ MonitorDialog::~MonitorDialog()
         inspector_ = nullptr;
     }
 
-    replaySignalTimerRelease();
-
-    qDebug() << "~MonitorDialog()";
+//    qDebug() << "~MonitorDialog()";
 }
 
 void MonitorDialog::InitTableHeader(QTableWidget *tableWidget)
@@ -139,9 +131,6 @@ void MonitorDialog::ReplayTabCreatNewChart(QString name)
         series->setVisible(false);
         series->setUseOpenGL(true);
     });
-    connect(&replay_, &Replay::SignalDataEvent, this, [=](QString name, QPointF data){
-        replay_series_.value(name)->append(data.x(),data.y());
-    });
 }
 
 void MonitorDialog::MonitorTabCreatNewChart(QString name)
@@ -197,11 +186,26 @@ void MonitorDialog::MonitorTabCreatNewChart(QString name)
 
     // 信号包含一组数据
     connect(&monitor_, &Monitor::SignalDataGroupEvent, this, [=](QVector<QMap<QString,QPointF>> datas){
-        qDebug() << "size: " << datas.size();
+        QMap<QString,QList<QPointF>> tmp;
+
+        // 按信号名称分类收到数据
         for(auto it=datas.begin(); it!=datas.end(); ++it) {
             QString name = it->begin().key();
             QPointF data = it->begin().value();
-            monitor_series_.value(name)->append(data.x(),data.y());
+            tmp[name].push_back(data);
+        }
+        // 如果信号check，则append数据，并remove多余数据
+        for(auto it=tmp.begin();it!=tmp.end();++it) {
+            auto str=it.key();
+            auto val=it.value();
+            if(monitor_.GetSignalCheckboxState(str) == Qt::Checked) {
+                monitor_series_.value(str)->append(val);
+
+                int icnt=monitor_series_.value(str)->count();
+                if(icnt>3000) {
+                    monitor_series_.value(str)->removePoints(0, icnt-3000);
+                }
+            }
         }
     });
 }
@@ -221,7 +225,7 @@ void MonitorDialog::ReplayTabTableSignalUpdate(QString signal, QColor color)
     wckb->setLayout(hLayout);
     ui->replaytableWidget->setCellWidget(rowcount,0,wckb);
 
-    replay_.SetSignalCheckboxState(signal,Qt::Unchecked);
+    replay_.SetCheckboxState(signal,Qt::Unchecked);
 
     // color
     QTableWidgetItem *itemLine = new QTableWidgetItem("▃▃▃▃▃");
@@ -234,9 +238,11 @@ void MonitorDialog::ReplayTabTableSignalUpdate(QString signal, QColor color)
     ui->replaytableWidget->setItem(rowcount,2,it);
 
     connect(ckb, &QCheckBox::clicked, this, [=](){
-        qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
-        replay_.SetSignalCheckboxState(signal,ckb->checkState());
+        replay_.SetCheckboxState(signal,ckb->checkState());
         replay_series_.value(signal)->setVisible(ckb->checkState());
+        if(replay_running_) {
+            replay_series_.value(signal)->replace(replay_.GetSignalDataSet(signal));
+        }
     });
 }
 
@@ -266,7 +272,7 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
     ui->monitortableWidget->setItem(rowcount,2,it);
 
     connect(ckb, &QCheckBox::clicked, this, [=](){
-        qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
+//        qDebug() << "checkbox state" << ckb->checkState() << "signal " << signal;
         monitor_.AddSignalCheckboxState(signal,ckb->checkState());
 
         monitor_series_.value(signal)->setVisible(ckb->checkState());
@@ -295,21 +301,6 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
             emit ckb->clicked(0);
         }
     });
-}
-
-// 回放坐标轴移动定时器
-void MonitorDialog::timeoutSlotTimer2()
-{
-    double second = (replay_axis_x_++)/10;
-    QValueAxis *axisX = static_cast<QValueAxis*>(r_chartview->chart()->axisX());
-    const double xMin = axisX->min();
-    const double xMax = axisX->max();
-
-    if(second>xMax) {
-        double dis = second-xMax;
-        axisX->setRange(xMin+dis, xMax+dis);
-    }
-
 }
 
 // 监测坐标轴移动定时器
@@ -357,13 +348,6 @@ void MonitorDialog::closeEvent(QCloseEvent *e)
     e->accept();
 }
 
-
-
-void MonitorDialog::on_lineEdit_returnPressed()
-{
-    qDebug()<< ui->lineEdit->text();
-}
-
 // 设备连接按键
 void MonitorDialog::on_btn_device_connect_clicked()
 {
@@ -405,7 +389,7 @@ void MonitorDialog::on_btn_device_connect_clicked()
 
                 // 延时50ms或者缓冲区数据大于100个，则发送信号给chart显示
                 if((tmp_delay_.elapsed()>=50) || (tmp_values_.size()>=100)) {
-                    qDebug() << "elapsed: " << tmp_delay_.elapsed() << " | " << tmp_values_.size();
+//                    qDebug() << "elapsed: " << tmp_delay_.elapsed() << " | " << tmp_values_.size();
                     monitor_.SendSignalDataGroup(tmp_values_);
                     tmp_values_.clear();
                     tmp_delay_.invalidate();
@@ -483,12 +467,23 @@ void MonitorDialog::on_btn_device_connect_clicked()
     }
 }
 
-// 回放开始停止按键
+// 回放开始/停止按键
 void MonitorDialog::on_btn_replay_start_clicked()
 {
-    if(replay_.SignalListSize() == 0) return;
+    if(replay_.SignalSize() == 0) return;
 
     if(ui->btn_replay_start->text() == "replay"){
+        // 检查是否有信号勾选,没有则退出
+        auto tmp = replay_.GetSignal();
+        int count=0;
+        for(int i=0;i<tmp.size();i++) {
+            if(replay_.GetCheckboxState(tmp.at(i)) == Qt::Checked) {
+                count++;
+                break;
+            }
+        }
+        if(0 == count) return;
+
         ui->btn_replay_start->setText("stop");
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/res/stop.png"), QSize(), QIcon::Normal, QIcon::Off);
@@ -503,8 +498,13 @@ void MonitorDialog::on_btn_replay_start_clicked()
             //TODO
             replay_running_ = 1;
         }
-        replay_timer_->start();
-        emit replay_signal(true);
+
+        auto str = replay_.GetSignal();
+        for(auto it=str.begin();it!=str.end(); ++it ) {
+            if(replay_.GetCheckboxState(*it) == Qt::Checked) {
+                replay_series_.value(*it)->replace(replay_.GetSignalDataSet(*it));
+            }
+        }
     }
     else {
         ui->btn_replay_start->setText("replay");
@@ -516,10 +516,7 @@ void MonitorDialog::on_btn_replay_start_clicked()
         ui->btn_replay_start->setAutoRaise(false);
         ui->btn_replay_start->setToolTip("开始");
 
-
         replay_running_ = 0;
-        replay_timer_->stop();
-        emit replay_signal(false);
     }
 }
 
@@ -527,10 +524,9 @@ void MonitorDialog::on_btn_replay_start_clicked()
 void MonitorDialog::on_btn_replay_open_clicked()
 {
     if(replay_running_) {
-        QMessageBox msg(QMessageBox::NoIcon, "提示", "请先关闭回放按键", QMessageBox::Close, NULL);
-        msg.exec();
-        return;
+        emit ui->btn_replay_start->clicked();
     }
+
     QString filename = QFileDialog::getOpenFileName(this, "打开一个文件", QApplication::applicationDirPath(), tr("HDF5 (*.h5 *.hdf5)"));
     if(filename.isEmpty()) return ;
 
@@ -544,16 +540,10 @@ void MonitorDialog::on_btn_replay_open_clicked()
         }
         for(auto it=replay_chart_.begin();it!=replay_chart_.end();it++) {
             it.value()->removeAllSeries();
-        }
-        replay_series_.clear();
-        replay_axis_x_ = 0;
-        for(auto it=replay_chart_.begin();it!=replay_chart_.end();it++) {
             replay_chart_.value(it.key())->axisX()->setRange(0, CHART_AXIS_X_RANGE);
         }
-        replay_data_.clear();
-
-        // 清除上个文件指针
-        replaySignalTimerRelease();
+        replay_series_.clear();
+        replay_.DataSetClear();
 
         // 保存文件信号清单
         auto signalname = file.get_list("/Signal");
@@ -591,37 +581,59 @@ void MonitorDialog::on_btn_replay_open_clicked()
             // close group
             H5Gclose(group_id);
 
-            QVector<QPointF> tmp ;
+            QList<QPointF> tmp ;
             for(auto it=ret.begin();it!=ret.end();++it) {
                 QPointF val(it->x,it->y);
                 tmp.push_back(val);
             }
-            replay_data_[ QString::fromStdString(signalname.at(i))] = tmp;
+            replay_.SetSignalDataSet(QString::fromStdString(signalname.at(i)), tmp);
         }
+        // 保存时间信息
+        {
+            hid_t group_id, dataset_id, dataspace_id;
+            uint64_t start_time, end_time;
+            int rank;
+            hsize_t dims_out[]={0};
+
+            // open group
+            group_id = H5Gopen2(file.get_file_id(), "/Header", H5P_DEFAULT);
+
+            {
+                dataset_id = H5Dopen2(group_id, "start_time", H5P_DEFAULT);
+                dataspace_id = H5Dget_space(dataset_id);
+                rank = H5Sget_simple_extent_ndims(dataspace_id);
+                H5Sget_simple_extent_dims(dataspace_id, dims_out, NULL);
+                H5Dread(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &start_time);
+
+                // close
+                H5Sclose(dataspace_id);
+                H5Dclose(dataset_id);
+            }
+            {
+                dataset_id = H5Dopen2(group_id, "end_time", H5P_DEFAULT);
+                dataspace_id = H5Dget_space(dataset_id);
+                rank = H5Sget_simple_extent_ndims(dataspace_id);
+                H5Sget_simple_extent_dims(dataspace_id, dims_out, NULL);
+                H5Dread(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &end_time);
+
+                // close
+                H5Sclose(dataspace_id);
+                H5Dclose(dataset_id);
+            }
+            // close group
+            H5Gclose(group_id);
+
+            auto spend_time = end_time-start_time;
+            if(spend_time < 20000) {
+                spend_time = 20000;
+            }
+            double second = static_cast<double>(spend_time)/1000;
+            QValueAxis *axisX = static_cast<QValueAxis*>(r_chartview->chart()->axisX());
+            axisX->setRange(second-20,second);
+        }
+
+        // 关闭文件
         file.close();
-
-        // 文件回放
-        for(auto it = replay_data_.begin();it!=replay_data_.end();++it){
-            auto name = it.key();
-            auto data = it.value();
-            if(data.size()) {
-                auto tmp = new SignalTimer(name,data,this);
-                connect(this, &MonitorDialog::replay_signal, tmp, &SignalTimer::Start);
-                connect(tmp, &SignalTimer::Send, this, [=](QString name, QPointF data){
-                        replay_.SendSignalData(name,data);
-                });
-                connect(tmp, &SignalTimer::Complate, this, [=](int size){
-                    if(size == max_sig_size) {
-                        replay_timer_->stop();
-                    }
-                });
-                replay_signal_timer_.push_back(std::move(tmp));
-            }
-            if(data.size()>max_sig_size) {
-                max_sig_size = data.size();
-            }
-        }
-
     }
     else {
         QMessageBox::information(this,"提示", "打开文件错误", QMessageBox::Close, QMessageBox::Close);
@@ -662,8 +674,6 @@ void MonitorDialog::on_btn_monitor_start_clicked()
     tmp_delay_.invalidate();
     monitor_timer_->start();
     timer_measure_.restart();
-
-    qDebug() << "------------------monitor start";
 }
 
 // 监测停止按键
@@ -685,10 +695,22 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
         record_running_ = false;
         ui->btn_monitor_record_stop->setEnabled(false);
 
-        end_time_  = QString::number(QDateTime::currentMSecsSinceEpoch()).toULong();
+        record_.SetEndTime(QString::number(QDateTime::currentMSecsSinceEpoch()).toULong());
 
-        if(!record_file_name_.empty()) {
-            qDebug() << "file name : " << QString::fromStdString(record_file_name_);
+        //关闭信号发送
+        if(inspector_ != nullptr) {
+            QMap<QString, bool> set_state;
+            auto checkstatus = monitor_.GetSignalCheckbox();
+            for(auto it=checkstatus.begin();it!=checkstatus.end();++it) {
+                if(it.value() == Qt::Unchecked) {
+                    set_state[it.key()] = false;
+                    inspector_->setVarWatchState(set_state);
+                }
+            }
+        }
+
+        if(!record_.GetFileName().empty()) {
+            qDebug() << "file name : " << QString::fromStdString(record_.GetFileName());
 
             QString dir_str = "log";
             QDir dir;
@@ -696,7 +718,7 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
                 dir.mkpath(dir_str);
             }
 
-            std::string path = dir_str.toStdString() + "/" + record_file_name_;
+            std::string path = dir_str.toStdString() + "/" + record_.GetFileName();
             Hdf5Handle new_file;
             new_file.creat(path);
 
@@ -730,7 +752,8 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
                 hsize_t dims[] = {1};
                 hid_t dataspace_id = H5Screate_simple(rank, dims, NULL);
                 hid_t dataset_id = H5Dcreate2(group_id, "start_time", H5T_NATIVE_ULONG ,dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-                herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &start_time_);
+                auto t = record_.GetStartTime();
+                herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &t);
 
                 H5Sclose(dataspace_id);
                 H5Dclose(dataset_id);
@@ -742,7 +765,8 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
                 hsize_t dims[] = {1};
                 hid_t dataspace_id = H5Screate_simple(rank, dims, NULL);
                 hid_t dataset_id = H5Dcreate2(group_id, "end_time", H5T_NATIVE_ULONG ,dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-                herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &end_time_);
+                auto t = record_.GetEndTime();
+                herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &t);
 
                 H5Sclose(dataspace_id);
                 H5Dclose(dataset_id);
@@ -761,13 +785,10 @@ void MonitorDialog::on_btn_monitor_stop_clicked()
 
         // clear record buffer
         record_data_.clear();
-        qDebug() << "------------------record stop";
     }
-
-    qDebug() << "------------------monitor stop";
 }
 
-// 记录停止开始
+// 记录开始
 void MonitorDialog::on_btn_monitor_record_clicked()
 {
     if((monitor_running_ == 1) && (!record_running_)) {
@@ -776,15 +797,25 @@ void MonitorDialog::on_btn_monitor_record_clicked()
 
         record_data_.clear();
 
+        //设置是否监测变量，只有设置为true的变量，才会触发varUpdate
+        if(inspector_ != nullptr) {
+            QMap<QString, bool> set_state;
+            auto checkstatus = monitor_.GetSignalCheckbox();
+            for(auto it=checkstatus.begin();it!=checkstatus.end();++it) {
+                if(it.value() == Qt::Unchecked) {
+                    set_state[it.key()] = true;
+                    inspector_->setVarWatchState(set_state);
+                }
+            }
+        }
+
         QDateTime datetime;
         QString timestr = datetime.currentDateTime().toString("yyyy_MM_dd_HH_mm_ss");
-        record_file_name_ = "log_" + timestr.toStdString() + ".h5";
+        record_.SetFileName("log_" + timestr.toStdString() + ".h5");
 
-        start_time_ = datetime.currentMSecsSinceEpoch();
+        record_.SetStartTime(datetime.currentMSecsSinceEpoch());
         record_start_ =  static_cast<double>(timer_measure_.elapsed())/1000;
         record_running_ = true;
-
-        qDebug() << "------------------record start";
     }
 }
 
@@ -795,10 +826,22 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
     ui->btn_monitor_record->setEnabled(true);
     record_running_ = false;
 
-    end_time_  = QString::number(QDateTime::currentMSecsSinceEpoch()).toULong();
+    record_.SetEndTime(QString::number(QDateTime::currentMSecsSinceEpoch()).toULong());
 
-    if(!record_file_name_.empty()) {
-        qDebug() << "file name : " << QString::fromStdString(record_file_name_);
+    //关闭信号发送
+    if(inspector_ != nullptr) {
+        QMap<QString, bool> set_state;
+        auto checkstatus = monitor_.GetSignalCheckbox();
+        for(auto it=checkstatus.begin();it!=checkstatus.end();++it) {
+            if(it.value() == Qt::Unchecked) {
+                set_state[it.key()] = false;
+                inspector_->setVarWatchState(set_state);
+            }
+        }
+    }
+
+    if(!record_.GetFileName().empty()) {
+        qDebug() << "file name : " << QString::fromStdString(record_.GetFileName());
 
         QString dir_str = "log";
         QDir dir;
@@ -806,7 +849,7 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
             dir.mkpath(dir_str);
         }
 
-        std::string path = dir_str.toStdString() + "/" + record_file_name_;
+        std::string path = dir_str.toStdString() + "/" + record_.GetFileName();
         Hdf5Handle new_file;
         new_file.creat(path);
 
@@ -840,7 +883,8 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
             hsize_t dims[] = {1};
             hid_t dataspace_id = H5Screate_simple(rank, dims, NULL);
             hid_t dataset_id = H5Dcreate2(group_id, "start_time", H5T_NATIVE_ULONG ,dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-            herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &start_time_);
+            auto t = record_.GetStartTime();
+            herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &t);
 
             H5Sclose(dataspace_id);
             H5Dclose(dataset_id);
@@ -852,7 +896,8 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
             hsize_t dims[] = {1};
             hid_t dataspace_id = H5Screate_simple(rank, dims, NULL);
             hid_t dataset_id = H5Dcreate2(group_id, "end_time", H5T_NATIVE_ULONG ,dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-            herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &end_time_);
+            auto t = record_.GetEndTime();
+            herr_t status = H5Dwrite(dataset_id, H5T_NATIVE_ULONG, H5S_ALL, H5S_ALL, H5P_DEFAULT, &t);
 
             H5Sclose(dataspace_id);
             H5Dclose(dataset_id);
@@ -870,7 +915,6 @@ void MonitorDialog::on_btn_monitor_record_stop_clicked()
 
     // clear record buffer
     record_data_.clear();
-    qDebug() << "------------------record stop";
 }
 
 void MonitorDialog::monitorStateReset()
@@ -890,37 +934,12 @@ void MonitorDialog::monitorStateReset()
 void MonitorDialog::recordStateReset()
 {
     record_running_ = false;
-    start_time_ = 0;
-    end_time_ = 0;
     record_start_ = 0;
-    record_file_name_.clear();
     record_data_.clear();
 }
 
-void MonitorDialog::replayStateReset()
+void MonitorDialog::ReplayParaReset()
 {
     replay_running_ = false;
-    replay_axis_x_ = 0;
-    max_sig_size = 0;
-    replay_timer_->stop();
-
-    replay_data_.clear();
+    replay_.DataSetClear();
 }
-
-void MonitorDialog::replaySignalTimerRelease()
-{
-    // 释放回放信号指针
-    max_sig_size = 0;
-    for (auto iter=replay_signal_timer_.begin(); iter!=replay_signal_timer_.end(); ++iter)
-    {
-        if (*iter != nullptr)
-        {
-            delete (*iter);
-            (*iter) = nullptr;
-        }
-    }
-    replay_signal_timer_.clear();
-    QVector<SignalTimer*> tmpSwapVector;
-    tmpSwapVector.swap(replay_signal_timer_);
-}
-

@@ -20,23 +20,27 @@ public:
 
     void Clear();
     void LoadFile();
+
+    int  SignalSize();
     void AddSignalList(QString name, QColor color);
-    void SetSignalDataSet(QString signal, QVector<QPointF> data);
-    int  SignalDataSize();
-    int  SignalListSize();
-    QPointF GetSignalDataSet(const QString signal, size_t n);
-    QVector<QString> GetSignalName();
+    QVector<QString> GetSignal();
+
+    void DataSetClear();
+    int  DataSetSize();
+    void SetSignalDataSet(QString signal, QList<QPointF> data);
+    QList<QPointF> GetSignalDataSet(const QString signal);
     void SendSignalData(QString name, QPointF data);
-    void SetSignalCheckboxState(QString signal, Qt::CheckState state);
-    Qt::CheckState GetSignalCheckboxState(QString signal);
+
+    void SetCheckboxState(QString signal, Qt::CheckState state);
+    Qt::CheckState GetCheckboxState(QString signal);
 
 signals:
     void SignalListEvent(const QString name, QColor color);
     void SignalDataEvent(const QString name, QPointF data);
 private:
-    QVector<QString> signal_name_;
-    QMap<QString, QVector<QPointF>> signal_dataset_;
-    QMap<QString, Qt::CheckState> signal_checkbox_state_;
+    QVector<QString> signal_;
+    QMap<QString, QList<QPointF>> dataset_;
+    QMap<QString, Qt::CheckState> checkbox_state_;
 };
 
 class Record : public QObject
@@ -47,6 +51,18 @@ public:
     ~Record();
     void reset();
 
+    void SetStartTime(unsigned long t);
+    unsigned long GetStartTime();
+
+    void SetEndTime(unsigned long t);
+    unsigned long GetEndTime();
+
+    void SetFileName(std::string name);
+    std::string GetFileName();
+
+    void SetSignalData(QString signal, QPointF data);
+    QVector<QPointF> GetSignalData(const QString signal);
+    int DataSize();
 signals:
 
 private:
@@ -104,11 +120,13 @@ signals:
 public slots:
     void Start(bool state);
     void Update();
+    void SlotSingleShot();
 private:
     QTimer *tm_;
     QString name_;
     QVector<QPointF> data_;
     int size_{0};
+    bool state_;
 };
 
 }

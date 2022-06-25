@@ -25,8 +25,9 @@ Replay::~Replay()
 
 void Replay::Clear()
 {
-    signal_name_.clear();
-    signal_dataset_.clear();
+    signal_.clear();
+    dataset_.clear();
+    checkbox_state_.clear();
 }
 
 void Replay::LoadFile()
@@ -34,34 +35,34 @@ void Replay::LoadFile()
 
 }
 
-int Replay::SignalDataSize()
+int Replay::DataSetSize()
 {
-    if(signal_dataset_.size()) {
-        return signal_dataset_.begin().value().size();
-    }
-    else {
-        return 0;
-    }
+    return dataset_.size();
 }
 
-int Replay::SignalListSize()
+int Replay::SignalSize()
 {
-    return signal_name_.size();
+    return signal_.size();
 }
 
-QPointF Replay::GetSignalDataSet(const QString signal, size_t n)
+QList<QPointF> Replay::GetSignalDataSet(const QString signal)
 {
-    QVector<QPointF> tmp;
-    auto it = signal_dataset_.find(signal);
-    if(it!=signal_dataset_.end()) {
+    QList<QPointF> tmp;
+    auto it = dataset_.find(signal);
+    if(it != dataset_.end()) {
         tmp = it.value();
     }
-    return tmp.at(n);
+    return tmp;
 }
 
-QVector<QString> Replay::GetSignalName()
+QVector<QString> Replay::GetSignal()
 {
-    return signal_name_;
+    return signal_;
+}
+
+void Replay::DataSetClear()
+{
+    dataset_.clear();
 }
 
 void Replay::SendSignalData(QString name, QPointF data)
@@ -69,25 +70,25 @@ void Replay::SendSignalData(QString name, QPointF data)
     emit SignalDataEvent(name, data);
 }
 
-void Replay::SetSignalCheckboxState(QString signal, Qt::CheckState state)
+void Replay::SetCheckboxState(QString signal, Qt::CheckState state)
 {
-    signal_checkbox_state_[signal] = state;
+    checkbox_state_[signal] = state;
 }
 
-Qt::CheckState Replay::GetSignalCheckboxState(QString signal)
+Qt::CheckState Replay::GetCheckboxState(QString signal)
 {
-    return signal_checkbox_state_.value(signal);
+    return checkbox_state_.value(signal);
 }
 
 void Replay::AddSignalList(QString name, QColor color)
 {
-        signal_name_.push_back(name);
+        signal_.push_back(name);
         emit SignalListEvent(name, color);
 }
 
-void Replay::SetSignalDataSet(QString signal, QVector<QPointF> data)
+void Replay::SetSignalDataSet(QString signal, QList<QPointF> data)
 {
-    signal_dataset_[signal] = data;
+    dataset_[signal] = data;
 }
 
 // reord
@@ -95,12 +96,11 @@ Record::Record(QObject *parent) : QObject(parent)
 {
     start_time_ = 0;
     end_time_ = 0;
-    qDebug() << "record";
 }
 
 Record::~Record()
 {
-    qDebug() << "~record";
+
 }
 
 void Record::reset()
@@ -110,6 +110,56 @@ void Record::reset()
     file_name_ = "";
     data_.clear();
 
+}
+
+void Record::SetStartTime(unsigned long t)
+{
+    start_time_ = t;
+}
+
+unsigned long Record::GetStartTime()
+{
+    return start_time_;
+}
+
+void Record::SetEndTime(unsigned long t)
+{
+    end_time_ = t;
+}
+
+unsigned long Record::GetEndTime()
+{
+    return end_time_;
+}
+
+void Record::SetFileName(std::string name)
+{
+    file_name_ = name;
+}
+
+std::string Record::GetFileName()
+{
+    return file_name_;
+}
+
+void Record::SetSignalData(QString signal, QPointF data)
+{
+    data_[signal].push_back(data);
+}
+
+QVector<QPointF> Record::GetSignalData(const QString signal)
+{
+    QVector<QPointF> tmp;
+    auto it = data_.find(signal);
+    if(it != data_.end()) {
+        tmp = it.value();
+    }
+    return tmp;
+}
+
+int Record::DataSize()
+{
+    return data_.size();
 }
 
 // wave
@@ -184,10 +234,10 @@ SignalTimer::SignalTimer(QString name, QVector<QPointF> data, QObject *parent)
         return;
     }
     GetSignalData(name, data);
-    tm_ = new QTimer(this);
-    tm_->setTimerType(Qt::PreciseTimer);
-    connect(tm_, &QTimer::timeout,this,&SignalTimer::Update);
-    tm_->setInterval(data_.at(0).x()*1000);
+//    tm_ = new QTimer(this);
+//    tm_->setTimerType(Qt::PreciseTimer);
+//    connect(tm_, &QTimer::timeout,this,&SignalTimer::Update);
+//    tm_->setInterval(data_.at(0).x()*1000);
 }
 
 SignalTimer::~SignalTimer()
@@ -204,11 +254,14 @@ void SignalTimer::GetSignalData(QString &name, QVector<QPointF> &data)
 
 void SignalTimer::Start(bool state)
 {
-    if(state) {
-        tm_->start();
+    state_ = state;
+    if(state_) {
+        if(size_ < data_.size()) {
+            QTimer::singleShot(data_.at(size_).x()*1000, this, &SignalTimer::SlotSingleShot);
+        }
     }
     else {
-        tm_->stop();
+        //
     }
 }
 
@@ -225,6 +278,22 @@ void SignalTimer::Update()
         emit Send(name_,data_.at(size_));
         emit Complate(data_.size());
     }
+}
+
+void SignalTimer::SlotSingleShot()
+{
+    emit Send(name_,data_.at(size_));
+    size_++;
+    if(state_ == 1) {
+        if(size_ < data_.size()) {
+            double interval = (data_.at(size_).x()-data_.at(size_-1).x()) * 1000;
+            QTimer::singleShot(interval, this, &SignalTimer::SlotSingleShot);
+        }
+        else  {
+            emit Complate(data_.size());
+        }
+    }
+    //QTimer::singleShot(data_.at(0).x()*1000, this, &SignalTimer::SlotSingleShot);
 }
 
 

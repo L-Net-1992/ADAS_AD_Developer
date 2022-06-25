@@ -33,7 +33,7 @@
 #include <nodeparser/invocable_parser.hpp>
 #include <nodeparser/models.hpp>
 #include <nodeparser/module_library.hpp>
-
+#include <nodeparser/new_subsystem_dialog.h>
 #include <model/modelcategory.hpp>
 
 
@@ -72,7 +72,7 @@ private:
     void initNodeButtonTable();
     void makeRootGroupItem(AICCTreeWidget *atw,const QString name,const QString text);
     void makeModelMenuItem(AICCTreeWidget *atw);
-    AICCToolButton *createToolButton(QString id, QString name,QString caption,QString iconName);
+    AICCToolButton *createToolButton(QString id,QString parentid, QString name,QString caption,QString iconName);
 
 private:
     void initNodeTree(AICCTreeWidget * tw_root,const QJsonObject json);

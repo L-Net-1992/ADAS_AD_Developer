@@ -67,7 +67,8 @@ void ModuleLibrary::setInvocables(const std::list<Invocable> &list) {
 
 }
 
-void ModuleLibrary::setCurrentUseCategoryFullPath(const QStringList &newCurrentUseCategoryFullPath)
+
+void ModuleLibrary::setCurrentUseCategoryFullPath(const std::vector<std::pair<int,std::string>> &newCurrentUseCategoryFullPath)
 {
     _currentUseCategoryFullPath = newCurrentUseCategoryFullPath;
 }
@@ -99,16 +100,6 @@ void ModuleLibrary::newSubsystem(QWidget *parent) {
 
 }
 
-void ModuleLibrary::openSubsystem(QWidget *parent, const std::string &package, const std::string &name) {
-    auto subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
-    //当子系统有node创建或删除时，将信号继续传送到外部
-    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
-        emit subsystemCreatedOrDeleted();
-    });
-    subsystemWindow->show();
-
-}
-
 void ModuleLibrary::openSubsystem(QWidget *parent, const std::map<std::string,std::string> &subsystemDataModel){
     const std::string package = subsystemDataModel.at("package");
     const std::string name = subsystemDataModel.at("name");
@@ -120,6 +111,17 @@ void ModuleLibrary::openSubsystem(QWidget *parent, const std::map<std::string,st
     subsystemWindow->show();
     subsystemWindow->setBusinessData(subsystemDataModel);
 }
+
+void ModuleLibrary::openSubsystem(QWidget *parent, const std::string &package, const std::string &name) {
+    auto subsystemWindow = new SubsystemWindow(this, _subsystemLibrary.getSubsystem(package, name), parent);
+    //当子系统有node创建或删除时，将信号继续传送到外部
+    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+        emit subsystemCreatedOrDeleted();
+    });
+    subsystemWindow->show();
+
+}
+
 
 void ModuleLibrary::setSystemSubsystemPath(const std::filesystem::path &path) {
     _subsystemLibrary.setSystemPath(path);

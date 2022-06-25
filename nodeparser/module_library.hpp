@@ -71,7 +71,7 @@ private:
     PackageLibrary _packageLibrary;
     SubsystemLibrary _subsystemLibrary;
 
-    QStringList _currentUseCategoryFullPath;   //当前使用的所有分类路径
+    std::vector<std::pair<int,std::string>> _currentUseCategoryFullPath;   //当前使用的所有分类路径
 
 public:
 
@@ -128,7 +128,9 @@ public:
     static void updateVarName(QtNodes::FlowScene & scene, QtNodes::Node & node, QWidget * parent);
     static void generateVarNameIfEmpty(QtNodes::FlowScene & scene, QtNodes::Node & node);
 
-    void setCurrentUseCategoryFullPath(const QStringList &newCurrentUseCategoryFullPath);
+    void setCurrentUseCategoryFullPath(const std::vector<std::pair<int,std::string>> &newCurrentUseCategoryFullPath);
+
+    const std::vector<std::pair<int,std::string>> &currentUseCategoryFullPath() const;
 
 private:
     static QString generateVarName(QtNodes::FlowScene & scene);

@@ -29,12 +29,9 @@ public:
     SubsystemNameType getSubsystemName();
     SubsystemDataModel getSubsystemDataModel();
 
-    /**
-     * @brief setCategoryComboBox   设置下拉列表中的分类
-     * @param categoryDataModel
-     */
-    void setCategoryComboBox(QStringList categoryDataModel);
-
+    void setCategoryComboBox(std::vector<std::pair<int,std::string>> categoryDataModel);
+    void setPackageName(const QString package,const QString name);
+    void selectCategoryComboBox(const int id);
 
 private:
     Ui::NewSubsystemDialog *ui;

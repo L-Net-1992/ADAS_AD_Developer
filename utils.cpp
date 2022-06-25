@@ -120,6 +120,7 @@ void makeLeafNode(const QString path,QJsonArray ja,QTreeWidgetItem *twi){
 /**
  * @brief getParentidByPath     通过字符串形式的路径获得最下一层的parentid
  * @param path                  字符串形式路径由|分隔每层路径
+ * @param pid                   未查到该路径对应的parentid返回pid默认值
  * @return                      返回最下一层路径的parentid
  */
 int getParentidByPath(std::string path,const int pid){

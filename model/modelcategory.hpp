@@ -23,9 +23,9 @@ class CategoryDataModel:public QObject{
     Q_OBJECT
 public:
     CategoryDataModel(){
-//        _category = recursionChildren(_category,0);
-//        qDebug() << "make category full path:" << makeCategoryFullPath(7);
-//        emit dataLoadCompleted(_category);
+        //        _category = recursionChildren(_category,0);
+        //        qDebug() << "make category full path:" << makeCategoryFullPath(7);
+        //        emit dataLoadCompleted(_category);
 
     }
     const QJsonObject &category() const;
@@ -51,37 +51,40 @@ public:
      * @param nid                   模块id
      * @return                      返回模块id所在分类的路径
      */
-    QString makeCategoryFullPath(const int nid){
+    std::pair<int,std::string> makeCategoryFullPath(const int nid){
+        std::pair<int,std::string> retfp ;
         AICCSqlite sqlite;
         QString sql = QString("select id,parentid,class_name from modelNode where id = %0 and is_node = %1").arg(nid).arg(1);
         QSqlQuery query = sqlite.query(sql);
         if(query.next()){
             int id = query.value("id").toInt();
             QString categoryFullPath = getParentDataByChildid("",id);
-            return categoryFullPath;
-        }else{
-//            qWarning() << "未查询到id为:" << nid << "的模块，请确认id正确";
-            return "";
+            retfp.first = id;
+            retfp.second = QString(categoryFullPath).toStdString();
+
         }
+        return retfp;
     }
+
 
     /**
      * @brief makeCategoryFullPath  给定功能模块名称，获得该功能模块的分类路径
      * @param cn                    模块名称class_name
      * @return                      返回模块class_name所在分类的路径
      */
-    QString makeCategoryFullPath(const QString cn){
+    std::pair<int,std::string> makeCategoryFullPath(const QString cn){
+        std::pair<int,std::string> retfp;
         AICCSqlite sqlite;
         QString sql = QString("select id,parentid,class_name from modelNode where class_name = '%0' and is_node = %1").arg(cn).arg(1);
         QSqlQuery query = sqlite.query(sql);
         if(query.next()){
             int id = query.value("id").toInt();
+            int parentid = query.value("parentid").toInt();
             QString categoryFullPath = getParentDataByChildid("",id);
-            return categoryFullPath;
-        }else{
-//            qWarning() << "数据库中未查询到名称为:" << cn << "的模块，请确认模块名称正确";
-            return "";
+            retfp.first = parentid;
+            retfp.second = QString(categoryFullPath).toStdString();
         }
+        return retfp;
     }
 
     /**
@@ -89,15 +92,24 @@ public:
      * @param cln                       所有使用的节点
      * @return                          以list形式返回所有可选择的完整路径
      */
-    QStringList makeAllCategoryFullPath(std::vector<std::string> cln){
-        QSet<QString> set;
-        for(std::string n:cln)
-                set.insert(makeCategoryFullPath(QString::fromStdString(n)));
-        QStringList slist = set.toList();
-        qSort(slist.begin(),slist.end(),[](const QString &s1,const QString &s2){
-            return s1.toLower() < s2.toLower();
+    std::vector<std::pair<int,std::string>> makeAllCategoryFullPath(std::vector<std::string> cln){
+//        QSet<QString> set;
+        std::vector<std::pair<int,std::string>> retacfp;
+        std::set<std::string> setacfp;
+        for(std::string n:cln){
+            std::pair<int,std::string> category = makeCategoryFullPath(QString::fromStdString(n));
+            if(setacfp.count(category.second)==0){
+                setacfp.insert(category.second);
+                retacfp.push_back(category);
+            }
+        }
+
+        //排序操作
+        qSort(retacfp.begin(),retacfp.end(),[](const std::pair<int,std::string> &s1,const std::pair<int,std::string> &s2){
+            return s1.second < s2.second;
         });
-        return slist;
+
+        return retacfp;
     }
 
     /**
@@ -113,6 +125,9 @@ public:
         return false;
     }
 
+    const std::vector<std::pair<int,std::string>> &currentUseCategoryFullPath() const{
+       return _currentUseCategoryFullPath;
+    };
 Q_SIGNALS:
     void dataLoadCompleted(const QJsonObject json);
 
@@ -126,20 +141,20 @@ private:
      */
     QString getParentDataByChildid(QString categoryFullPath,int id){
 
-       AICCSqlite sqlite;
-       QString sql = QString("select mnp.id,mnp.class_name,mnp.parentid,mnp.caption from modelNode mnp inner join modelNode mn on mnp.id = mn.parentid where mn.id = %0").arg(id);
-       QSqlQuery query = sqlite.query(sql);
+        AICCSqlite sqlite;
+        QString sql = QString("select mnp.id,mnp.class_name,mnp.parentid,mnp.caption from modelNode mnp inner join modelNode mn on mnp.id = mn.parentid where mn.id = %0").arg(id);
+        QSqlQuery query = sqlite.query(sql);
 
-       if(query.next()){
-           int id = query.value("id").toInt();
-           QString cname = query.value("class_name").toString();
-           QString caption = query.value("caption").toString();
+        if(query.next()){
+            int id = query.value("id").toInt();
+            QString cname = query.value("class_name").toString();
+            QString caption = query.value("caption").toString();
 
-           categoryFullPath = categoryFullPath!=""?caption.append("|").append(categoryFullPath):caption;
-           return getParentDataByChildid(categoryFullPath,id);
-       }
-       else
-           return categoryFullPath;
+            categoryFullPath = categoryFullPath!=""?caption.append("|").append(categoryFullPath):caption;
+            return getParentDataByChildid(categoryFullPath,id);
+        }
+        else
+            return categoryFullPath;
     }
 
 
@@ -154,7 +169,7 @@ private:
         QString sql = QString("select id,parentid,class_name,caption,is_node,icon_name,sort_same_parentid from modelNode where parentid = %0 order by sort_same_parentid").arg(pid);
 
         QVector<QMap<QString,QVariant>> vector = sqlite.query1(sql,
-                                                                [](QSqlQuery q){
+                                                               [](QSqlQuery q){
                 QMap<QString,QVariant> v;
                 v.insert("id",q.value("id").toInt());
                 v.insert("parentid",q.value("parentid").toInt());
@@ -162,7 +177,7 @@ private:
                 v.insert("is_node",q.value("is_node").toInt());
                 v.insert("icon_name",q.value("icon_name").toString());
                 return v;
-        });
+    });
 
         QJsonArray jIdSort;
         QVectorIterator vit(vector);
@@ -213,8 +228,8 @@ private:
 
 private:
     QJsonObject _category;
-    std::vector<std::string> _currentLoadedNode;        //当前已经加载的所有node
-    QStringList _currentUseCategoryFullPath;            //当前使用的完整分类路径
+    std::vector<std::string> _currentLoadedNode;                            //当前已经加载的所有node
+    std::vector<std::pair<int,std::string>> _currentUseCategoryFullPath;   //当前完整的分类路径的id，与完整分类路径字符串描述
 };
 
 

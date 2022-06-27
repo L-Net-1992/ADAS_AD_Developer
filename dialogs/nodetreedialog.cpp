@@ -68,6 +68,7 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
     auto func_ptr = [](QSqlQuery q){
         QMap<QString,QVariant> v;
         v.insert("id",q.value("id").toString());
+        v.insert("parentid",q.value("parentid").toString());
         v.insert("class_name",q.value("class_name").toString());
         v.insert("caption",q.value("caption").toString());
         v.insert("icon_name",q.value("icon_name").toString());
@@ -75,7 +76,7 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
     };
     AICCSqlite sqlite;
     //将结果集转换
-    QString sql = QString("select id,class_name,caption,icon_name from modelNode where parentid = %0 and is_node=1").arg(jo.value("id").toInt());
+    QString sql = QString("select id,parentid,class_name,caption,icon_name from modelNode where parentid = %0 and is_node=1").arg(jo.value("id").toInt());
     QVector<QMap<QString,QVariant>> vector = sqlite.query1(sql,func_ptr);
 
 
@@ -88,6 +89,7 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
 
         const QMap<QString,QVariant> m = vit.next();
         QString id = m.value("id").toString();
+        QString parentid = m.value("parentid").toString();
         QString className = m.value("class_name").toString();
         QString caption = m.value("caption").toString();
         QString iconName = m.value("icon_name").toString();
@@ -96,7 +98,7 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
 //            qDebug() << "ppp2::ccc1";
 
         if(_categoryDataModel->existNode(className.toStdString())){
-            tb = createToolButton(id,className,caption,iconName);
+            tb = createToolButton(id,parentid,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
             i++;
         }
@@ -163,12 +165,90 @@ void NodeTreeDialog::initToolBar(){
 
 ///初始化表格
 void NodeTreeDialog::initNodeButtonTable(){
-    ui->tw_nodeModels->setShowGrid(false);
+    //处理右键菜单
+    QTableWidget *tw = ui->tw_nodeModels;
+    tw->setShowGrid(false);
+    tw->setContextMenuPolicy(Qt::CustomContextMenu);
+    int selRow = -1;
+    int selCol = -1;
+    connect(tw,&QTableWidget::customContextMenuRequested,this,[&](QPoint p){
+        QTableWidget *twc = ui->tw_nodeModels;
+        QModelIndex mindex = twc->indexAt(p);
+        QMenu *popMenu = new QMenu(twc);
+        if(mindex.isValid()){
+            QAction *action = new QAction();
+            action->setText(QString(QStringLiteral("修改模块信息")));
+            popMenu->addAction(action);
 
+            connect(action,&QAction::triggered,this,[&](){
+                AICCToolButton *button = (AICCToolButton*)twc->cellWidget(twc->currentRow(),twc->currentColumn());
+
+                //获得包名第一个冒号之前为包名
+                QRegExp reg_package("(::[a-zA-Z0-9]+)+");
+                const QString package = button->nodeName().split(reg_package).at(0);
+                //获得类名第一个冒号之后为名字空间+类名
+                QRegExp reg("^([a-zA-Z0-9]+::)");
+                const QString name = button->nodeName().split(reg).at(1);
+
+                QString bparentid = button->nodeParentId();
+
+                NewSubsystemDialog nsdialog(this);
+                nsdialog.setCategoryComboBox(this->_categoryDataModel->currentUseCategoryFullPath());
+                nsdialog.selectCategoryComboBox(bparentid.toInt());
+                nsdialog.setPackageName(package,name);
+
+                NewSubsystemDialog::SubsystemDataModel subsystem_model;
+                for(;;){
+                    if(!nsdialog.exec()) return;
+                    subsystem_model = nsdialog.getSubsystemDataModel();
+                    //判断caption是否为空
+                    if(subsystem_model.at("caption").empty()){
+                        QMessageBox::critical(this,"错误","名称字段不能为空");
+                        continue;
+                    }
+                    break;
+                }
+
+                QString id = button->nodeId();
+                int parentid = QString::fromStdString(subsystem_model.at("parentid")).toInt();
+                QString caption = QString::fromStdString(subsystem_model.at("caption"));
+
+                //TODO:此处已拿到4个字段数据，开始向数据库里更新
+                AICCSqlite sqlite;
+                QString sql = QString("update modelNode set caption = '%0',parentid = '%1' where id = %2").arg(caption).arg(parentid).arg(id);
+                QSqlQuery query = sqlite.query(sql);
+
+
+                AICCTreeWidget *tnt = ui->tw_nodeTree;
+                //执行成功后刷新选择
+                if(query.exec()){
+                    if(tnt->selectedItems().size()==1){
+                        QTreeWidgetItem *twi = tnt->selectedItems().at(0);
+                        this->itemClickedAction(twi,0);
+                    }
+                }
+
+            });
+
+            popMenu->exec(QCursor::pos());
+        }
+
+        QList<QAction*> list = popMenu->actions();
+        foreach(QAction *pAction,list) delete pAction;
+        delete popMenu;
+    });
+
+
+
+    connect(tw,&QTableWidget::cellClicked,this,[&](int row,int col){
+        selRow = row;
+        selCol = col;
+        qDebug() << row << col;
+    });
 }
 
 ///根据名称创建button
-AICCToolButton * NodeTreeDialog::createToolButton(QString id, QString name,QString caption,QString iconName){
+AICCToolButton * NodeTreeDialog::createToolButton(QString id,QString parentid, QString name,QString caption,QString iconName){
     AICCToolButton *tb = new AICCToolButton();
     tb->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextUnderIcon);
     if(caption.lastIndexOf("::")!=-1)
@@ -177,6 +257,7 @@ AICCToolButton * NodeTreeDialog::createToolButton(QString id, QString name,QStri
     tb->setToolTip(caption+"\n"+name);
     tb->setNodeIcon(iconName);
     tb->setNodeId(id);
+    tb->setNodeParentId(parentid);
     tb->setNodeName(name);
     tb->setNodeCaption(caption);
 

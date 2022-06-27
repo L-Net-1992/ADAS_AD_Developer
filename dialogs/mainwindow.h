@@ -51,6 +51,7 @@
 #include "nodeparser/models.hpp"
 #include "nodeparser/subsystem_library.h"
 #include "nodeparser/subsystem_window.h"
+#include "nodeparser/new_subsystem_dialog.h"
 #include "sqlite/aiccsqlite.hpp"
 #include "model/modelsproject.hpp"
 #include "model/modelcategory.hpp"

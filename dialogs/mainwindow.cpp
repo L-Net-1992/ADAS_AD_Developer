@@ -119,9 +119,6 @@ void MainWindow::initTreeView()
 
 }
 
-
-
-
 void MainWindow::initSplitter()
 {
     ui->dw_left->show();
@@ -172,7 +169,7 @@ void MainWindow::initToolbar()
         emDialog->show();
     });
 
-    //导入脚本按钮
+    //导入code脚本按钮
     connect(ui->tb_import_code,&QPushButton::clicked,this,[&]{
         //此处代码为显示单独得窗口来进行导入
         //        isDialog->show();
@@ -268,8 +265,8 @@ void MainWindow::initToolbar()
         }
     });
 
-    ///导入子系统模块按钮
-    ///导入一个flow文件成为自定义模块
+    //导入子系统模块按钮
+    //导入一个flow文件成为自定义模块
     connect(ui->tb_import_module,&QToolButton::clicked,this,[&]{
         QString importModuleName = QFileDialog::getOpenFileName(this,tr("请选择要导入的自定义模块文件"),QApplication::applicationDirPath(),tr("自定义模块flow文件 (*.flow)"),Q_NULLPTR,QFileDialog::ReadOnly);
         QFileInfo imFileInfo(importModuleName);
@@ -795,7 +792,7 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     for(auto it = parserResult.begin();it!=parserResult.end();++it){
         const auto &inv = *it;
         QString nodeName = QString::fromStdString(inv.getName());
-        QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
+        QString category = QString::fromStdString(_categoryDataModel->makeCategoryFullPath(nodeName).second);
         //获得caption
         QString caption = getCaptionByName(nodeName);
 
@@ -813,7 +810,7 @@ std::shared_ptr<DataModelRegistry> MainWindow::registerDataModels(){
     //注册所有的子系统
     for (const auto &inv: _moduleLibrary->subsystemLibrary().getInvocableList()) {
         QString nodeName = QString::fromStdString(inv.getName());
-        QString category = _categoryDataModel->makeCategoryFullPath(nodeName);
+        QString category = QString::fromStdString(_categoryDataModel->makeCategoryFullPath(nodeName).second);
         //获得caption
         QString caption = getCaptionByName(nodeName);
 

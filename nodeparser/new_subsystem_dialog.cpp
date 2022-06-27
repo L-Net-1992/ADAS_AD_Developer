@@ -11,18 +11,11 @@
 #include <iostream>
 
 NewSubsystemDialog::NewSubsystemDialog(QWidget *parent) :
-        QDialog(parent), ui(new Ui::NewSubsystemDialog) {
+        QDialog(parent), ui(new Ui::NewSubsystemDialog){
     ui->setupUi(this);
     QRegExp tokenRegex(R"([a-zA-Z][\w_]*)");
     ui->packageEdit->setValidator(new QRegExpValidator(tokenRegex, ui->packageEdit));
     ui->nameEdit->setValidator(new QRegExpValidator(tokenRegex, ui->nameEdit));
-
-    //是否屏蔽
-//    ui->captionLabel->setVisible(false);
-//    ui->captionLineEdit->setVisible(false);
-//    ui->categoryComboBox->setVisible(false);
-//    ui->categoryLabel->setVisible(false);
-
 }
 
 NewSubsystemDialog::~NewSubsystemDialog() {
@@ -36,6 +29,7 @@ NewSubsystemDialog::SubsystemNameType NewSubsystemDialog::getSubsystemName() {
 NewSubsystemDialog::SubsystemDataModel NewSubsystemDialog::getSubsystemDataModel(){
     SubsystemDataModel dataModel;
     dataModel.insert(make_pair("category",ui->categoryComboBox->currentText().toStdString()));
+    dataModel.insert(make_pair("parentid",ui->categoryComboBox->currentData().toString().toStdString()));
     dataModel.insert(make_pair("package",ui->packageEdit->text().toStdString()));
     dataModel.insert(make_pair("name",ui->nameEdit->text().toStdString()));
     dataModel.insert(make_pair("caption",ui->captionEdit->text().toStdString()));
@@ -43,17 +37,37 @@ NewSubsystemDialog::SubsystemDataModel NewSubsystemDialog::getSubsystemDataModel
 }
 
 
-void NewSubsystemDialog::setCategoryComboBox(QStringList categoryDataModel){
+void NewSubsystemDialog::setCategoryComboBox(std::vector<std::pair<int,std::string>> categoryDataModel){
 //    qDebug() << "set category combobox:" << categoryDataModel.size();
-    QStringList::iterator it;
+    std::vector<std::pair<int,std::string>>::iterator it;
     for(it=categoryDataModel.begin();it!=categoryDataModel.end();it++){
-        std::string s = it->toStdString();
+        std::string s = it->second;
         if(s=="") continue;
-        ui->categoryComboBox->addItem(QString::fromStdString(it->toStdString()));
+//        ui->categoryComboBox->
+        ui->categoryComboBox->addItem(QString::fromStdString(it->second),it->first);
     }
 }
 
+void NewSubsystemDialog::setPackageName(const QString package,const QString name){
+    ui->packageEdit->setText(package);
+    ui->packageEdit->setReadOnly(true);
+    ui->nameEdit->setText(name);
+    ui->nameEdit->setReadOnly(true);
 
+}
+
+void NewSubsystemDialog::selectCategoryComboBox(const int id){
+    QComboBox *ccb = ui->categoryComboBox;
+    for(int idx = 0;idx<ccb->count();idx++){
+//        ccb->itemData(idx);
+        int pid = ccb->itemData(idx).toInt();
+        if(pid == id){
+            ccb->setCurrentIndex(idx);
+            return ;
+        }
+    }
+
+}
 
 
 

@@ -24,6 +24,8 @@ public:
         QSizePolicy sp = this->sizePolicy();
         sp.setHorizontalPolicy(QSizePolicy::Preferred);
         this->setSizePolicy(sp);
+        this->setAttribute(Qt::WA_TransparentForMouseEvents,true);
+
 
     };
     ///设置Node的Icon
@@ -35,6 +37,13 @@ public:
     void setNodeId(QString id){_nodeId = id;}
     void setNodeName(QString name){_nodeName = name;}
     void setNodeCaption(QString caption){_nodeCaption = caption;}
+    const QString &nodeName() const;
+
+    const QString &nodeId() const;
+
+    const QString &nodeParentId() const;
+    void setNodeParentId(const QString &newNodeParentId);
+
 protected:
 
 
@@ -88,7 +97,28 @@ private:
     QString _nodeName;
     QString _nodeCaption;
     QString _nodeId;
+    QString _nodeParentId;
 
 };
+
+inline const QString &AICCToolButton::nodeName() const
+{
+    return _nodeName;
+}
+
+inline const QString &AICCToolButton::nodeId() const
+{
+    return _nodeId;
+}
+
+inline const QString &AICCToolButton::nodeParentId() const
+{
+    return _nodeParentId;
+}
+
+inline void AICCToolButton::setNodeParentId(const QString &newNodeParentId)
+{
+    _nodeParentId = newNodeParentId;
+}
 
 #endif // AICCTOOLBUTTON_H

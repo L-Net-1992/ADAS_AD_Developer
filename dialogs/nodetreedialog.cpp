@@ -1,6 +1,6 @@
 #include "nodetreedialog.h"
 #include "ui_nodetreedialog.h"
-
+#include <QSqlRecord>
 NodeTreeDialog::NodeTreeDialog(QSharedPointer<CategoryDataModel> cdm,QSharedPointer<ProjectDataModel> pdm,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NodeTreeDialog),
@@ -50,7 +50,7 @@ void NodeTreeDialog::initTreeWidget()
 
 ///点击目录展示目录中所有模块//    initNodeTree(tw);
 void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
-//    qDebug() << "item click:" << item->text(0);
+    qDebug() << "item click:" << item->text(0);
     this->setFixedWidth(1140);
     this->setFixedHeight(624);
 
@@ -264,26 +264,54 @@ AICCToolButton * NodeTreeDialog::createToolButton(QString id,QString parentid, Q
     return tb;
 }
 
+void NodeTreeDialog::on_tb_search_subsystem_clicked()
+{
+    if(ui->comboBox->currentText().isEmpty())
+        return;
 
+    auto key = ui->comboBox->currentText().replace(QRegExp("[\\s]+"), " ").split(" ");
+    key.removeAll("");
+    if(key.isEmpty()) {
+        return;
+    }
+    QString str;
+    switch(key.size())
+    {
+    case 1:
+        str = QString("SELECT * FROM modelNode WHERE caption like '%%1%'").arg(key.at(0));
+        break;
+    case 2:
+        str = QString("SELECT * FROM modelNode WHERE caption like '%%1%' caption like '%%2%'").arg(key.at(0)).arg(key.at(1));
+        break;
+    default:
+        str = QString("SELECT * FROM modelNode WHERE caption like '%%1%' caption like '%%2%'").arg(key.at(0)).arg(key.at(1));
+        break;
+    }
 
+    //清空表格内容，删除已有的按钮
+    ui->tw_nodeModels->setRowCount(0);
+    ui->tw_nodeModels->clearContents();
 
+    AICCSqlite sqlite;
+    auto query = sqlite.query(str);
+    int size = 0;
+    while(query.next())
+    {
+        QSqlRecord rec = query.record();
+        QString id = rec.value("id").toString();
+        QString className = rec.value("class_name").toString();
+        QString caption = rec.value("caption").toString();
+        QString iconName = rec.value("icon_name").toString();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if(size%6 == 0) {
+            ui->tw_nodeModels->setRowCount(ui->tw_nodeModels->rowCount()+1);
+        }
+        AICCToolButton *tb;
+        if(_categoryDataModel->existNode(className.toStdString())){
+            tb = createToolButton(id,className,caption,iconName);
+            ui->tw_nodeModels->setCellWidget(size/6,size%6,tb);
+            qDebug() << "size: " << size++;
+        }
+    }
+}
 

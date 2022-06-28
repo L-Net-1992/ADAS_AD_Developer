@@ -299,6 +299,7 @@ void NodeTreeDialog::on_tb_search_subsystem_clicked()
     {
         QSqlRecord rec = query.record();
         QString id = rec.value("id").toString();
+        QString parentid = rec.value("parentid").toString();
         QString className = rec.value("class_name").toString();
         QString caption = rec.value("caption").toString();
         QString iconName = rec.value("icon_name").toString();
@@ -308,7 +309,7 @@ void NodeTreeDialog::on_tb_search_subsystem_clicked()
         }
         AICCToolButton *tb;
         if(_categoryDataModel->existNode(className.toStdString())){
-            tb = createToolButton(id,className,caption,iconName);
+            tb = createToolButton(id,parentid,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(size/6,size%6,tb);
             qDebug() << "size: " << size++;
         }

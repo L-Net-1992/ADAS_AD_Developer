@@ -190,12 +190,13 @@ void NodeTreeDialog::initNodeButtonTable(){
                 QRegExp reg("^([a-zA-Z0-9]+::)");
                 const QString name = button->nodeName().split(reg).at(1);
 
-                QString bparentid = button->nodeParentId();
+                const QString bparentid = button->nodeParentId();
+                const QString bcaption = button->nodeCaption();
 
                 NewSubsystemDialog nsdialog(this);
                 nsdialog.setCategoryComboBox(this->_categoryDataModel->currentUseCategoryFullPath());
                 nsdialog.selectCategoryComboBox(bparentid.toInt());
-                nsdialog.setPackageName(package,name);
+                nsdialog.setPackageNameCaption(package,name,bcaption);
 
                 NewSubsystemDialog::SubsystemDataModel subsystem_model;
                 for(;;){
@@ -213,11 +214,9 @@ void NodeTreeDialog::initNodeButtonTable(){
                 int parentid = QString::fromStdString(subsystem_model.at("parentid")).toInt();
                 QString caption = QString::fromStdString(subsystem_model.at("caption"));
 
-                //TODO:此处已拿到4个字段数据，开始向数据库里更新
                 AICCSqlite sqlite;
                 QString sql = QString("update modelNode set caption = '%0',parentid = '%1' where id = %2").arg(caption).arg(parentid).arg(id);
                 QSqlQuery query = sqlite.query(sql);
-
 
                 AICCTreeWidget *tnt = ui->tw_nodeTree;
                 //执行成功后刷新选择

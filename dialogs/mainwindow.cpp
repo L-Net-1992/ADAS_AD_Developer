@@ -761,13 +761,19 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     //1:生成NodeTreeDialog的菜单结构
     _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);
     //2:初始化模块变量相关操作
-    FlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
+    AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
         ModuleLibrary::generateVarNameIfEmpty(*scene, node);
     });
-    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
-        ModuleLibrary::updateVarName(*scene, node, this);
+
+    //3:重命名变量
+    connect(scene,&AICCFlowScene::nodeRename,this,[scene,this](Node &node){
+        ModuleLibrary::updateVarName(*scene,node,this);
     });
+
+//    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
+//        ModuleLibrary::updateVarName(*scene, node, this);
+//    });
     //3:启用工具栏、展示选择项目窗口
     ui->statusbar->showMessage("节点模型数据加载已完成");
     ui->tw_toolbar->setEnabled(true);

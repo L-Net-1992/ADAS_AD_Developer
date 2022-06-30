@@ -37,12 +37,12 @@ public:
     void setNodeId(QString id){_nodeId = id;}
     void setNodeName(QString name){_nodeName = name;}
     void setNodeCaption(QString caption){_nodeCaption = caption;}
+    void setNodeParentId(const QString &newNodeParentId){_nodeParentId = newNodeParentId;}
     const QString &nodeName() const;
-
     const QString &nodeId() const;
-
     const QString &nodeParentId() const;
-    void setNodeParentId(const QString &newNodeParentId);
+    const QString &nodeCaption() const;
+
 
 protected:
 
@@ -116,9 +116,9 @@ inline const QString &AICCToolButton::nodeParentId() const
     return _nodeParentId;
 }
 
-inline void AICCToolButton::setNodeParentId(const QString &newNodeParentId)
+inline const QString &AICCToolButton::nodeCaption() const
 {
-    _nodeParentId = newNodeParentId;
+    return _nodeCaption;
 }
 
 #endif // AICCTOOLBUTTON_H

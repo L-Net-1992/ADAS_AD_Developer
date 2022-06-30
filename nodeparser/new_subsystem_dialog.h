@@ -30,7 +30,7 @@ public:
     SubsystemDataModel getSubsystemDataModel();
 
     void setCategoryComboBox(std::vector<std::pair<int,std::string>> categoryDataModel);
-    void setPackageName(const QString package,const QString name);
+    void setPackageNameCaption(const QString package,const QString name,const QString caption);
     void selectCategoryComboBox(const int id);
 
 private:

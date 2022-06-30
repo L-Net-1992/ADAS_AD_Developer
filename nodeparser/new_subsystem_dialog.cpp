@@ -48,12 +48,12 @@ void NewSubsystemDialog::setCategoryComboBox(std::vector<std::pair<int,std::stri
     }
 }
 
-void NewSubsystemDialog::setPackageName(const QString package,const QString name){
+void NewSubsystemDialog::setPackageNameCaption(const QString package,const QString name,const QString caption){
     ui->packageEdit->setText(package);
     ui->packageEdit->setReadOnly(true);
     ui->nameEdit->setText(name);
     ui->nameEdit->setReadOnly(true);
-
+    ui->captionEdit->setText(caption);
 }
 
 void NewSubsystemDialog::selectCategoryComboBox(const int id){

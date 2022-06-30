@@ -6,6 +6,10 @@
 #include <nodes/Node>
 #include <QDebug>
 #include <nodeparser/module_library.hpp>
+#include <QMenu>
+#include <QAction>
+#include <QClipboard>
+#include <QMimeData>
 
 
 using QtNodes::FlowView;
@@ -35,6 +39,8 @@ public:
         this->addText("(0,0)");
         this->addEllipse(0,0,1,1);
 
+        connect(this,&AICCFlowScene::nodeContextMenu,this,&AICCFlowScene::nodeContextMenuAction);
+
         //        this->addEllipse(72,1,1,1);
         //        this->addEllipse(72,94,1,1);
         //当场景文件加载完成后，连接节点创建信号与节点删除信号
@@ -63,12 +69,71 @@ public:
         }
     }
 
+private:
+
+
+    void nodeContextMenuAction (Node &node,const QPointF &pos){
+
+        QMenu *pop_menu = new QMenu();
+
+        QAction *act_copy = new QAction(pop_menu);
+        act_copy->setText(QStringLiteral("复制"));
+        act_copy->setIcon(QIcon(":/res/editor-copy.png"));
+        pop_menu->addAction(act_copy);
+
+        QAction *act_paste = new QAction(pop_menu);
+        act_paste->setText(QStringLiteral("粘贴"));
+        act_paste->setIcon(QIcon(":/res/editor-paste.png"));
+        pop_menu->addAction(act_paste);
+
+        pop_menu->addSeparator();
+
+        QAction *act_rename = new QAction(pop_menu);
+        act_rename->setText(QStringLiteral("重命名"));
+        act_rename->setIcon(QIcon(":/res/rename.png"));
+        pop_menu->addAction(act_rename);
+
+        //设置菜单功能
+        connect(act_copy,&QAction::triggered,this,[&](){
+            QClipboard *clipboard = QApplication::clipboard();
+            std::vector<Node*> nodes =  this->selectedNodes();
+            QStringList sl_nodes;
+            for(Node* node:nodes){
+                auto *ndm = static_cast<InvocableDataModel *>(node->nodeDataModel());
+                sl_nodes.append(ndm->name());
+                qDebug() << "=================" <<sl_nodes;
+            }
+            clipboard->setProperty("nodes",sl_nodes);
+
+            qDebug() << "--------------clipboard:" << clipboard->property("nodes").toStringList();
+        });
+
+        //粘贴
+        connect(act_paste,&QAction::triggered,this,[&](){
+
+        });
+
+        //重命名
+        connect(act_rename,&QAction::triggered,this,[&](){
+           emit nodeRename(node);
+        });
+        pop_menu->exec(QCursor::pos());
+
+//        //回收action资源
+        foreach(QAction *pAction,pop_menu->actions()) delete pAction;
+    }
 
 
 
 Q_SIGNALS:
     void getNodeDataModel(NodeDataModel *nodeDataModel);
+    void nodeRename(Node &node);
 
+private:
+    QSharedPointer<QAction> _pop_menu;
+    QSharedPointer<QAction> _act_copy;
+    QSharedPointer<QAction> _act_paste;
+    QSharedPointer<QAction> _act_rename;
 };
 
 #endif // AICCFLOWSCENE_H

@@ -79,7 +79,6 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
     QString sql = QString("select id,parentid,class_name,caption,icon_name from modelNode where parentid = %0 and is_node=1").arg(jo.value("id").toInt());
     QVector<QMap<QString,QVariant>> vector = sqlite.query1(sql,func_ptr);
 
-
     ui->tw_nodeModels->setRowCount(vector.size()/columnCount+1);
 
     QVectorIterator vit(vector);
@@ -182,6 +181,7 @@ void NodeTreeDialog::initNodeButtonTable(){
 
             connect(action,&QAction::triggered,this,[&](){
                 AICCToolButton *button = (AICCToolButton*)twc->cellWidget(twc->currentRow(),twc->currentColumn());
+                if(button == Q_NULLPTR) return;
 
                 //获得包名第一个冒号之前为包名
                 QRegExp reg_package("(::[a-zA-Z0-9]+)+");

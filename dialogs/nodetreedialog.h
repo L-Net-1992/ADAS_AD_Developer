@@ -66,6 +66,8 @@ signals:
 private slots:
     void itemClickedAction(QTreeWidgetItem *item,int column);
 
+    void on_tb_search_subsystem_clicked();
+
 private:
     void initTreeWidget();
     void initToolBar();

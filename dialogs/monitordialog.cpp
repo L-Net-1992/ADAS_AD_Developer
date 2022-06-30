@@ -288,6 +288,19 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
             }
         }
     });
+//<<<<<<< HEAD
+////    connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
+////        qDebug() << ui->checkBox->checkState();
+////        if(ui->checkBox->checkState() == Qt::Checked) {
+////            ckb->setCheckState(Qt::Checked);
+////            emit ckb->clicked(1);
+////        }
+////        else {
+////            ckb->setCheckState(Qt::Unchecked);
+////            emit ckb->clicked(0);
+////        }
+////    });
+//=======
 
     // 全选按键
     connect(ui->checkBox, &QCheckBox::clicked, this, [=](){
@@ -301,6 +314,7 @@ void MonitorDialog::MonitorTabTableSignalUpdate(QString signal, QColor color)
             emit ckb->clicked(0);
         }
     });
+//>>>>>>> f1b48e3b993fb0c6fb941c2eec4f0e14b205f597
 }
 
 // 监测坐标轴移动定时器

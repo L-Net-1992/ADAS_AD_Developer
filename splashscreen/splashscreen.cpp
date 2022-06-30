@@ -45,7 +45,7 @@ void SplashScreen::drawContents(QPainter *painter)
     painter->drawText((this->frameGeometry().width()-rec.width())/2, this->frameGeometry().height()-120, copyright);
 
     // logo
-    QString logoname("AADS");
+    QString logoname("AA Studio");
     painter->save();
     painter->setFont(QFont("SimSun", 30 ,75));
     QPen pen(QColor(138, 151, 123), 3, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);

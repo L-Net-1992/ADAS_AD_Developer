@@ -5,7 +5,8 @@ ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer
     QDialog(parent),
     ui(new Ui::ProjectDialog),
     pDataModel(pdm),
-    rProjectDataModel(rpdm)
+    rProjectDataModel(rpdm),
+    rebackRecentProject(false)
 {
     ui->setupUi(this);
         this->setAttribute(Qt::WA_QuitOnClose, false);
@@ -56,7 +57,8 @@ void ProjectDialog::initButton()
     //取消按钮事件
     connect(ui->pb_project_cancel,&QPushButton::clicked,this,[&]()
     {
-        emit projectDialogCanceled();
+        emit projectDialogCanceled(rebackRecentProject);
+        rebackRecentProject = false;
         this->close();
     });
 
@@ -70,7 +72,7 @@ void ProjectDialog::initButton()
 
         //创建项目文件夹
         QString projectFolder = projectPath+"/"+projectName;
-        QString projectConfigFolder = projectFolder+"/.ap";
+        QString projectConfigFolder = projectFolder;
 
         bool existProjectFolder = folder.exists(projectFolder);
         if(existProjectFolder)
@@ -87,13 +89,13 @@ void ProjectDialog::initButton()
                 return;
             }
             //创建配置信息文件夹
-
-            bool pcfok = folder.mkdir(projectConfigFolder);
-            if(!pcfok)
-            {
-                QMessageBox::information(this,tr("建立 .ap 文件夹"),tr("建立 .ap 文件夹失败：").append(projectConfigFolder));
-                return;
-            }
+            //不使用.ap文件夹，下方代码没用
+//            bool pcfok = folder.mkdir(projectConfigFolder);
+//            if(!pcfok)
+//            {
+//                QMessageBox::information(this,tr("建立 .ap 文件夹"),tr("建立 .ap 文件夹失败：").append(projectConfigFolder));
+//                return;
+//            }
         }
 
 
@@ -199,4 +201,12 @@ void ProjectDialog::writeProjectXml(QFile &file)
     QTextStream out_stream(&file);
     doc.save(out_stream,4);
     file.close();
+}
+
+/**
+ * @brief ProjectDialog::showFromRecentProjectDialog    通过最近项目窗口显示创建项目窗口
+ */
+void ProjectDialog::showFromRecentProjectDialog(){
+    this->show();
+    rebackRecentProject = true;
 }

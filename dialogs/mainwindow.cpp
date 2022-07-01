@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->initNodeEditor();
     this->initImportScriptDialog();
     this->initRecentProjectDialog();
+    this->initProjectDialog();
     this->initProjectDataModel();
 
     //    std::cout << "std::cout";
@@ -558,12 +559,13 @@ void MainWindow::saveProjectAction(){
 }
 
 ///打开项目动作
-void MainWindow::openProjectAction(){
+bool MainWindow::openProjectAction(){
     QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
     QFileInfo fileInfo(fileName);
-    if(!fileInfo.exists(fileName)) return;
-    QString projectProject = fileInfo.absoluteFilePath().split("/.ap/project.xml")[0];
+    if(!fileInfo.exists(fileName)) return false;
+    QString projectProject = fileInfo.absoluteFilePath().split("/project.xml")[0];
     _currentProjectDataModel->setProject(QFileInfo(projectProject));
+    return true;
 }
 
 ///打开项目完成后执行部分
@@ -618,14 +620,20 @@ void MainWindow::initRecentProjectDialog(){
         _currentProjectDataModel->setProject(pdm->projectName(),pdm->projectPath());
     });
     connect(rProjectDialog,&RecentProjectDialog::recentProjectDialogClosed,this,[&]{
-        qDebug() <<" close ";
+//        qDebug() <<" close ";
         forceClose = true;
         this->close();
 
     });
+    //最近项目窗口点击
     connect(rProjectDialog,&RecentProjectDialog::newProjectTriggered,this,[&]{
-        projectDialog->show();
+//        projectDialog->show();
+        projectDialog->showFromRecentProjectDialog();
         rProjectDialog->hide();
+    });
+    connect(rProjectDialog,&RecentProjectDialog::openLocalProject,this,[&](){
+        if(this->openProjectAction())
+            rProjectDialog->hide();
     });
 }
 
@@ -633,6 +641,14 @@ void MainWindow::initRecentProjectDialog(){
 ///初始化数据模型
 void MainWindow::initProjectDataModel(){
     connect(_currentProjectDataModel.get(),&ProjectDataModel::projectDataModelLoadCompleted,this,&MainWindow::projectDataModelLoadCompletedAction);
+
+}
+
+void MainWindow::initProjectDialog(){
+    connect(projectDialog,&ProjectDialog::projectDialogCanceled,this,[&](bool showRecentProjectDialog){
+        if(showRecentProjectDialog)
+            rProjectDialog->show();
+    });
 }
 
 ///NodeEditor数据处理部分

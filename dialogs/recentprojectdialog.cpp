@@ -8,7 +8,7 @@ RecentProjectDialog::RecentProjectDialog(QSharedPointer<RecentProjectDataModel>r
     _recent_project_data_model(rpdm)
 {
     ui->setupUi(this);
-        this->setAttribute(Qt::WA_QuitOnClose, false);
+    this->setAttribute(Qt::WA_QuitOnClose, false);
     this->setModal(true);
     initStyle();
     setDoubleClickAction();
@@ -86,7 +86,8 @@ void RecentProjectDialog::initConnect(){
         if(ui->lw_project->selectedItems().count()>0){
             openProjectAction(ui->lw_project->selectedItems().at(0));
         }else{
-            QMessageBox::information(Q_NULLPTR,"信息","请在列表中先选择一个可用项目",QMessageBox::Ok,QMessageBox::Ok);
+            emit openLocalProject();
+//            QMessageBox::information(Q_NULLPTR,"信息","请在列表中先选择一个可用项目",QMessageBox::Ok,QMessageBox::Ok);
         }
     });
 }

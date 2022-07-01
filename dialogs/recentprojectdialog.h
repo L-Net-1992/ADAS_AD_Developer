@@ -28,7 +28,7 @@ Q_SIGNALS:
     void setCurrentProjectDataModelCompleted(QSharedPointer<ProjectDataModel>pdm);
     void recentProjectDialogClosed();
     void newProjectTriggered();
-
+    void openLocalProject();
 
 private:
     void initStyle();

@@ -31,9 +31,10 @@ public:
     const QStringList &getFlowSceneSaveFiles() const;
     void readProjectXml(QFile &file);
     void setProjectPath(const QString &newProjectPath);
+    void showFromRecentProjectDialog();
 
 Q_SIGNALS:
-    void projectDialogCanceled();
+    void projectDialogCanceled(bool showRecentProjectDialog);
 
 private:
     void initButton();
@@ -52,7 +53,7 @@ private:
     QStringList flowSceneSaveFiles;
     QSharedPointer<ProjectDataModel> pDataModel;
     QSharedPointer<RecentProjectDataModel> rProjectDataModel;
-
+    bool rebackRecentProject;
 };
 
 #endif // PROJECTDIALOG_H

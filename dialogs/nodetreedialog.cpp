@@ -310,7 +310,6 @@ void NodeTreeDialog::on_tb_search_subsystem_clicked()
         if(_categoryDataModel->existNode(className.toStdString())){
             tb = createToolButton(id,parentid,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(size/6,size%6,tb);
-            qDebug() << "size: " << size++;
         }
     }
 }

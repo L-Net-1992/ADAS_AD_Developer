@@ -131,7 +131,7 @@ public:
     ///判断项目是否存在
     bool existProject(const QString ppath){
         QDir existDir(ppath);
-        QFile existFile(ppath+"/.ap/project.xml");
+        QFile existFile(ppath+"/project.xml");
         if(!existDir.exists() || !existFile.exists()) return false;
         return true;
     }

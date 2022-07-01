@@ -53,7 +53,7 @@ public:
         _projectName = pFileInfo.baseName();
         _projectPath = pFileInfo.absoluteFilePath();
         _projectSubSystemPath = _projectPath+"/subsystem";
-        _projectXml = _projectPath+"/.ap/project.xml";
+        _projectXml = _projectPath+"/project.xml";
         parseProjectXml(_projectXml);
         emit projectDataModelLoadCompleted(_projectName,_projectPath);
     }

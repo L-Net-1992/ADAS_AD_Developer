@@ -102,10 +102,11 @@ private:
     void initImportScriptDialog();
     void initRecentProjectDialog();
     void initDataInspectorDialog();
+    void initProjectDialog();
     void initProjectDataModel();
 
     void saveProjectAction();
-    void openProjectAction();
+    bool openProjectAction();
     //打开项目动作函数部分
     void projectDataModelLoadCompletedAction(const QString pname,const QString ppath);
     //创建子系统动作函数

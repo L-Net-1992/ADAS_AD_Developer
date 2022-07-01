@@ -222,7 +222,7 @@
         </size>
        </property>
        <property name="title">
-        <string>节点组件</string>
+        <string/>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">

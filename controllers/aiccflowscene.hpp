@@ -41,6 +41,8 @@ public:
 
         connect(this,&AICCFlowScene::nodeContextMenu,this,&AICCFlowScene::nodeContextMenuAction);
 
+
+
         //        this->addEllipse(72,1,1,1);
         //        this->addEllipse(72,94,1,1);
         //当场景文件加载完成后，连接节点创建信号与节点删除信号
@@ -55,7 +57,7 @@ public:
     ///在FlowScene中创建node
     void dropCreateNode(const QString  &name,const QString &caption,const QPointF posView)
     {
-        std::cout << "aicc flow scene:" << name.toStdString() << " " << caption.toStdString() << "   categoryies size:" << this->registry().categories().size();
+//        std::cout << "aicc flow scene:" << name.toStdString() << " " << caption.toStdString() << "   categoryies size:" << this->registry().categories().size();
         try{
             auto type = this->registry().create(name);
 
@@ -73,6 +75,7 @@ private:
 
 
     void nodeContextMenuAction (Node &node,const QPointF &pos){
+        QClipboard *clipboard = QApplication::clipboard();
 
         QMenu *pop_menu = new QMenu();
 
@@ -85,6 +88,8 @@ private:
         act_paste->setText(QStringLiteral("粘贴"));
         act_paste->setIcon(QIcon(":/res/editor-paste.png"));
         pop_menu->addAction(act_paste);
+        if(clipboard->property("nodes").toStringList().size()==0)
+            act_paste->setEnabled(false);
 
         pop_menu->addSeparator();
 
@@ -95,22 +100,24 @@ private:
 
         //设置菜单功能
         connect(act_copy,&QAction::triggered,this,[&](){
-            QClipboard *clipboard = QApplication::clipboard();
             std::vector<Node*> nodes =  this->selectedNodes();
             QStringList sl_nodes;
             for(Node* node:nodes){
                 auto *ndm = static_cast<InvocableDataModel *>(node->nodeDataModel());
                 sl_nodes.append(ndm->name());
-                qDebug() << "=================" <<sl_nodes;
             }
             clipboard->setProperty("nodes",sl_nodes);
-
-            qDebug() << "--------------clipboard:" << clipboard->property("nodes").toStringList();
         });
 
         //粘贴
         connect(act_paste,&QAction::triggered,this,[&](){
-
+            QClipboard *clipboard = QApplication::clipboard();
+            QStringList sl = clipboard->property("nodes").toStringList();
+            for(int i=0;i<sl.size();i++){
+                QString nn = sl.at(i);
+                QPointF p(pos.x()+(i*10),pos.y()+(i*10));
+                dropCreateNode(nn,nn,p);
+            }
         });
 
         //重命名

@@ -14,6 +14,7 @@ ProjectDialog::ProjectDialog(QSharedPointer<ProjectDataModel> pdm,QSharedPointer
     initOpenPath();
     initStackedFirst();
     initStackedSecond();
+    initValidator();
 }
 
 
@@ -88,14 +89,6 @@ void ProjectDialog::initButton()
                 QMessageBox::information(this,tr("建立文件夹"),tr("建立文件夹失败：").append(projectFolder));
                 return;
             }
-            //创建配置信息文件夹
-            //不使用.ap文件夹，下方代码没用
-//            bool pcfok = folder.mkdir(projectConfigFolder);
-//            if(!pcfok)
-//            {
-//                QMessageBox::information(this,tr("建立 .ap 文件夹"),tr("建立 .ap 文件夹失败：").append(projectConfigFolder));
-//                return;
-//            }
         }
 
 
@@ -175,6 +168,13 @@ void ProjectDialog::initStackedSecond()
 {
     connect(ui->le_config1,&QLineEdit::textChanged,this,[&](const QString &str){config1 = str;ui->le_summary_config1->setText(config1);});
     connect(ui->le_config2,&QLineEdit::textChanged,this,[&](const QString &str){config2=str;ui->le_summary_config2->setText(config2);});
+}
+
+void ProjectDialog::initValidator(){
+    QRegExp pnameRegExp(R"([a-zA-Z0-9_]+)");
+    ui->le_project_name->setValidator(new QRegExpValidator(pnameRegExp,ui->le_project_name));
+    QRegExp ppathRegExp(R"([^<>/\\\|:""\*\?]+\.\w+$)");
+    ui->le_project_path->setValidator(new QRegExpValidator(ppathRegExp,ui->le_project_path));
 }
 
 ///写入项目配置xml文件

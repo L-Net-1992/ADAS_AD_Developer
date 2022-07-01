@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
+#include <QRegExpValidator>
 #include <cmath>
 #include <model/modelsproject.hpp>
 #include <model/modelsrecentproject.hpp>
@@ -41,6 +42,7 @@ private:
     void initOpenPath();
     void initStackedFirst();
     void initStackedSecond();
+    void initValidator();
     void writeProjectXml(QFile &file);
 
 private:

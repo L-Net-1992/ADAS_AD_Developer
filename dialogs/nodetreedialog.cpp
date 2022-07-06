@@ -339,5 +339,8 @@ void NodeTreeDialog::modelSearchUpdate()
             size++;
         }
     }
+
+    // 去除当前item高亮显示
+    ui->tw_nodeTree->currentItem()->setSelected(false);
 }
 

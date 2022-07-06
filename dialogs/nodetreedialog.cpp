@@ -341,6 +341,8 @@ void NodeTreeDialog::modelSearchUpdate()
     }
 
     // 去除当前item高亮显示
-    ui->tw_nodeTree->currentItem()->setSelected(false);
+    if(ui->tw_nodeTree->currentItem()) {
+        ui->tw_nodeTree->currentItem()->setSelected(false);
+    }
 }
 

@@ -159,7 +159,28 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
 
 ///初始化工具条上的功能
 void NodeTreeDialog::initToolBar(){
-
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &NodeTreeDialog::modelSearchUpdate);
+    connect(ui->tb_search_subsystem, &QToolButton::clicked, this, &NodeTreeDialog::modelSearchUpdate);
+    connect(ui->tb_left_arrow, &QToolButton::clicked, this, [=](){
+        int idx = ui->comboBox->currentIndex();
+        int max = ui->comboBox->count();
+        if(idx == 0) {
+            ui->comboBox->setCurrentIndex(max-1);
+        }
+        else {
+            ui->comboBox->setCurrentIndex(idx-1);
+        }
+    });
+    connect(ui->tb_right_arrow, &QToolButton::clicked, this, [=](){
+        int idx = ui->comboBox->currentIndex();
+        int max = ui->comboBox->count();
+        if(idx == max-1) {
+            ui->comboBox->setCurrentIndex(0);
+        }
+        else {
+            ui->comboBox->setCurrentIndex(idx+1);
+        }
+    });
 }
 
 ///初始化表格
@@ -263,16 +284,21 @@ AICCToolButton * NodeTreeDialog::createToolButton(QString id,QString parentid, Q
     return tb;
 }
 
-void NodeTreeDialog::on_tb_search_subsystem_clicked()
+// 模块浏览器搜索槽函数
+void NodeTreeDialog::modelSearchUpdate()
 {
-    if(ui->comboBox->currentText().isEmpty())
+    // 如果是空，退出
+    if(ui->comboBox->currentText().isEmpty()) {
         return;
+    }
 
+    // 去除多余空格
     auto key = ui->comboBox->currentText().replace(QRegExp("[\\s]+"), " ").split(" ");
     key.removeAll("");
     if(key.isEmpty()) {
         return;
     }
+
     QString str;
     switch(key.size())
     {
@@ -310,7 +336,13 @@ void NodeTreeDialog::on_tb_search_subsystem_clicked()
         if(_categoryDataModel->existNode(className.toStdString())){
             tb = createToolButton(id,parentid,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(size/6,size%6,tb);
+            size++;
         }
+    }
+
+    // 去除当前item高亮显示
+    if(ui->tw_nodeTree->currentItem()) {
+        ui->tw_nodeTree->currentItem()->setSelected(false);
     }
 }
 

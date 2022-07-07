@@ -18,9 +18,14 @@
 #include <QTreeWidgetItem>
 #include <nodes/FlowScene>
 #include <nodes/Node>
-#include "nodeparser/invocable.hpp"
-#include "nodeparser/models.hpp"
-#include "nodeparser/module_library.hpp"
+//#include "nodeparser/invocable.hpp"
+//#include "nodeparser/models.hpp"
+//#include "nodeparser/module_library.hpp"
+#include "ADAS_AD_Backend/invocable.hpp"
+#include "ADAS_AD_Backend/models.hpp"
+#include "ADAS_AD_Backend/module_library.hpp"
+
+
 
 using QtNodes::FlowScene;
 using QtNodes::Node;

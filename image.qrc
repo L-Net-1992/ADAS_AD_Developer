@@ -101,5 +101,6 @@
         <file>res/AADS3.jpg</file>
         <file>res/Record.png</file>
         <file>res/Save1.png</file>
+        <file>res/rename.png</file>
     </qresource>
 </RCC>

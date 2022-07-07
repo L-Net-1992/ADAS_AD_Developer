@@ -242,6 +242,10 @@
     <property name="title">
      <string>编辑</string>
     </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
+    <addaction name="actionRename"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1837,6 +1841,36 @@ gridline-color:#FFFFFF;
   <action name="actionCreateSubSystem">
    <property name="text">
     <string>创建子系统</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>复制</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>粘贴</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionRename">
+   <property name="text">
+    <string>重命名</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

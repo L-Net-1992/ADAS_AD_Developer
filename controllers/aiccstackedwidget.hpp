@@ -19,8 +19,10 @@
 #include <nodes/DataModelRegistry>
 
 #include <algorithm>
-#include <nodeparser/module_library.hpp>
-#include <nodeparser/invocable_parser.hpp>
+//#include <nodeparser/module_library.hpp>
+//#include <nodeparser/invocable_parser.hpp>
+#include "ADAS_AD_Backend/module_library.hpp"
+#include "ADAS_AD_Backend/invocable_parser.hpp"
 #include <controllers/aiccflowview.hpp>
 #include <controllers/aiccflowscene.hpp>
 

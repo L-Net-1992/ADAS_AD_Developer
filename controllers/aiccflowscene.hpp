@@ -5,12 +5,14 @@
 #include <nodes/FlowScene>
 #include <nodes/Node>
 #include <QDebug>
-#include <nodeparser/module_library.hpp>
+//#include <nodeparser/module_library.hpp>
+#include "ADAS_AD_Backend/module_library.hpp"
 #include <QMenu>
 #include <QAction>
 #include <QClipboard>
 #include <QMimeData>
-
+#include <QShortcut>
+#include <QKeySequence>
 
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
@@ -39,7 +41,19 @@ public:
         this->addText("(0,0)");
         this->addEllipse(0,0,1,1);
 
-        connect(this,&AICCFlowScene::nodeContextMenu,this,&AICCFlowScene::nodeContextMenuAction);
+
+//        _pop_menu = new QMenu();
+
+
+//        _act_rename = new QAction(_pop_menu);
+//        _act_rename->setText(QStringLiteral("重命名"));
+//        _act_rename->setIcon(QIcon(":/res/rename.png"));
+////        QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_F2));
+//        _act_rename->setShortcut(QKeySequence(Qt::Key_F2));
+//        _act_rename->setShortcutContext(Qt::ApplicationShortcut);
+//        _pop_menu->addAction(_act_rename);
+
+//        connect(this,&AICCFlowScene::nodeContextMenu,this,&AICCFlowScene::nodeContextMenuAction);
 
 
 
@@ -74,73 +88,80 @@ public:
 private:
 
 
-    void nodeContextMenuAction (Node &node,const QPointF &pos){
-        QClipboard *clipboard = QApplication::clipboard();
+//    void nodeContextMenuAction (Node &node,const QPointF &pos){
+//        QClipboard *clipboard = QApplication::clipboard();
 
-        QMenu *pop_menu = new QMenu();
+//        QMenu *pop_menu = new QMenu();
 
-        QAction *act_copy = new QAction(pop_menu);
-        act_copy->setText(QStringLiteral("复制"));
-        act_copy->setIcon(QIcon(":/res/editor-copy.png"));
-        pop_menu->addAction(act_copy);
+//        QAction *act_copy = new QAction(pop_menu);
+//        act_copy->setText(QStringLiteral("复制"));
+//        act_copy->setIcon(QIcon(":/res/editor-copy.png"));
+//        act_copy->setShortcut(QKeySequence::Copy);
+//        pop_menu->addAction(act_copy);
 
-        QAction *act_paste = new QAction(pop_menu);
-        act_paste->setText(QStringLiteral("粘贴"));
-        act_paste->setIcon(QIcon(":/res/editor-paste.png"));
-        pop_menu->addAction(act_paste);
-        if(clipboard->property("nodes").toStringList().size()==0)
-            act_paste->setEnabled(false);
+//        QAction *act_paste = new QAction(pop_menu);
+//        act_paste->setText(QStringLiteral("粘贴"));
+//        act_paste->setIcon(QIcon(":/res/editor-paste.png"));
+//        act_paste->setShortcut(QKeySequence::Paste);
+//        pop_menu->addAction(act_paste);
+//        if(clipboard->property("nodes").toStringList().size()==0)
+//            act_paste->setEnabled(false);
 
-        pop_menu->addSeparator();
+//        pop_menu->addSeparator();
 
-        QAction *act_rename = new QAction(pop_menu);
-        act_rename->setText(QStringLiteral("重命名"));
-        act_rename->setIcon(QIcon(":/res/rename.png"));
-        pop_menu->addAction(act_rename);
+//        QAction *act_rename = new QAction(pop_menu);
+//        act_rename->setText(QStringLiteral("重命名"));
+//        act_rename->setIcon(QIcon(":/res/rename.png"));
+//        act_rename->setShortcut(QKeySequence(Qt::Key_F2));
+//        act_rename->setShortcutContext(Qt::ApplicationShortcut);
+//        pop_menu->addAction(act_rename);
 
-        //设置菜单功能
-        connect(act_copy,&QAction::triggered,this,[&](){
-            std::vector<Node*> nodes =  this->selectedNodes();
-            QStringList sl_nodes;
-            for(Node* node:nodes){
-                auto *ndm = static_cast<InvocableDataModel *>(node->nodeDataModel());
-                sl_nodes.append(ndm->name());
-            }
-            clipboard->setProperty("nodes",sl_nodes);
-        });
+//        //复制
+//        connect(act_copy,&QAction::triggered,this,[&](){
+//            std::vector<Node*> nodes =  this->selectedNodes();
+//            QStringList sl_nodes;
+//            for(Node* node:nodes){
+//                auto *ndm = static_cast<InvocableDataModel *>(node->nodeDataModel());
+//                sl_nodes.append(ndm->name());
+//            }
+//            clipboard->setProperty("nodes",sl_nodes);
+//        });
 
-        //粘贴
-        connect(act_paste,&QAction::triggered,this,[&](){
-            QClipboard *clipboard = QApplication::clipboard();
-            QStringList sl = clipboard->property("nodes").toStringList();
-            for(int i=0;i<sl.size();i++){
-                QString nn = sl.at(i);
-                QPointF p(pos.x()+(i*10),pos.y()+(i*10));
-                dropCreateNode(nn,nn,p);
-            }
-        });
+//        //粘贴
+//        connect(act_paste,&QAction::triggered,this,[&](){
+//            QClipboard *clipboard = QApplication::clipboard();
+//            QStringList sl = clipboard->property("nodes").toStringList();
+//            for(int i=0;i<sl.size();i++){
+//                QString nn = sl.at(i);
+//                QPointF p(pos.x()+(i*10),pos.y()+(i*10));
+//                dropCreateNode(nn,nn,p);
+//            }
+//        });
 
-        //重命名
-        connect(act_rename,&QAction::triggered,this,[&](){
-           emit nodeRename(node);
-        });
-        pop_menu->exec(QCursor::pos());
+//        //重命名
+//        connect(act_rename,&QAction::triggered,this,[&](){
+//           emit nodeRename(node);
+//        });
 
-//        //回收action资源
-        foreach(QAction *pAction,pop_menu->actions()) delete pAction;
-    }
+
+
+//        pop_menu->exec(QCursor::pos());
+
+////        //回收action资源
+//        foreach(QAction *pAction,pop_menu->actions()) delete pAction;
+//    }
 
 
 
 Q_SIGNALS:
     void getNodeDataModel(NodeDataModel *nodeDataModel);
-    void nodeRename(Node &node);
+//    void nodeRename(Node &node);
 
 private:
-    QSharedPointer<QAction> _pop_menu;
+    QMenu *_pop_menu;
     QSharedPointer<QAction> _act_copy;
     QSharedPointer<QAction> _act_paste;
-    QSharedPointer<QAction> _act_rename;
+    QAction * _act_rename;
 };
 
 #endif // AICCFLOWSCENE_H

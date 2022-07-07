@@ -9,7 +9,8 @@
 #include <QDebug>
 #include <QFile>
 #include <model/modelsproject.hpp>
-#include "nodeparser/inspector.hpp"
+//#include "nodeparser/inspector.hpp"
+#include "ADAS_AD_Backend/inspector.hpp"
 
 namespace Ui {
 class CalibrationDialog;

@@ -731,8 +731,9 @@ void MainWindow::initNodeEditor(){
     //9:scene放置或删除node时判断该node是否为subsystem,如果未subsystem则刷新左侧结构树
     auto refreshSubsystemTree = [&](Node &n){
         const auto *model = static_cast<const InvocableDataModel*>(n.nodeDataModel());
-        if(model->invocable().getType()==Invocable::Subsystem)
+        if(model->invocable().getType()==Invocable::Subsystem){
             ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
+        }
     };
     connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::nodeCreated,this,refreshSubsystemTree);
     connect(ui->sw_flowscene->getCurrentView()->scene(),&AICCFlowScene::nodeDeleted,this,refreshSubsystemTree);
@@ -783,7 +784,7 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     });
 
     //3:重命名变量
-    connect(scene,&AICCFlowScene::nodeRename,this,[scene,this](Node &node){
+    connect(ui->sw_flowscene->getCurrentView(),&AICCFlowView::nodeRename,this,[scene,this](Node &node){
         ModuleLibrary::updateVarName(*scene,node,this);
     });
 

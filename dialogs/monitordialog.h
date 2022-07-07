@@ -12,7 +12,8 @@
 #include <QtCharts/QLineSeries>
 #include <QTimer>
 #include "monitor_files/monitor_signal.h"
-#include "nodeparser/inspector.hpp"
+//#include "nodeparser/inspector.hpp"
+#include "ADAS_AD_Backend/inspector.hpp"
 #include "monitor_files/monitor_chartview.h"
 
 using namespace monitor;

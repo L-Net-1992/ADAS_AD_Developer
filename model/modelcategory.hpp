@@ -16,8 +16,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "sqlite/aiccsqlite.hpp"
-#include "nodeparser/module_library.hpp"
-#include "nodeparser/subsystem_library.h"
+#include "ADAS_AD_Backend/module_library.hpp"
+#include "ADAS_AD_Backend/subsystem_library.h"
 
 class CategoryDataModel:public QObject{
     Q_OBJECT

@@ -6,9 +6,13 @@
 #include <QStringList>
 #include <QSharedPointer>
 
-#include "nodeparser/invocable.hpp"
-#include "nodeparser/invocable_parser.hpp"
-#include "nodeparser/module_library.hpp"
+#include "ADAS_AD_Backend/inspector.hpp"
+#include "ADAS_AD_Backend/invocable_parser.hpp"
+#include "ADAS_AD_Backend/module_library.hpp"
+
+//#include "nodeparser/invocable.hpp"
+//#include "nodeparser/invocable_parser.hpp"
+//#include "nodeparser/module_library.hpp"
 #include "model/modelsproject.hpp"
 
 namespace Ui {

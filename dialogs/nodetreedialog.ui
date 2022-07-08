@@ -217,12 +217,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QGroupBox" name="groupBox">
        <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
@@ -344,6 +347,15 @@ background-color:#FFFFFF;
 gridline-color:#FFFFFF;
 
 </string>
+           </property>
+           <property name="dragEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>true</bool>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::NoDragDrop</enum>
            </property>
            <property name="showGrid">
             <bool>false</bool>

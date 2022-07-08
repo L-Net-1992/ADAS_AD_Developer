@@ -87,6 +87,7 @@ private:
     void initNodeTree(AICCTreeWidget * tw_root,const QJsonObject json);
     void recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int pid);
 
+
 private:
     Ui::NodeTreeDialog *ui;
     QSharedPointer<CategoryDataModel> _categoryDataModel;

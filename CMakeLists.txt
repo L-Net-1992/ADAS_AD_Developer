@@ -28,7 +28,7 @@ find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
-#find_package(ADAS_AD_Backend REQUIRED CONFIG)
+#find_package(ADAS_AD_Backend REQUIRED)
 
 set ( PROJECT_SOURCES
     main.cpp
@@ -92,7 +92,6 @@ set ( PROJECT_SOURCES
     sqlite/aiccsqlite.hpp
 
     process/aiccprocess.hpp
-#    nlohmann/json.hpp
     conf/config.json
     conf/model_menu.json
     conf/Config.hpp
@@ -131,10 +130,11 @@ target_link_libraries(ADAS_AD_Developer
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
     ${QSCINTILLA}
-#    ${ADAS_AD_Backend}
+#    ADAS_AD_Backend
+#    /usr/local/lib/libADAS_AD_Backend.so
     )
 
-
+#add_subdirectory(ADAS_AD_Backend)
 add_subdirectory(nodeeditor)
 
 

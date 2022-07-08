@@ -9,8 +9,8 @@ NodeTreeDialog::NodeTreeDialog(QSharedPointer<CategoryDataModel> cdm,QSharedPoin
 {
     ui->setupUi(this);
     this->setAttribute(Qt::WA_QuitOnClose, false);
-    this->initTreeWidget();
     this->initToolBar();
+    this->initTreeWidget();
     this->initNodeButtonTable();
 
 }
@@ -19,19 +19,47 @@ NodeTreeDialog::~NodeTreeDialog()
 {
     delete ui;
 }
-///初始化属性结构内容
+
+///初始化工具条上的功能
+void NodeTreeDialog::initToolBar(){
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &NodeTreeDialog::modelSearchUpdate);
+    connect(ui->tb_search_subsystem, &QToolButton::clicked, this, &NodeTreeDialog::modelSearchUpdate);
+    connect(ui->tb_left_arrow, &QToolButton::clicked, this, [=](){
+        int idx = ui->comboBox->currentIndex();
+        int max = ui->comboBox->count();
+        if(idx == 0) {
+            ui->comboBox->setCurrentIndex(max-1);
+        }
+        else {
+            ui->comboBox->setCurrentIndex(idx-1);
+        }
+    });
+    connect(ui->tb_right_arrow, &QToolButton::clicked, this, [=](){
+        int idx = ui->comboBox->currentIndex();
+        int max = ui->comboBox->count();
+        if(idx == max-1) {
+            ui->comboBox->setCurrentIndex(0);
+        }
+        else {
+            ui->comboBox->setCurrentIndex(idx+1);
+        }
+    });
+}
+
+
+/**
+ * @brief NodeTreeDialog::initTreeWidget    初始化分类数据
+ */
 void NodeTreeDialog::initTreeWidget()
 {
     ui->tw_nodeTree->setAcceptDrops(true);
     ui->tw_nodeTree->clear();
 
-//    initNodeTree(ui->tw_nodeTree,_categoryDataModel->category());
-
     //数据有改变时刷新左侧功能树
     connect(_categoryDataModel.get(),&CategoryDataModel::dataLoadCompleted,this,[&](const QJsonObject json){
             initNodeTree(ui->tw_nodeTree,json);
     });
-
+    //项目加载完毕
     connect(_projectDataModel.get(),&ProjectDataModel::projectDataModelLoadCompleted,this,[&](const QString pname,const QString ppath){
         if(ui->tw_nodeTree->topLevelItem(0)!=Q_NULLPTR)
             ui->tw_nodeTree->topLevelItem(0)->setText(0,pname);
@@ -39,7 +67,10 @@ void NodeTreeDialog::initTreeWidget()
 
 
     ui->tw_nodeTree->expandAll();
+    //点击功能树展示分类下所有模块
     connect(ui->tw_nodeTree,&QTreeWidget::itemClicked,this,&NodeTreeDialog::itemClickedAction);
+
+    //拖放后重新展示分类下模块数据
     connect(ui->tw_nodeTree,&AICCTreeWidget::dropCompleted,this,[&](QTreeWidgetItem *item){
         qDebug() << " drop completed";
         //        tw->clearFocus();
@@ -48,9 +79,13 @@ void NodeTreeDialog::initTreeWidget()
     });
 }
 
-///点击目录展示目录中所有模块//    initNodeTree(tw);
+/**
+ * @brief NodeTreeDialog::itemClickedAction 点击目录展示目录中所有模块
+ * @param item
+ * @param column
+ */
 void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
-    qDebug() << "item click:" << item->text(0);
+//    qDebug() << "item click:" << item->text(0);
     this->setFixedWidth(1140);
     this->setFixedHeight(624);
 
@@ -93,9 +128,6 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
         QString caption = m.value("caption").toString();
         QString iconName = m.value("icon_name").toString();
 
-//        if(className=="ppp2::ccc1")
-//            qDebug() << "ppp2::ccc1";
-
         if(_categoryDataModel->existNode(className.toStdString())){
             tb = createToolButton(id,parentid,className,caption,iconName);
             ui->tw_nodeModels->setCellWidget(i/columnCount,i%columnCount,tb);
@@ -104,7 +136,12 @@ void NodeTreeDialog::itemClickedAction(QTreeWidgetItem *item,int column){
     }
 }
 
-///左侧属性菜单部分_sqlite
+
+/**
+ * @brief NodeTreeDialog::initNodeTree  左侧菜单内容初始化
+ * @param tw_root
+ * @param json
+ */
 void NodeTreeDialog::initNodeTree(AICCTreeWidget * tw_root,const QJsonObject json){
     if(tw_root==Q_NULLPTR)
         return;
@@ -112,6 +149,7 @@ void NodeTreeDialog::initNodeTree(AICCTreeWidget * tw_root,const QJsonObject jso
 
     QTreeWidgetItem *twi_root = new QTreeWidgetItem(tw_root);
     //暂时隐藏
+    twi_root->setText(0,"模块分类");
 //    twi_root->setText(0,_projectDataModel->projectName());
 //    QIcon icon;
 //    icon.addPixmap(QPixmap(":/res/Open.png"));
@@ -157,36 +195,17 @@ void NodeTreeDialog::recursionChildren(QJsonObject json,QTreeWidgetItem *twp,int
     }
 }
 
-///初始化工具条上的功能
-void NodeTreeDialog::initToolBar(){
-    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &NodeTreeDialog::modelSearchUpdate);
-    connect(ui->tb_search_subsystem, &QToolButton::clicked, this, &NodeTreeDialog::modelSearchUpdate);
-    connect(ui->tb_left_arrow, &QToolButton::clicked, this, [=](){
-        int idx = ui->comboBox->currentIndex();
-        int max = ui->comboBox->count();
-        if(idx == 0) {
-            ui->comboBox->setCurrentIndex(max-1);
-        }
-        else {
-            ui->comboBox->setCurrentIndex(idx-1);
-        }
-    });
-    connect(ui->tb_right_arrow, &QToolButton::clicked, this, [=](){
-        int idx = ui->comboBox->currentIndex();
-        int max = ui->comboBox->count();
-        if(idx == max-1) {
-            ui->comboBox->setCurrentIndex(0);
-        }
-        else {
-            ui->comboBox->setCurrentIndex(idx+1);
-        }
-    });
-}
 
-///初始化表格
+
+
+/**
+ * @brief NodeTreeDialog::initNodeButtonTable   初始化按钮表格
+ */
 void NodeTreeDialog::initNodeButtonTable(){
+
     //处理右键菜单
     QTableWidget *tw = ui->tw_nodeModels;
+
     tw->setShowGrid(false);
     tw->setContextMenuPolicy(Qt::CustomContextMenu);
     int selRow = -1;
@@ -258,8 +277,6 @@ void NodeTreeDialog::initNodeButtonTable(){
         delete popMenu;
     });
 
-
-
     connect(tw,&QTableWidget::cellClicked,this,[&](int row,int col){
         selRow = row;
         selCol = col;
@@ -267,7 +284,15 @@ void NodeTreeDialog::initNodeButtonTable(){
     });
 }
 
-///根据名称创建button
+/**
+ * @brief NodeTreeDialog::createToolButton  创建表格中的模块按钮
+ * @param id
+ * @param parentid
+ * @param name
+ * @param caption
+ * @param iconName
+ * @return
+ */
 AICCToolButton * NodeTreeDialog::createToolButton(QString id,QString parentid, QString name,QString caption,QString iconName){
     AICCToolButton *tb = new AICCToolButton();
     tb->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextUnderIcon);

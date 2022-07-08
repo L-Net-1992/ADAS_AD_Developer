@@ -24,7 +24,8 @@ public:
         QSizePolicy sp = this->sizePolicy();
         sp.setHorizontalPolicy(QSizePolicy::Preferred);
         this->setSizePolicy(sp);
-        this->setAttribute(Qt::WA_TransparentForMouseEvents,true);
+        //此语句不能加，加上后会导致左右的按钮不响应鼠标事件
+//        this->setAttribute(Qt::WA_TransparentForMouseEvents,true);
 
 
     };
@@ -49,6 +50,7 @@ protected:
 
     void mousePressEvent(QMouseEvent *e)
     {
+
         if(e->button() & Qt::LeftButton){
             QByteArray dataItemName;
             QDataStream dataStreamName(&dataItemName,QIODevice::WriteOnly);
@@ -73,17 +75,19 @@ protected:
             drag->setMimeData(mimeData);
             drag->exec(Qt::MoveAction);
         }
-
+//        qDebug() << "mouse press event";
 //        qDebug() << "mouse press event" << dataItem << " "<< dataItemName;
         e->accept();
     }
     void mouseReleaseEvent(QMouseEvent *e)
     {
+
 //        qDebug() << "mouse release event";
         e->accept();
     };
     void mouseMoveEvent(QMouseEvent *e)
     {
+
 //        qDebug() << "mouse move event";
         e->accept();
     };

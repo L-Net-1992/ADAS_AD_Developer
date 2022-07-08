@@ -53,7 +53,7 @@ protected:
     };
     void dropEvent(QDropEvent *e) {
         QStringList formats = e->mimeData()->formats();
-        qDebug() << "e->mimeData()" << e->mimeData();
+        qDebug() << "formats:" << formats << "   e->mimeData():" << e->mimeData();
         if(e->mimeData()->hasFormat("Data/name"))
         {
             QByteArray itemData = e->mimeData()->data("Data/name");
@@ -118,11 +118,13 @@ public:
     void actionPaste(){
         QClipboard *clipboard = QApplication::clipboard();
         QStringList sl = clipboard->property("nodes").toStringList();
-        QPointF pos = this->mapFromScene(QCursor::pos());
+//        QPointF pos = this->mapFromScene(QCursor::pos());
+        QPointF pos = _scene->selectedNodes().at(0)->nodeGraphicsObject().pos();
 
         for(int i=0;i<sl.size();i++){
             QString nn = sl.at(i);
-            QPointF p(pos.x()+(i*10),pos.y()+(i*10));
+//            qDebug() << "---------------pos:" << pos;
+            QPointF p(pos.x()+((i+1)*30),pos.y()+((i+1)*30));
             _scene->dropCreateNode(nn,nn,p);
         }
     }

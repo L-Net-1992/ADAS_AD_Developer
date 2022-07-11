@@ -28,8 +28,8 @@
 #include <nodes/NodeStyle>
 #include <nodes/ConnectionStyle>
 #include <nodes/DataModelRegistry>
-#include <controllers/aiccflowview.hpp>
-#include <controllers/aiccflowscene.hpp>
+#include <ADAS_AD_Backend/aiccflowscene.hpp>
+#include <ADAS_AD_Backend/aiccflowview.hpp>
 #include <controllers/aiccstackedwidget.hpp>
 #include <controllers/aiccstructtreewidget.hpp>
 #include <dialogs/projectdialog.h>

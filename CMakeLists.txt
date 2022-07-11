@@ -28,7 +28,7 @@ find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
-#find_package(ADAS_AD_Backend REQUIRED)
+find_package(ADAS_AD_Backend REQUIRED)
 
 set ( PROJECT_SOURCES
     main.cpp
@@ -64,29 +64,29 @@ set ( PROJECT_SOURCES
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
-    controllers/aiccflowview.hpp
-    controllers/aiccflowscene.hpp
+#    controllers/aiccflowview.hpp
+#    controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccstructtreewidget.hpp
     controllers/aicctitlebar.hpp
 
-    ADAS_AD_Backend/inspector.hpp
-    ADAS_AD_Backend/inspector.cpp
-    ADAS_AD_Backend/inspector_thread.cpp
-    ADAS_AD_Backend/inspector_thread.hpp
-    ADAS_AD_Backend/invocable.hpp
-    ADAS_AD_Backend/invocable_parser.hpp
-    ADAS_AD_Backend/models.hpp
-    ADAS_AD_Backend/models.cpp
-    ADAS_AD_Backend/module_library.hpp
-    ADAS_AD_Backend/module_library.cpp
-    ADAS_AD_Backend/source_generator.hpp
-    ADAS_AD_Backend/package_library.h ADAS_AD_Backend/package_library.cpp
-    ADAS_AD_Backend/subsystem_library.h ADAS_AD_Backend/subsystem_library.cpp
-    ADAS_AD_Backend/subsystem_window.ui ADAS_AD_Backend/subsystem_window.h ADAS_AD_Backend/subsystem_window.cpp
-    ADAS_AD_Backend/new_subsystem_dialog.ui ADAS_AD_Backend/new_subsystem_dialog.h ADAS_AD_Backend/new_subsystem_dialog.cpp
-    ADAS_AD_Backend/var_name_dialog.ui ADAS_AD_Backend/var_name_dialog.h ADAS_AD_Backend/var_name_dialog.cpp
+#    ADAS_AD_Backend/inspector.hpp
+#    ADAS_AD_Backend/inspector.cpp
+#    ADAS_AD_Backend/inspector_thread.cpp
+#    ADAS_AD_Backend/inspector_thread.hpp
+#    ADAS_AD_Backend/invocable.hpp
+#    ADAS_AD_Backend/invocable_parser.hpp
+#    ADAS_AD_Backend/models.hpp
+#    ADAS_AD_Backend/models.cpp
+#    ADAS_AD_Backend/module_library.hpp
+#    ADAS_AD_Backend/module_library.cpp
+#    ADAS_AD_Backend/source_generator.hpp
+#    ADAS_AD_Backend/package_library.h ADAS_AD_Backend/package_library.cpp
+#    ADAS_AD_Backend/subsystem_library.h ADAS_AD_Backend/subsystem_library.cpp
+#    ADAS_AD_Backend/subsystem_window.ui ADAS_AD_Backend/subsystem_window.h ADAS_AD_Backend/subsystem_window.cpp
+#    ADAS_AD_Backend/new_subsystem_dialog.ui ADAS_AD_Backend/new_subsystem_dialog.h ADAS_AD_Backend/new_subsystem_dialog.cpp
+#    ADAS_AD_Backend/var_name_dialog.ui ADAS_AD_Backend/var_name_dialog.h ADAS_AD_Backend/var_name_dialog.cpp
 
 
     sqlite/aiccsqlite.hpp
@@ -101,13 +101,14 @@ add_executable(ADAS_AD_Developer
     ${PROJECT_SOURCES}
     )
 
-target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti )
+#target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti )
+target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fno-rtti )
 target_include_directories(ADAS_AD_Developer
     PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
-    nodes
+#    nodes
     )
 find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
 #find_library(ADAS_AD_Backend libADAS_AD_Backend.so REQUIRED)
@@ -120,8 +121,6 @@ target_link_libraries(ADAS_AD_Developer
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Charts
     Qt${QT_VERSION_MAJOR}::Concurrent
-    nodes
-    ${LLVM_AVAILABLE_LIBS}
     clangAST
     clangBasic
     clangFrontend
@@ -130,12 +129,11 @@ target_link_libraries(ADAS_AD_Developer
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
     ${QSCINTILLA}
-#    ADAS_AD_Backend
-#    /usr/local/lib/libADAS_AD_Backend.so
+    ADAS_AD_Backend
     )
 
 #add_subdirectory(ADAS_AD_Backend)
-add_subdirectory(nodeeditor)
+#add_subdirectory(nodeeditor)
 
 
 

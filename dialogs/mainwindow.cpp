@@ -109,7 +109,9 @@ void MainWindow::initTreeView()
         QStringList sl = pn.split("::");
         //当拆解出的字符串包含包名与类名打开子窗口
         if(sl.size()==2){
-            _moduleLibrary->openSubsystem(this,sl.at(0).toStdString(),sl.at(1).toStdString());
+            //            _moduleLibrary->openSubsystem(this,sl.at(0).toStdString(),sl.at(1).toStdString());
+            openSubsystem(sl.at(0).toStdString(),sl.at(1).toStdString());
+
         }
     });
 
@@ -429,7 +431,46 @@ void MainWindow::initToolbar()
 
     ///创建子系统按钮
     connect(ui->tb_create_subsystem,&QToolButton::clicked,this,[&]{
-        _moduleLibrary->newSubsystem(this);
+        //        _moduleLibrary->newSubsystem(this);
+
+
+        NewSubsystemDialog dialog(this);
+
+        dialog.setCategoryComboBox(_categoryDataModel->currentUseCategoryFullPath());
+        NewSubsystemDialog::SubsystemNameType subsystem_name;
+        for (;;) {
+            if (!dialog.exec())
+                return;
+            subsystem_name = dialog.getSubsystemName();
+            if (subsystem_name.first.empty() || subsystem_name.second.empty()) {
+                QMessageBox::critical(this, "错误", "包名或子系统名不能为空");
+                continue;
+            }
+
+            //            if (_subsystemLibrary.hasSubsystem(subsystem_name.first, subsystem_name.second)) {
+            if(_moduleLibrary->subsystemLibrary().hasSubsystem(subsystem_name.first,subsystem_name.second)){
+                QMessageBox::critical(this, "错误", "子系统已经存在");
+                continue;
+            }
+            break;
+        }
+        _moduleLibrary->subsystemLibrary().newSubsystem(subsystem_name.first, subsystem_name.second);
+        emit _moduleLibrary->importCompleted();
+
+        //    openSubsystem(parent, subsystem_name.first, subsystem_name.second);
+        //        openSubsystem(parent,dialog.getSubsystemDataModel());
+        //        SubsystemDataModel &subsystemDataModel = dialog.getSubsystemDataModel();
+        std::map<std::string,std::string> subsystemDataModel = dialog.getSubsystemDataModel();
+        const std::string package = subsystemDataModel.at("package");
+        const std::string name = subsystemDataModel.at("name");
+        auto subsystemWindow = new SubsystemWindow(_moduleLibrary.get(), _moduleLibrary->subsystemLibrary().getSubsystem(package, name), this);
+        //当子系统有node创建或删除时，将信号继续传送到外部
+        connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+            emit subsystemWindow->subsystemCreatedOrDeleted();
+        });
+        subsystemWindow->show();
+        subsystemWindow->setBusinessData(subsystemDataModel);
+
     });
 
     ///测试dialog显示
@@ -500,7 +541,8 @@ void MainWindow::initStackedWidget(){
         auto invocableDataModel = static_cast<InvocableDataModel*>(nodeDataModel);
         const auto & invocable = invocableDataModel->invocable();
         if(invocable.getType() == Invocable::Subsystem){
-            _moduleLibrary->openSubsystem(this, invocable.getPackage(), invocable.getSubsystemName());
+            //            _moduleLibrary->openSubsystem(this, invocable.getPackage(), invocable.getSubsystemName());
+            openSubsystem(invocable.getPackage(),invocable.getSubsystemName());
 
         }
         //如果点击的是MIL模块，显示特殊的文件加载子窗口
@@ -620,14 +662,14 @@ void MainWindow::initRecentProjectDialog(){
         _currentProjectDataModel->setProject(pdm->projectName(),pdm->projectPath());
     });
     connect(rProjectDialog,&RecentProjectDialog::recentProjectDialogClosed,this,[&]{
-//        qDebug() <<" close ";
+        //        qDebug() <<" close ";
         forceClose = true;
         this->close();
 
     });
     //最近项目窗口点击
     connect(rProjectDialog,&RecentProjectDialog::newProjectTriggered,this,[&]{
-//        projectDialog->show();
+        //        projectDialog->show();
         projectDialog->showFromRecentProjectDialog();
         rProjectDialog->hide();
     });
@@ -780,17 +822,19 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     //2:初始化模块变量相关操作
     AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
-        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
+//        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
+        scene->generateVarNameIfEmpty(*scene,node);
     });
 
     //3:重命名变量
     connect(ui->sw_flowscene->getCurrentView(),&AICCFlowView::nodeRename,this,[scene,this](Node &node){
-        ModuleLibrary::updateVarName(*scene,node,this);
+//        ModuleLibrary::updateVarName(*scene,node,this);
+        scene->updateVarName(*scene,node,this);
     });
 
-//    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
-//        ModuleLibrary::updateVarName(*scene, node, this);
-//    });
+    //    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){
+    //        ModuleLibrary::updateVarName(*scene, node, this);
+    //    });
     //3:启用工具栏、展示选择项目窗口
     ui->statusbar->showMessage("节点模型数据加载已完成");
     ui->tw_toolbar->setEnabled(true);
@@ -913,7 +957,14 @@ void MainWindow::initImportScriptDialog(){
     //    });
 }
 
-
+void MainWindow::openSubsystem(const std::string package,const std::string name){
+    auto subsystemWindow = new SubsystemWindow(_moduleLibrary.get(), _moduleLibrary->subsystemLibrary().getSubsystem(package,name), this);
+    //当子系统有node创建或删除时，将信号继续传送到外部
+    connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
+        emit subsystemWindow->subsystemCreatedOrDeleted();
+    });
+    subsystemWindow->show();
+}
 
 
 

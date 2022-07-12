@@ -3,8 +3,8 @@
 
 ImportScriptDialog::ImportScriptDialog(QSharedPointer<ProjectDataModel>pdm,QWidget *parent) :
     QDialog(parent),
-    _projectDataModel(pdm),
-    ui(new Ui::ImportScriptDialog)
+    ui(new Ui::ImportScriptDialog),
+    _projectDataModel(pdm)
 {
     ui->setupUi(this);
     this->initButton();

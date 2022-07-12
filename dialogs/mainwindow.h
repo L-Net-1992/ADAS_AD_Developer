@@ -28,8 +28,8 @@
 #include <nodes/NodeStyle>
 #include <nodes/ConnectionStyle>
 #include <nodes/DataModelRegistry>
-#include <ADAS_AD_Backend/aiccflowscene.hpp>
-#include <ADAS_AD_Backend/aiccflowview.hpp>
+#include <controllers/aiccflowscene.hpp>
+#include <controllers/aiccflowview.hpp>
 #include <controllers/aiccstackedwidget.hpp>
 #include <controllers/aiccstructtreewidget.hpp>
 #include <dialogs/projectdialog.h>
@@ -43,20 +43,17 @@
 #include <dialogs/calibrationdialog.h>
 #include <dialogs/recentprojectdialog.h>
 #include <dialogs/exportmoduledialog.h>
+#include <dialogs/new_subsystem_dialog.h>
+
+#include "dialogs/subsystem_window.h"
+#include "dialogs/new_subsystem_dialog.h"
 #include "stdio.h"
 #include "utils.h"
 #include "controllers/aicctreewidget.hpp"
 #include "controllers/aicctoolbutton.hpp"
-//#include "nodeparser/source_generator.hpp"
-//#include "nodeparser/models.hpp"
-//#include "nodeparser/subsystem_library.h"
-//#include "nodeparser/subsystem_window.h"
-//#include "nodeparser/new_subsystem_dialog.h"
 #include "ADAS_AD_Backend/source_generator.hpp"
 #include "ADAS_AD_Backend/models.hpp"
 #include "ADAS_AD_Backend/subsystem_library.h"
-#include "ADAS_AD_Backend/subsystem_window.h"
-#include "ADAS_AD_Backend/new_subsystem_dialog.h"
 
 #include "sqlite/aiccsqlite.hpp"
 #include "model/modelsproject.hpp"
@@ -129,6 +126,7 @@ private:
     void sceneLoadFromMemoryCompletedAction(bool isCompleted);
     void refreshLeftTreeData();
     void invocableParserAction(const std::string msg);
+    void openSubsystem(const std::string package,const std::string name);
 public:
     void showMsg(QString msg);
 

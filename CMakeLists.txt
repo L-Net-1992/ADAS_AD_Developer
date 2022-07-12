@@ -45,6 +45,10 @@ set ( PROJECT_SOURCES
     dialogs/monitordialog.h dialogs/monitordialog.cpp dialogs/monitordialog.ui
     dialogs/nodeparametersmildialog.h dialogs/nodeparametersmildialog.cpp dialogs/nodeparametersmildialog.ui
 
+    dialogs/subsystem_window.h dialogs/subsystem_window.cpp dialogs/subsystem_window.ui
+    dialogs/new_subsystem_dialog.h dialogs/new_subsystem_dialog.cpp dialogs/new_subsystem_dialog.ui
+    dialogs/var_name_dialog.h dialogs/var_name_dialog.cpp dialogs/var_name_dialog.ui
+
     dialogs/recentprojectdialog.h dialogs/recentprojectdialog.cpp dialogs/recentprojectdialog.ui
     dialogs/exportmoduledialog.h dialogs/exportmoduledialog.cpp dialogs/exportmoduledialog.ui
     hdf5/hdf5files_handle.h hdf5/hdf5files_handle.cpp
@@ -64,31 +68,12 @@ set ( PROJECT_SOURCES
 
     controllers/aicctoolbutton.hpp
     controllers/aiccbreadcrumbnavigation.hpp
-#    controllers/aiccflowview.hpp
-#    controllers/aiccflowscene.hpp
+    controllers/aiccflowview.hpp
+    controllers/aiccflowscene.hpp
     controllers/aiccstackedwidget.hpp
     controllers/aicctreewidget.hpp
     controllers/aiccstructtreewidget.hpp
     controllers/aicctitlebar.hpp
-
-#    ADAS_AD_Backend/inspector.hpp
-#    ADAS_AD_Backend/inspector.cpp
-#    ADAS_AD_Backend/inspector_thread.cpp
-#    ADAS_AD_Backend/inspector_thread.hpp
-#    ADAS_AD_Backend/invocable.hpp
-#    ADAS_AD_Backend/invocable_parser.hpp
-#    ADAS_AD_Backend/models.hpp
-#    ADAS_AD_Backend/models.cpp
-#    ADAS_AD_Backend/module_library.hpp
-#    ADAS_AD_Backend/module_library.cpp
-#    ADAS_AD_Backend/source_generator.hpp
-#    ADAS_AD_Backend/package_library.h ADAS_AD_Backend/package_library.cpp
-#    ADAS_AD_Backend/subsystem_library.h ADAS_AD_Backend/subsystem_library.cpp
-#    ADAS_AD_Backend/subsystem_window.ui ADAS_AD_Backend/subsystem_window.h ADAS_AD_Backend/subsystem_window.cpp
-#    ADAS_AD_Backend/new_subsystem_dialog.ui ADAS_AD_Backend/new_subsystem_dialog.h ADAS_AD_Backend/new_subsystem_dialog.cpp
-#    ADAS_AD_Backend/var_name_dialog.ui ADAS_AD_Backend/var_name_dialog.h ADAS_AD_Backend/var_name_dialog.cpp
-
-
     sqlite/aiccsqlite.hpp
 
     process/aiccprocess.hpp
@@ -108,10 +93,8 @@ target_include_directories(ADAS_AD_Developer
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
-#    nodes
     )
 find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
-#find_library(ADAS_AD_Backend libADAS_AD_Backend.so REQUIRED)
 
 target_link_options(ADAS_AD_Developer PRIVATE -no-pie)
 target_link_libraries(ADAS_AD_Developer
@@ -131,9 +114,6 @@ target_link_libraries(ADAS_AD_Developer
     ${QSCINTILLA}
     ADAS_AD_Backend
     )
-
-#add_subdirectory(ADAS_AD_Backend)
-#add_subdirectory(nodeeditor)
 
 
 

@@ -37,7 +37,7 @@ private:
     void initButton();
 private:
     Ui::ImportScriptDialog *ui;
-    QSharedPointer<ProjectDataModel>_projectDataModel;
+    QSharedPointer<ProjectDataModel> _projectDataModel;
 };
 
 #endif // IMPORTSCRIPTDIALOG_H

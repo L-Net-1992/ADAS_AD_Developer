@@ -23,8 +23,8 @@
 //#include <nodeparser/invocable_parser.hpp>
 #include "ADAS_AD_Backend/module_library.hpp"
 #include "ADAS_AD_Backend/invocable_parser.hpp"
-#include <ADAS_AD_Backend/controllers/aiccflowview.hpp>
-#include <ADAS_AD_Backend/controllers/aiccflowscene.hpp>
+#include "controllers/aiccflowview.hpp"
+#include "controllers/aiccflowscene.hpp"
 
 
 using QtNodes::DataModelRegistry;

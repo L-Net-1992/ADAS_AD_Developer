@@ -38,7 +38,7 @@
 #include <ADAS_AD_Backend/invocable_parser.hpp>
 #include <ADAS_AD_Backend/models.hpp>
 #include <ADAS_AD_Backend/module_library.hpp>
-#include <ADAS_AD_Backend/new_subsystem_dialog.h>
+#include "dialogs/new_subsystem_dialog.h"
 
 
 #include <model/modelcategory.hpp>

@@ -10,7 +10,7 @@
 #include "ADAS_AD_Backend/module_library.hpp"
 #include <filesystem>
 #include <QFileDialog>
-#include "aiccflowscene.hpp"
+#include "controllers/aiccflowscene.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubsystemWindow; }

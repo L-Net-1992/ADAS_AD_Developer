@@ -823,13 +823,13 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
 //        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
-        scene->generateVarNameIfEmpty(*scene,node);
+        scene->generateVarNameIfEmpty(node);
     });
 
     //3:重命名变量
     connect(ui->sw_flowscene->getCurrentView(),&AICCFlowView::nodeRename,this,[scene,this](Node &node){
 //        ModuleLibrary::updateVarName(*scene,node,this);
-        scene->updateVarName(*scene,node,this);
+        scene->updateVarName(node,this);
     });
 
     //    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){

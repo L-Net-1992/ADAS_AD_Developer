@@ -71,7 +71,7 @@
   <customwidget>
    <class>AICCFlowView</class>
    <extends>QGraphicsView</extends>
-   <header>aiccflowview.hpp</header>
+   <header>controllers/aiccflowview.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

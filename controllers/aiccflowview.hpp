@@ -131,18 +131,6 @@ public:
         }
     }
 
-private:
-    void initShortcut(QWidget *parent){
-
-        _sc_copy = new QShortcut(QKeySequence::Copy,parent);
-        _sc_paste = new QShortcut(QKeySequence::Paste,parent);
-
-
-        connect(_sc_copy,&QShortcut::activated,this,[&](){
-            qDebug() << "copy";
-        });
-    }
-
     void nodeContextMenuAction(Node &node,const QPointF &pos){
         QClipboard *clipboard = QApplication::clipboard();
 
@@ -178,7 +166,8 @@ private:
 
         //重命名
         connect(act_rename,&QAction::triggered,this,[&](){
-            emit nodeRename(node);
+//            this->_scene->updateVarName(
+//            emit nodeRename(node);
         });
 
 
@@ -188,6 +177,20 @@ private:
         //        //回收action资源
         foreach(QAction *pAction,pop_menu->actions()) delete pAction;
     }
+
+private:
+    void initShortcut(QWidget *parent){
+
+        _sc_copy = new QShortcut(QKeySequence::Copy,parent);
+        _sc_paste = new QShortcut(QKeySequence::Paste,parent);
+
+
+        connect(_sc_copy,&QShortcut::activated,this,[&](){
+            qDebug() << "copy";
+        });
+    }
+
+
 
 Q_SIGNALS:
     //该信号需要将view对象以参数方式传递过去使用,否则会有问题

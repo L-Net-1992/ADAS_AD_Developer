@@ -62,7 +62,8 @@ public:
     }
 
 public:
-    void updateVarName(FlowScene &scene,Node &node,QWidget *parent){
+//    void updateVarName(FlowScene &scene,Node &node,QWidget *parent){
+    void updateVarName(Node &node,QWidget *parent){
             auto *nodeDataModel = static_cast<InvocableDataModel *>(node.nodeDataModel());
             VarNameDialog dialog(parent);
             dialog.setVarName(nodeDataModel->varName());
@@ -74,7 +75,7 @@ public:
                     QMessageBox::critical(parent, "错误", "名称不能为空");
                     continue;
                 }
-                if (varNameExists(scene, var_name)) {
+                if (varNameExists(*this, var_name)) {
                     QMessageBox::critical(parent, "错误", "名称已经被使用");
                     continue;
                 }
@@ -83,7 +84,7 @@ public:
             }
     }
 
-    bool varNameExists(FlowScene &scene,const QString &var_name){
+    bool varNameExists(AICCFlowScene &scene,const QString &var_name){
             for (const auto *node: scene.allNodes()) {
                 const auto *nodeDataModel = static_cast<const InvocableDataModel *>(node->nodeDataModel());
                 if (nodeDataModel->varName() == var_name)
@@ -92,19 +93,19 @@ public:
             return false;
     }
 
-    QString generateVarName(QtNodes::FlowScene &scene) {
+    QString generateVarName() {
         QString fmt("n%1");
         for (int i = 1;; i++) {
             QString var_name = fmt.arg(i);
-            if (!varNameExists(scene, var_name))
+            if (!varNameExists(*this, var_name))
                 return var_name;
         }
     }
 
-    void generateVarNameIfEmpty(QtNodes::FlowScene &scene, QtNodes::Node &node) {
+    void generateVarNameIfEmpty(QtNodes::Node &node) {
         auto *nodeDataModel = static_cast<InvocableDataModel *>(node.nodeDataModel());
         if (nodeDataModel->varName().isEmpty())
-            nodeDataModel->setVarName(generateVarName(scene));
+            nodeDataModel->setVarName(generateVarName());
     }
 
 Q_SIGNALS:

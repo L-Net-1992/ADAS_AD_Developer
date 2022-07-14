@@ -17,7 +17,8 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     this->setWindowFlag(Qt::WindowStaysOnTopHint);
     connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
-    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
+//    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
+    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, ui->flowView, &AICCFlowView::nodeContextMenuAction);
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
 
     scene_.setRegistry(module_library->test2());
@@ -143,11 +144,12 @@ void SubsystemWindow::save() {
 
 void SubsystemWindow::generateVarName(QtNodes::Node &node) {
 //    ModuleLibrary::generateVarNameIfEmpty(scene_, node);
-    scene_.generateVarNameIfEmpty(scene_,node);
+    scene_.generateVarNameIfEmpty(node);
 }
 
 void SubsystemWindow::updateVarName(QtNodes::Node &node, const QPointF & pos) {
 //    ModuleLibrary::updateVarName(scene_, node, this);
-    scene_.updateVarName(scene_,node,this);
+    scene_.updateVarName(node,this);
+//    ui->flowView->nodeContextMenuAction(node,pos);
 }
 

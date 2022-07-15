@@ -29,7 +29,6 @@ class AICCFlowView : public FlowView
 {
     Q_OBJECT
 public:
-    AICCFlowView(){}
     AICCFlowView(AICCFlowScene *scene,QWidget *parent):FlowView(scene,parent)
     {
         _scene = scene;
@@ -38,13 +37,9 @@ public:
 
         initShortcut(parent);
 
-        //模块右键菜单
-        connect(_scene,&AICCFlowScene::nodeContextMenu,this,&AICCFlowView::nodeContextMenuAction);
 
     }
-    AICCFlowView(QWidget *parent):FlowView(parent){
-
-    }
+    AICCFlowView(QWidget *parent):FlowView(parent){}
 
 
 protected:
@@ -108,75 +103,6 @@ public:
         return _scene;
     }
 
-    void actionCopy(){
-        QClipboard *clipboard = QApplication::clipboard();
-        std::vector<Node*> nodes =  _scene->selectedNodes();
-        QStringList sl_nodes;
-        for(Node* node:nodes){
-            auto *ndm = static_cast<InvocableDataModel *>(node->nodeDataModel());
-            sl_nodes.append(ndm->name());
-        }
-        clipboard->setProperty("nodes",sl_nodes);
-    }
-    void actionPaste(){
-        QClipboard *clipboard = QApplication::clipboard();
-        QStringList sl = clipboard->property("nodes").toStringList();
-//        QPointF pos = this->mapFromScene(QCursor::pos());
-        QPointF pos = _scene->selectedNodes().at(0)->nodeGraphicsObject().pos();
-
-        for(int i=0;i<sl.size();i++){
-            QString nn = sl.at(i);
-            QPointF p(pos.x()+((i+1)*30),pos.y()+((i+1)*30));
-            _scene->dropCreateNode(nn,nn,p);
-        }
-    }
-
-    void nodeContextMenuAction(Node &node,const QPointF &pos){
-        QClipboard *clipboard = QApplication::clipboard();
-
-        QMenu *pop_menu = new QMenu();
-
-        QAction *act_copy = new QAction(pop_menu);
-        act_copy->setText(QStringLiteral("复制"));
-        act_copy->setIcon(QIcon(":/res/editor-copy.png"));
-        act_copy->setShortcut(QKeySequence::Copy);
-        pop_menu->addAction(act_copy);
-
-        QAction *act_paste = new QAction(pop_menu);
-        act_paste->setText(QStringLiteral("粘贴"));
-        act_paste->setIcon(QIcon(":/res/editor-paste.png"));
-        act_paste->setShortcut(QKeySequence::Paste);
-        pop_menu->addAction(act_paste);
-        if(clipboard->property("nodes").toStringList().size()==0)
-            act_paste->setEnabled(false);
-
-        pop_menu->addSeparator();
-
-        QAction *act_rename = new QAction(pop_menu);
-        act_rename->setText(QStringLiteral("重命名"));
-        act_rename->setIcon(QIcon(":/res/rename.png"));
-        act_rename->setShortcutContext(Qt::ApplicationShortcut);
-        pop_menu->addAction(act_rename);
-
-        //复制
-        connect(act_copy,&QAction::triggered,this,&AICCFlowView::actionCopy);
-
-        //粘贴
-        connect(act_paste,&QAction::triggered,this,&AICCFlowView::actionPaste);
-
-        //重命名
-        connect(act_rename,&QAction::triggered,this,[&](){
-//            this->_scene->updateVarName(
-//            emit nodeRename(node);
-        });
-
-
-
-        pop_menu->exec(QCursor::pos());
-
-        //        //回收action资源
-        foreach(QAction *pAction,pop_menu->actions()) delete pAction;
-    }
 
 private:
     void initShortcut(QWidget *parent){
@@ -200,7 +126,7 @@ Q_SIGNALS:
 
 
 private:
-    AICCFlowScene* _scene;
+    AICCFlowScene *_scene;
     QShortcut *_sc_copy;
     QShortcut *_sc_paste;
     QShortcut *_sc_rename;

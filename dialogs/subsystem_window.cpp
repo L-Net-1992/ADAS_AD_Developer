@@ -11,14 +11,21 @@
 #include <QByteArray>
 #include "ADAS_AD_Backend/models.hpp"
 SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::SubsystemWindow), module_library_(module_library), parent_(parent), subsystem_path_(subsystem_path) {
+    QMainWindow(parent),
+    ui(new Ui::SubsystemWindow),
+    module_library_(module_library),
+    parent_(parent),
+    subsystem_path_(subsystem_path)
+{
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowFlag(Qt::WindowStaysOnTopHint);
+//    scene_.setParent(parent_);
+    scene_.setWparent(this);
     connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
-//    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, this, &SubsystemWindow::updateVarName);
-    connect(&scene_, &QtNodes::FlowScene::nodeContextMenu, ui->flowView, &AICCFlowView::nodeContextMenuAction);
+//    connect(&scene_,&AICCFlowScene::nodeContextMenu,this,&SubsystemWindow::updateVarName);
+
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
 
     scene_.setRegistry(module_library->test2());
@@ -32,6 +39,7 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     setWindowTitle(QString("子系统 - %1::%2").arg(package, name));
     connect(module_library, &ModuleLibrary::importCompleted, this, &SubsystemWindow::updateRegistry);
     ui->flowView->setScene(&scene_);
+    scene_.setParent(ui->flowView->parent());
     std::cout << "new SubsystemWindow" << std::endl;
 
     //接受view的node创建完成消息增加新的page
@@ -144,12 +152,33 @@ void SubsystemWindow::save() {
 
 void SubsystemWindow::generateVarName(QtNodes::Node &node) {
 //    ModuleLibrary::generateVarNameIfEmpty(scene_, node);
-    scene_.generateVarNameIfEmpty(node);
+    scene_.generateVarNameIfEmpty(scene_.allNodes(),node);
 }
 
-void SubsystemWindow::updateVarName(QtNodes::Node &node, const QPointF & pos) {
-//    ModuleLibrary::updateVarName(scene_, node, this);
-    scene_.updateVarName(node,this);
-//    ui->flowView->nodeContextMenuAction(node,pos);
-}
+//void SubsystemWindow::updateVarName(QtNodes::Node &node, const QPointF & pos) {
+
+//    AICCFlowScene::updateVarName(scene_.allNodes(),node,this);
+
+
+
+//    auto *nodeDataModel = static_cast<InvocableDataModel *>(node.nodeDataModel());
+//    VarNameDialog dialog(parent);
+//    dialog.setVarName(nodeDataModel->varName());
+//    for (;;) {
+//        if (!dialog.exec())
+//            return;
+//        auto var_name = dialog.varName();
+//        if (var_name.isEmpty()) {
+//            QMessageBox::critical(parent, "错误", "名称不能为空");
+//            continue;
+//        }
+//        if (varNameExists(var_name)) {
+//            QMessageBox::critical(parent, "错误", "名称已经被使用");
+//            continue;
+//        }
+//        nodeDataModel->setVarName(var_name);
+//        return;
+//    }
+
+//}
 

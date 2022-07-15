@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     //设置全局字体大小
     QFont font = a.font();
+//    font.setFamily("Regular");
     font.setPointSize(11);
     a.setFont(font);
 

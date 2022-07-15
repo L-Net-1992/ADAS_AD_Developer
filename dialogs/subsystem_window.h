@@ -20,7 +20,7 @@ class SubsystemWindow : public QMainWindow {
 Q_OBJECT
 
 public:
-    explicit SubsystemWindow(ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent = nullptr);
+    explicit SubsystemWindow (ModuleLibrary *module_library, const std::filesystem::path & subsystem_path ,QWidget *parent = nullptr);
     ~SubsystemWindow() override;
 //    QtNodes::FlowScene & scene();
     AICCFlowScene & scene();
@@ -44,7 +44,7 @@ private Q_SLOTS:
     void nodeDoubleClicked(QtNodes::Node & node);
     void updateRegistry();
     void generateVarName(QtNodes::Node & node);
-    void updateVarName(QtNodes::Node & node, const QPointF & pos);
+//    void updateVarName(QtNodes::Node & node, const QPointF & pos);
 };
 
 

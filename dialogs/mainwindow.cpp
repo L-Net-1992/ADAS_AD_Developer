@@ -464,6 +464,7 @@ void MainWindow::initToolbar()
         const std::string package = subsystemDataModel.at("package");
         const std::string name = subsystemDataModel.at("name");
         auto subsystemWindow = new SubsystemWindow(_moduleLibrary.get(), _moduleLibrary->subsystemLibrary().getSubsystem(package, name), this);
+
         //当子系统有node创建或删除时，将信号继续传送到外部
         connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
             emit subsystemWindow->subsystemCreatedOrDeleted();
@@ -823,13 +824,13 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     AICCFlowScene *scene = ui->sw_flowscene->getCurrentView()->scene();
     connect(scene, &FlowScene::nodeCreated, [scene](QtNodes::Node & node){
 //        ModuleLibrary::generateVarNameIfEmpty(*scene, node);
-        scene->generateVarNameIfEmpty(node);
+        scene->generateVarNameIfEmpty(scene->allNodes(),node);
     });
 
     //3:重命名变量
     connect(ui->sw_flowscene->getCurrentView(),&AICCFlowView::nodeRename,this,[scene,this](Node &node){
 //        ModuleLibrary::updateVarName(*scene,node,this);
-        scene->updateVarName(node,this);
+        scene->updateVarName(scene->allNodes(),node,this);
     });
 
     //    connect(scene, &FlowScene::nodeContextMenu, [scene,this](QtNodes::Node & node, const QPointF& pos){

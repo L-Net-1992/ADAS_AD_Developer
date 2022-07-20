@@ -102,5 +102,7 @@
         <file>res/Record.png</file>
         <file>res/Save1.png</file>
         <file>res/rename.png</file>
+        <file>res/point.png</file>
+        <file>res/empty.png</file>
     </qresource>
 </RCC>

@@ -70,7 +70,7 @@ public:
           "NodeStyle": {
             "NormalBoundaryColor": "darkgray",
             "SelectedBoundaryColor": "deepskyblue",
-            "GradientColor0": "mintcream",
+            "GradientColor0": [119,151,166],
             "GradientColor1": "mintcream",
             "GradientColor2": "mintcream",
             "GradientColor3": "mintcream",

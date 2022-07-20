@@ -152,6 +152,22 @@ void MainWindow::initToolbar()
     ui->tw_toolbar->setCurrentIndex(0);
     ui->tw_bottom->setCurrentIndex(0);
 
+    //tab按下时显示图标
+    connect(ui->tw_toolbar,&QTabWidget::currentChanged,this,[&](int index){
+//        ui->tw_toolbar->currentWidget()->
+//        for(int i=0;i<ui->tw_toolbar->count();i++){
+//            ui->tw_toolbar->
+//            ui->tw_toolbar->setTabIcon(index,QPixmap());
+//        }
+//        ui->tw_toolbar->setTabIcon(index,QPixmap(":/res/point.png"));
+//        ui->tw_toolbar->setTabIcon()
+//        QString tabText = ui->tw_toolbar->tabText(index);
+//        ui->tw_toolbar->setTabText(index,"•"+tabText);
+
+//        ui->tw_toolbar->currentWidget()->setWindowTitle("aaa");
+//        qDebug() << "-----current widget:" << ui->tw_toolbar->count();
+    });
+
     //设置New按钮显示项目子窗口
     connect(ui->tb_new,&QToolButton::clicked,projectDialog,&ProjectDialog::show);
 

@@ -140,7 +140,7 @@
          <enum>QTabWidget::North</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_output">
          <property name="sizePolicy">
@@ -149,6 +149,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <attribute name="icon">
+          <iconset>
+           <selectedoff>:/res/empty.png</selectedoff>
+           <selectedon>:/res/point.png</selectedon>
+          </iconset>
+         </attribute>
          <attribute name="title">
           <string>输出</string>
          </attribute>
@@ -189,6 +195,12 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_other">
+         <attribute name="icon">
+          <iconset>
+           <selectedoff>:/res/empty.png</selectedoff>
+           <selectedon>:/res/point.png</selectedon>
+          </iconset>
+         </attribute>
          <attribute name="title">
           <string>其他</string>
          </attribute>
@@ -571,7 +583,7 @@ gridline-color:#FFFFFF;
   </widget>
   <widget class="QDockWidget" name="dw_toolbar">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -579,7 +591,7 @@ gridline-color:#FFFFFF;
    <property name="minimumSize">
     <size>
      <width>1280</width>
-     <height>158</height>
+     <height>135</height>
     </size>
    </property>
    <property name="features">
@@ -614,7 +626,7 @@ gridline-color:#FFFFFF;
         <bool>true</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -637,10 +649,19 @@ gridline-color:#FFFFFF;
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">/*background:rgb(240, 240, 240)*/</string>
+        <string notr="true"/>
        </property>
        <property name="currentIndex">
         <number>0</number>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>6</width>
+         <height>6</height>
+        </size>
+       </property>
+       <property name="elideMode">
+        <enum>Qt::ElideNone</enum>
        </property>
        <property name="usesScrollButtons">
         <bool>false</bool>
@@ -657,6 +678,12 @@ gridline-color:#FFFFFF;
         <property name="toolTip">
          <string/>
         </property>
+        <attribute name="icon">
+         <iconset>
+          <selectedoff>:/res/empty.png</selectedoff>
+          <selectedon>:/res/point.png</selectedon>
+         </iconset>
+        </attribute>
         <attribute name="title">
          <string>编辑器</string>
         </attribute>
@@ -946,6 +973,12 @@ gridline-color:#FFFFFF;
         <property name="font">
          <font/>
         </property>
+        <attribute name="icon">
+         <iconset>
+          <selectedoff>:/res/empty.png</selectedoff>
+          <selectedon>:/res/point.png</selectedon>
+         </iconset>
+        </attribute>
         <attribute name="title">
          <string>部署</string>
         </attribute>
@@ -1238,8 +1271,14 @@ gridline-color:#FFFFFF;
         <property name="font">
          <font/>
         </property>
+        <attribute name="icon">
+         <iconset>
+          <selectedoff>:/res/empty.png</selectedoff>
+          <selectedon>:/res/point.png</selectedon>
+         </iconset>
+        </attribute>
         <attribute name="title">
-         <string>仿真</string>
+         <string>仿真  </string>
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
@@ -1406,8 +1445,14 @@ gridline-color:#FFFFFF;
         <property name="font">
          <font/>
         </property>
+        <attribute name="icon">
+         <iconset>
+          <selectedoff>:/res/empty.png</selectedoff>
+          <selectedon>:/res/point.png</selectedon>
+         </iconset>
+        </attribute>
         <attribute name="title">
-         <string>标定</string>
+         <string>标定  </string>
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -1469,6 +1514,12 @@ gridline-color:#FFFFFF;
         <property name="font">
          <font/>
         </property>
+        <attribute name="icon">
+         <iconset>
+          <selectedoff>:/res/empty.png</selectedoff>
+          <selectedon>:/res/point.png</selectedon>
+         </iconset>
+        </attribute>
         <attribute name="title">
          <string>自定义模块</string>
         </attribute>

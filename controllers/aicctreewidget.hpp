@@ -10,7 +10,7 @@
 #include <QDrag>
 #include <QMenu>
 #include <QVBoxLayout>
-#include <conf/Config.hpp>
+//#include <conf/Config.hpp>
 #include <QApplication>
 #include "utils.h"
 #include <QStandardItem>

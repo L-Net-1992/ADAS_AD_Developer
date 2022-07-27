@@ -18,14 +18,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sqlite/node.db3 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/conf/model_menu.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/conf)
 file(COPY ${allCopyFiles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/nodeconfig)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generate)
 
 find_package(QT NAMES QT6 Qt5 COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Xml Sql Charts Concurrent REQUIRED)
-#find_package(LLVM REQUIRED CONFIG)
-#find_package(Clang REQUIRED CONFIG)
 find_package(Boost 1.76.0 REQUIRED COMPONENTS system graph json)
 find_package(HDF5 REQUIRED )
 find_package(ADAS_AD_Backend REQUIRED)
@@ -61,6 +58,7 @@ set ( PROJECT_SOURCES
     image.qrc
     itemreadonlydelegate.h
     utils.h utils.cpp
+    aiccundocommand.hpp
 
     model/modelsproject.hpp
     model/modelsrecentproject.hpp
@@ -78,8 +76,7 @@ set ( PROJECT_SOURCES
 
     process/aiccprocess.hpp
     conf/config.json
-    conf/model_menu.json
-    conf/Config.hpp
+#    conf/Config.hpp
     )
 
 add_executable(ADAS_AD_Developer
@@ -87,16 +84,11 @@ add_executable(ADAS_AD_Developer
     )
 
 #target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fvisibility=hidden -fno-rtti )
-target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fno-rtti )
-target_include_directories(ADAS_AD_Developer
-    PRIVATE
-#    ${LLVM_INCLUDE_DIRS}
-#    ${CLANG_INCLUDE_DIRS}
-#    ${CMAKE_CURRENT_SOURCE_DIR}/controllers
-    )
+#target_compile_options(ADAS_AD_Developer PRIVATE -Wall -fno-rtti )
+target_compile_options(ADAS_AD_Developer PRIVATE -Wall)
 find_library(QSCINTILLA libqscintilla2_qt5.so.15 REQUIRED)
 
-target_link_options(ADAS_AD_Developer PRIVATE -no-pie)
+target_link_options(ADAS_AD_Developer PRIVATE -no-pie )
 target_link_libraries(ADAS_AD_Developer
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -104,11 +96,6 @@ target_link_libraries(ADAS_AD_Developer
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Charts
     Qt${QT_VERSION_MAJOR}::Concurrent
-#    clangAST
-#    clangBasic
-#    clangFrontend
-#    clangSerialization
-#    clangTooling
     Boost::json Boost::headers Boost::system Boost::graph
     ${HDF5_LIBRARIES}
     ${QSCINTILLA}

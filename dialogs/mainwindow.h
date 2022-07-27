@@ -127,12 +127,16 @@ private:
     void refreshLeftTreeData();
     void invocableParserAction(const std::string msg);
     void openSubsystem(const std::string package,const std::string name);
+
+    //设置界面状态
+    void appEnable(bool enable);
+
+
 public:
     void showMsg(QString msg);
 
 private:
     Ui::MainWindow *ui;
-//    AICCSqlite sqlite;
     ProjectDialog *projectDialog;
     RecentProjectDialog *rProjectDialog;
     NodeParametersDialog *npDialog;

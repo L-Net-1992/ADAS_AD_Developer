@@ -11,7 +11,7 @@
 #include <QMenu>
 #include <QTime>
 #include <QVBoxLayout>
-#include <conf/Config.hpp>
+//#include <conf/Config.hpp>
 #include <QApplication>
 #include "utils.h"
 #include <QStandardItem>
@@ -43,6 +43,7 @@ public:
         });
 
         icon.addPixmap(QPixmap(":/res/Open.png"));
+
     }
 
     ~AICCStructTreeWidget(){}

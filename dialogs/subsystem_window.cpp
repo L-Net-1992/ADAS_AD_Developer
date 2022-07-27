@@ -100,6 +100,7 @@ AICCFlowScene &SubsystemWindow::scene() {
     return scene_;
 }
 
+
 void SubsystemWindow::nodeDoubleClicked(QtNodes::Node & node) {
     auto nodeDataModel = static_cast<InvocableDataModel*>(node.nodeDataModel());
     const auto invocable = nodeDataModel->invocable();
@@ -108,7 +109,7 @@ void SubsystemWindow::nodeDoubleClicked(QtNodes::Node & node) {
         auto subsystemWindow = new SubsystemWindow(module_library_, module_library_->subsystemLibrary().getSubsystem(invocable.getPackage(),invocable.getSubsystemName()), this);
         //当子系统有node创建或删除时，将信号继续传送到外部
         connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
-            emit subsystemWindow->subsystemCreatedOrDeleted();
+            emit subsystemCreatedOrDeleted();
         });
         subsystemWindow->show();
 

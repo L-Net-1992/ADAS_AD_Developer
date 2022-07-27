@@ -50,11 +50,6 @@ MainWindow::MainWindow(QWidget *parent):
     this->initProjectDialog();
     this->initProjectDataModel();
 
-    //    std::cout << "std::cout";
-    //    printf("printf");
-    //    qDebug() << "qDebug";
-
-
 }
 
 MainWindow::~MainWindow()
@@ -151,22 +146,6 @@ void MainWindow::initToolbar()
     delete titleBarWidget;
     ui->tw_toolbar->setCurrentIndex(0);
     ui->tw_bottom->setCurrentIndex(0);
-
-    //tab按下时显示图标
-    connect(ui->tw_toolbar,&QTabWidget::currentChanged,this,[&](int index){
-//        ui->tw_toolbar->currentWidget()->
-//        for(int i=0;i<ui->tw_toolbar->count();i++){
-//            ui->tw_toolbar->
-//            ui->tw_toolbar->setTabIcon(index,QPixmap());
-//        }
-//        ui->tw_toolbar->setTabIcon(index,QPixmap(":/res/point.png"));
-//        ui->tw_toolbar->setTabIcon()
-//        QString tabText = ui->tw_toolbar->tabText(index);
-//        ui->tw_toolbar->setTabText(index,"•"+tabText);
-
-//        ui->tw_toolbar->currentWidget()->setWindowTitle("aaa");
-//        qDebug() << "-----current widget:" << ui->tw_toolbar->count();
-    });
 
     //设置New按钮显示项目子窗口
     connect(ui->tb_new,&QToolButton::clicked,projectDialog,&ProjectDialog::show);
@@ -483,7 +462,8 @@ void MainWindow::initToolbar()
 
         //当子系统有node创建或删除时，将信号继续传送到外部
         connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
-            emit subsystemWindow->subsystemCreatedOrDeleted();
+//            emit subsystemWindow->subsystemCreatedOrDeleted();
+            ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
         });
         subsystemWindow->show();
         subsystemWindow->setBusinessData(subsystemDataModel);
@@ -629,6 +609,9 @@ bool MainWindow::openProjectAction(){
 
 ///打开项目完成后执行部分
 void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const QString ppath){
+
+    this->appEnable(true);
+
     //0:数据准备
     this->setWindowTitle(_currentProjectDataModel->projectName()+" ("+_currentProjectDataModel->projectPath()+") "+" - 图形化ADAS/AD应用开发系");
     ui->sw_flowscene->initDefaultScenes();
@@ -671,6 +654,8 @@ void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const Q
     //5:打开新项目后分类数据要刷新
     _categoryDataModel->refreshCategoryDataModel(*_moduleLibrary);
 
+    //6:设置界面可用
+
 }
 
 ///初始化最近打开项目窗口
@@ -679,14 +664,12 @@ void MainWindow::initRecentProjectDialog(){
         _currentProjectDataModel->setProject(pdm->projectName(),pdm->projectPath());
     });
     connect(rProjectDialog,&RecentProjectDialog::recentProjectDialogClosed,this,[&]{
-        //        qDebug() <<" close ";
-        forceClose = true;
-        this->close();
+//        forceClose = true;
+//        this->close();
 
     });
     //最近项目窗口点击
     connect(rProjectDialog,&RecentProjectDialog::newProjectTriggered,this,[&]{
-        //        projectDialog->show();
         projectDialog->showFromRecentProjectDialog();
         rProjectDialog->hide();
     });
@@ -854,11 +837,35 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
     //    });
     //3:启用工具栏、展示选择项目窗口
     ui->statusbar->showMessage("节点模型数据加载已完成");
-    ui->tw_toolbar->setEnabled(true);
-    ui->tw_node->setEnabled(true);
-    ui->menubar->setEnabled(true);
+    appEnable(false);
     rProjectDialog->show();
+}
 
+/**
+ * @brief MainWindow::appEnable 设置界面可用性
+ * @param enable
+ */
+void MainWindow::appEnable(bool enable){
+    if(enable){
+            ui->tw_toolbar->setEnabled(true);
+            ui->tw_node->setEnabled(true);
+            ui->menubar->setEnabled(true);
+            ui->menuNew->setEnabled(true);
+            ui->menuFile->setEnabled(true);
+            ui->menuEdit->setEnabled(true);
+            ui->menuView->setEnabled(true);
+            ui->menuHelp->setEnabled(true);
+            ui->actionSave->setEnabled(true);
+    }else{
+            ui->tw_toolbar->setEnabled(false);
+            ui->tw_node->setEnabled(false);
+            ui->menubar->setEnabled(true);
+            ui->menuNew->setEnabled(true);
+            ui->menuEdit->setEnabled(false);
+            ui->menuView->setEnabled(false);
+            ui->menuHelp->setEnabled(false);
+            ui->actionSave->setEnabled(false);
+    }
 }
 
 /**
@@ -978,7 +985,8 @@ void MainWindow::openSubsystem(const std::string package,const std::string name)
     auto subsystemWindow = new SubsystemWindow(_moduleLibrary.get(), _moduleLibrary->subsystemLibrary().getSubsystem(package,name), this);
     //当子系统有node创建或删除时，将信号继续传送到外部
     connect(subsystemWindow,&SubsystemWindow::subsystemCreatedOrDeleted,this,[&]{
-        emit subsystemWindow->subsystemCreatedOrDeleted();
+//        emit subsystemWindow->subsystemCreatedOrDeleted();
+        ui->tw_node->fillInitLeftTreeData(*_moduleLibrary,_currentProjectDataModel->projectName(),ui->sw_flowscene->getCurrentView()->scene());
     });
     subsystemWindow->show();
 }

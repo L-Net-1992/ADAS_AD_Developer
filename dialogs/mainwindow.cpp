@@ -865,6 +865,9 @@ void MainWindow::appEnable(bool enable){
             ui->menuView->setEnabled(false);
             ui->menuHelp->setEnabled(false);
             ui->actionSave->setEnabled(false);
+
+            ui->tb_new->setEnabled(true);
+            ui->pb_open->setEnabled(true);
     }
 }
 

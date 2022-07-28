@@ -25,8 +25,8 @@ SubsystemWindow::SubsystemWindow(ModuleLibrary *module_library, const std::files
     connect(&scene_, &QtNodes::FlowScene::nodeDoubleClicked, this, &SubsystemWindow::nodeDoubleClicked);
     connect(&scene_, &QtNodes::FlowScene::nodeCreated, this, &SubsystemWindow::generateVarName);
 //    connect(&scene_,&AICCFlowScene::nodeContextMenu,this,&SubsystemWindow::updateVarName);
-
     connect(ui->actionSave, &QAction::triggered, this, &SubsystemWindow::save);
+//    connect(this,&QMainWindow::destroyed,this,[&](){});
 
     scene_.setRegistry(module_library->test2());
     int file_size = static_cast<int>(std::filesystem::file_size(subsystem_path));
@@ -149,6 +149,29 @@ void SubsystemWindow::save() {
     emit subsystemCreatedOrDeleted();
 
 }
+
+
+void SubsystemWindow::closeEvent(QCloseEvent *event){
+//    QMessageBox::StandardButton result = QMessageBox::warning(this,QStringLiteral("退出"),QStringLiteral("请确认组合模块已保存再退出"),QMessageBox::Save|QMessageBox::Ok|QMessageBox::Cancel);
+//    switch(result){
+//        case QMessageBox::Ok:
+//        event->accept();
+//        break;
+//    case QMessageBox::Cancel:
+//        event->ignore();
+//        break;
+//    case QMessageBox::Save:
+//        save();
+//        event->ignore();
+//        break;
+//    }
+}
+
+//void SubsystemWindow::destroyed(){
+//    if(0 == QMessageBox::warning(this,QStringLiteral("退出"),QStringLiteral("请确认组合模块已保存再退出"),QStringLiteral("确定"),QStringLiteral("取消"),QStringLiteral("保存"))){
+//        e->accept();
+//    }
+//}
 
 
 void SubsystemWindow::generateVarName(QtNodes::Node &node) {

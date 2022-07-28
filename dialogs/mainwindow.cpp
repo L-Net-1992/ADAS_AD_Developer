@@ -865,6 +865,15 @@ void MainWindow::scriptParserCompletedAction(std::list<Invocable> parserResult){
 void MainWindow::appEnable(bool enable){
     if(enable){
             ui->tw_toolbar->setEnabled(true);
+
+            ui->tw_toolbar->setTabEnabled(1,true);
+            ui->tw_toolbar->setTabEnabled(2,true);
+            ui->tw_toolbar->setTabEnabled(3,true);
+            ui->tw_toolbar->setTabEnabled(4,true);
+            ui->pb_save->setEnabled(true);
+            ui->pb_library_browser->setEnabled(true);
+            ui->pb_dataInspector->setEnabled(true);
+
             ui->tw_node->setEnabled(true);
             ui->menubar->setEnabled(true);
             ui->menuNew->setEnabled(true);
@@ -873,6 +882,7 @@ void MainWindow::appEnable(bool enable){
             ui->menuView->setEnabled(true);
             ui->menuHelp->setEnabled(true);
             ui->actionSave->setEnabled(true);
+
     }else{
 
             ui->tw_node->setEnabled(false);

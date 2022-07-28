@@ -26,6 +26,9 @@ public:
     AICCFlowScene & scene();
     void setBusinessData(const std::map<std::string,std::string> & subsystemDataModel);
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 Q_SIGNALS:
     void subsystemCreatedOrDeleted();
 

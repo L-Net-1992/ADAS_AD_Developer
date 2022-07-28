@@ -86,6 +86,9 @@ public:
             this->dropCreateNode(nn,nn,p);
         }
     }
+    void actionRename(Node &node){
+        this->updateVarName(allNodes(), node, _wparent);
+    }
 
     void nodeContextMenuAction(Node &node,const QPointF &pos){
         QClipboard *clipboard = QApplication::clipboard();
@@ -122,7 +125,7 @@ public:
 
         //重命名
         connect(act_rename,&QAction::triggered,this,[&](){
-            this->updateVarName(allNodes(), node, _wparent);
+            actionRename(node);
         });
 
 

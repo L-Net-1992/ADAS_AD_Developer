@@ -89,6 +89,7 @@ void MainWindow::initMenu()
     connect(ui->actionPropertyWindow,&QAction::toggled,ui->dw_right,&QDockWidget::setVisible);
     connect(ui->actionAbout,&QAction::triggered,this,&QApplication::aboutQt);
     connect(ui->actionNewProject,&QAction::triggered,projectDialog,&ProjectDialog::show);
+    connect(ui->actionRecentProject,&QAction::triggered,this,&MainWindow::openRecentProjectAction);
     connect(ui->actionOpen,&QAction::triggered,this,&MainWindow::openProjectAction);
     connect(ui->actionSave,&QAction::triggered,this,&MainWindow::saveProjectAction);
     //        connect(ui->actionCreateSubSystem,&QAction::triggered,this,[&]{_moduleLibrary->newSubsystem(this);});
@@ -597,7 +598,10 @@ void MainWindow::saveProjectAction(){
     }
 }
 
-///打开项目动作
+/**
+ * @brief MainWindow::openProjectAction 打开项目动作
+ * @return
+ */
 bool MainWindow::openProjectAction(){
     QString fileName = QFileDialog::getOpenFileName(this,tr("打开项目"),QDir::homePath(),tr("项目 (*.xml)"));
     QFileInfo fileInfo(fileName);
@@ -607,7 +611,19 @@ bool MainWindow::openProjectAction(){
     return true;
 }
 
-///打开项目完成后执行部分
+/**
+ * @brief MainWindow::openRecentProjectAction   打开最近
+ */
+void MainWindow::openRecentProjectAction(){
+    rProjectDialog->show();
+}
+
+
+/**
+ * @brief MainWindow::projectDataModelLoadCompletedAction 打开项目完成后执行部分
+ * @param pname
+ * @param ppath
+ */
 void MainWindow::projectDataModelLoadCompletedAction(const QString pname,const QString ppath){
 
     this->appEnable(true);

@@ -110,6 +110,7 @@ private:
 
     void saveProjectAction();
     bool openProjectAction();
+    void openRecentProjectAction();
     //打开项目动作函数部分
     void projectDataModelLoadCompletedAction(const QString pname,const QString ppath);
     //创建子系统动作函数

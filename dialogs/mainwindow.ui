@@ -246,6 +246,7 @@
     <addaction name="menuNew"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionRecentProject"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -1839,7 +1840,7 @@ gridline-color:#FFFFFF;
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>保存</string>
+    <string>保存项目</string>
    </property>
    <property name="font">
     <font/>
@@ -1883,7 +1884,7 @@ gridline-color:#FFFFFF;
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>打开</string>
+    <string>打开项目</string>
    </property>
    <property name="font">
     <font/>
@@ -1922,6 +1923,11 @@ gridline-color:#FFFFFF;
    </property>
    <property name="visible">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionRecentProject">
+   <property name="text">
+    <string>最近项目</string>
    </property>
   </action>
  </widget>

@@ -743,9 +743,10 @@ void MainWindow::initNodeEditor(){
 
     //2:执行加载前的准备动作emit _moduleLibrary->importCompleted();
     ui->statusbar->showMessage("正在加载节点模块数据");
-    ui->tw_toolbar->setEnabled(false);
-    ui->tw_node->setEnabled(false);
-    ui->menubar->setEnabled(false);
+    this->appEnable(false);
+//    ui->tw_toolbar->setEnabled(false);
+//    ui->tw_node->setEnabled(false);
+//    ui->menubar->setEnabled(false);
 
     //    ui->pte_output->appendPlainText("--------------------");
     //3:创建单独线程，耗时操作放到其中，防止界面卡死
@@ -873,8 +874,20 @@ void MainWindow::appEnable(bool enable){
             ui->menuHelp->setEnabled(true);
             ui->actionSave->setEnabled(true);
     }else{
-            ui->tw_toolbar->setEnabled(false);
+
             ui->tw_node->setEnabled(false);
+//            ui->tw_toolbar->setEnabled(false);
+            ui->tw_toolbar->setTabEnabled(1,false);
+            ui->tw_toolbar->setTabEnabled(2,false);
+            ui->tw_toolbar->setTabEnabled(3,false);
+            ui->tw_toolbar->setTabEnabled(4,false);
+
+            ui->tb_new->setEnabled(true);
+            ui->pb_open->setEnabled(true);
+            ui->pb_save->setEnabled(false);
+            ui->pb_library_browser->setEnabled(false);
+            ui->pb_dataInspector->setEnabled(false);
+
             ui->menubar->setEnabled(true);
             ui->menuNew->setEnabled(true);
             ui->menuEdit->setEnabled(false);
@@ -882,8 +895,9 @@ void MainWindow::appEnable(bool enable){
             ui->menuHelp->setEnabled(false);
             ui->actionSave->setEnabled(false);
 
-            ui->tb_new->setEnabled(true);
-            ui->pb_open->setEnabled(true);
+
+//            ui->actionNewProject->setEnabled(true);
+//            ui->actionOpen->setEnabled(true);
     }
 }
 
